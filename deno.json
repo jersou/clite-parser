@@ -1,0 +1,6 @@
+{
+  "tasks": {
+    "fmt": "deno fmt --ignore=vendor",
+    "run": "deno run -A example.ts"
+  }
+}
