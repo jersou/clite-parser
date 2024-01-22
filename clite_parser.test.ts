@@ -31,7 +31,7 @@ class Tool {
     console.log("up", this);
   }
 
-  down(force: boolean, timeout: number) {
+  down(force: boolean, timeout = 10) {
     console.log("down", force, timeout, this);
     return `down force=${force} timeout=${timeout}
     opt1=${this.opt1}
@@ -69,6 +69,15 @@ Deno.test("getFieldNames", () => {
     "opt_snake_case",
     "optCamelCase",
     "_hidden",
+  ]);
+});
+
+Deno.test("args regex", () => {
+  const result = "force, timeout = 10".replace(/\s*=\s*[^,]+\s*/g, "")
+    .split(",").map((arg) => arg.trim());
+  assertEquals(result, [
+    "force",
+    "timeout",
   ]);
 });
 

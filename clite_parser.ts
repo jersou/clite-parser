@@ -6,14 +6,16 @@ import {
 
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
-const ARGUMENT_NAME_REGEX = /([^\s,]+)/g;
+const ARGUMENT_NAME_REGEX = /^((?<arg>[^\s,=]+)(:?\s*=\s*[^,]+)?\s*,?)*$/g;
 
 // deno-lint-ignore ban-types
 export function getFunctionArgNames(func: Function): string[] {
   const fnStr = func.toString().replace(COMMENTS_REGEX, "");
-  const argNames = ARGUMENT_NAMES_REGEX.exec(fnStr)?.groups?.args;
-  const result = argNames?.match(ARGUMENT_NAME_REGEX);
-  return result ?? [];
+  const argNames = ARGUMENT_NAMES_REGEX.exec(fnStr);
+
+  return argNames?.[1].length && argNames?.[1]?.replace(/\s*=\s*[^,]+\s*/g, "")
+        .split(",")
+        .map((arg) => arg.replace(/[\s()]+/g, "")) || [];
 }
 
 export function getMethodNames(obj: object): string[] {
