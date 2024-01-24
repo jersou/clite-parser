@@ -1,4 +1,4 @@
-# CliteParser (CLI lite parser)
+# CLI lite parser for Deno
 
 **CliteParser generate CLI from class**, each method generate a "command", each
 field generate an "option" :
@@ -65,7 +65,7 @@ $ ./example-lite.ts
 main Tool { retry: 2, webUrl: "none", no_color: undefined }
 ```
 
-### boolean option
+## Boolean option
 
 ```shell
 $ ./example-lite.ts --no-color
