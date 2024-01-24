@@ -13,7 +13,7 @@ class Tool {
   no_color?: boolean;
 
   main() {
-    console.log("main", this);
+    console.log("main command", this);
   }
 
   up() {
@@ -55,19 +55,19 @@ $ ./example-lite.ts down true 14
 down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
 
 $ ./example-lite.ts  --retry=4 --web-url=tttt --no-color
-main Tool { retry: "4", webUrl: "tttt", no_color: true }
+main command Tool { retry: "4", webUrl: "tttt", no_color: true }
 ```
 
 ## Default command
 
 ```shell
 $ ./example-lite.ts
-main Tool { retry: 2, webUrl: "none", no_color: undefined }
+main command Tool { retry: 2, webUrl: "none", no_color: undefined }
 ```
 
 ## Boolean option
 
 ```shell
 $ ./example-lite.ts --no-color
-main Tool { retry: 2, webUrl: "none", no_color: true }
+main command Tool { retry: 2, webUrl: "none", no_color: true }
 ```

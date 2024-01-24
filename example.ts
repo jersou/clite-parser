@@ -7,11 +7,11 @@ class Tool {
   no_color?: boolean;
 
   main() {
-    console.log("main", this);
+    console.log("main command", this);
   }
 
   up() {
-    console.log("up", this);
+    console.log("up command", this);
   }
 
   down(force: boolean, timeout: number) {
