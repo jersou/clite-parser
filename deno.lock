@@ -1,5 +1,8 @@
 {
   "version": "3",
+  "redirects": {
+    "https://deno.land/x/clite_parser/clite_parser.ts": "https://deno.land/x/clite_parser@0.1.1/clite_parser.ts"
+  },
   "remote": {
     "https://deno.land/std@0.212.0/assert/_constants.ts": "a271e8ef5a573f1df8e822a6eb9d09df064ad66a4390f21b3e31f820a38e0975",
     "https://deno.land/std@0.212.0/assert/_diff.ts": "dcc63d94ca289aec80644030cf88ccbf7acaa6fbd7b0f22add93616b36593840",
@@ -39,6 +42,7 @@
     "https://deno.land/std@0.212.0/text/compare_similarity.ts": "1d54eca10f33bd0889760c04984fc990ac9c247b79ff75f0f207ed1a2563c11c",
     "https://deno.land/std@0.212.0/text/levenshtein_distance.ts": "24be5cc88326bbba83ca7c1ea89259af0050cffda2817ff3a6d240ad6495eae2",
     "https://deno.land/std@0.212.0/text/mod.ts": "216a1b4c4c0b2c6718e9af020e9f7d439158e5421442458b7b98cd32d8b6a109",
-    "https://deno.land/std@0.212.0/text/word_similarity_sort.ts": "579760a2cb4075a6d5960bce161eb8bb84ea3d15f0747bb55f190a2b122b94fb"
+    "https://deno.land/std@0.212.0/text/word_similarity_sort.ts": "579760a2cb4075a6d5960bce161eb8bb84ea3d15f0747bb55f190a2b122b94fb",
+    "https://deno.land/x/clite_parser@0.1.1/clite_parser.ts": "925bbc1351c27d1a48c67ae4f510d8a29bc8b2fbc154e5afbe270e5b36098032"
   }
 }

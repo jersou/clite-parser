@@ -91,7 +91,8 @@ Deno.test("getMethodArgNames", () => {
 
 Deno.test("genHelp", () => {
   const tool = new Tool();
-  const expected = `Usage: Tool [Options] [command [command args]]
+  const expected = `Tool Help
+Usage: <Tool file> [Options] [command [command args]]
 Commands:
   up
   down <force> <timeout>

@@ -6,13 +6,11 @@ import {
 
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
-const ARGUMENT_NAME_REGEX = /^((?<arg>[^\s,=]+)(:?\s*=\s*[^,]+)?\s*,?)*$/g;
 
 // deno-lint-ignore ban-types
 export function getFunctionArgNames(func: Function): string[] {
   const fnStr = func.toString().replace(COMMENTS_REGEX, "");
   const argNames = ARGUMENT_NAMES_REGEX.exec(fnStr);
-
   return argNames?.[1].length && argNames?.[1]?.replace(/\s*=\s*[^,]+\s*/g, "")
         .split(",")
         .map((arg) => arg.replace(/[\s()]+/g, "")) || [];
@@ -39,21 +37,18 @@ function getDefaultMethod(methods: string[]) {
 
 // deno-lint-ignore no-explicit-any
 export function genHelp(obj: { [index: string]: any }): string {
-  const methods = getMethodNames(obj).filter((method) =>
-    !method.startsWith("_")
-  );
+  const methods = getMethodNames(obj)
+    .filter((method) => !method.startsWith("_"));
   const defaultCommand = getDefaultMethod(methods);
   const fields = getFieldNames(obj).filter((method) => !method.startsWith("_"));
-  const toolName = Object.getPrototypeOf(obj).constructor.name;
+  const name = Object.getPrototypeOf(obj).constructor.name;
   const helpLines: string[] = [];
-  helpLines.push(`Usage: ${toolName} [Options] [command [command args]]`);
+  helpLines.push(`${name} Help`);
+  helpLines.push(`Usage: <${name} file> [Options] [command [command args]]`);
   if (methods.length > 0) {
     helpLines.push(`Command${methods.length > 1 ? "s" : ""}:`);
     for (const method of methods) {
-      let line = `  ${method}`;
-      if (method === defaultCommand) {
-        line += " (default)";
-      }
+      let line = `  ${method}${method === defaultCommand ? " (default)" : ""}`;
       const args = getMethodArgNames(obj, method);
       if (args.length > 0) {
         line += " " + args.map((arg) => `<${arg}>`).join(" ");
@@ -65,11 +60,10 @@ export function genHelp(obj: { [index: string]: any }): string {
     helpLines.push(`Option${fields.length > 1 ? "s" : ""}:`);
     for (const field of fields) {
       const defaultValue = obj[field];
-      helpLines.push(
-        defaultValue != undefined
-          ? `  --${toKebabCase(field)}=<value>   (default "${defaultValue}")`
-          : `  --${toKebabCase(field)}=<value>`,
-      );
+      const fieldHelp = defaultValue != undefined
+        ? `  --${toKebabCase(field)}=<value>   (default "${defaultValue}")`
+        : `  --${toKebabCase(field)}=<value>`;
+      helpLines.push(fieldHelp);
     }
   }
   return helpLines.join("\n");
@@ -84,7 +78,6 @@ export type ParseResult = {
 export function parseArgs(args: string[]): ParseResult {
   const argsResult: ParseResult = {
     options: {},
-    command: undefined,
     commandArgs: [],
   };
   for (const arg of args) {
