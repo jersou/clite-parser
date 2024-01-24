@@ -3,7 +3,7 @@
 **CliteParser generate CLI from class**, each method generate a "command", each
 field generate an "option" :
 
-```
+```typescript
 #!/usr/bin/env -S deno run -A
 import { cliteRun } from "https://deno.land/x/clite_parser@0.1.2/clite_parser.ts";
 
@@ -17,7 +17,7 @@ class Tool {
   }
 
   up() {
-    console.log("main", this);
+    console.log("up command", this);
   }
 
   down(force: boolean, timeout: number) {
@@ -30,7 +30,7 @@ cliteRun(new Tool());
 
 ## The help is generated automatically:
 
-```
+```shell
 $ ./example-lite.ts --help
 Usage: Tool [Options] [command [command args]]
 Commands:
@@ -47,7 +47,7 @@ Fields and methods that start with "_" are ignored.
 
 ## Example with options and command arguments
 
-```
+```shell
 $ ./example-lite.ts --retry=4 --web-url=tttt --no-color down true 14
 down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
 
@@ -60,16 +60,14 @@ main Tool { retry: "4", webUrl: "tttt", no_color: true }
 
 ## Default command
 
-```
+```shell
 $ ./example-lite.ts
 main Tool { retry: 2, webUrl: "none", no_color: undefined }
 ```
 
 ### boolean option
 
-```
+```shell
 $ ./example-lite.ts --no-color
 main Tool { retry: 2, webUrl: "none", no_color: true }
 ```
-
-

@@ -43,6 +43,7 @@
     "https://deno.land/std@0.212.0/text/levenshtein_distance.ts": "24be5cc88326bbba83ca7c1ea89259af0050cffda2817ff3a6d240ad6495eae2",
     "https://deno.land/std@0.212.0/text/mod.ts": "216a1b4c4c0b2c6718e9af020e9f7d439158e5421442458b7b98cd32d8b6a109",
     "https://deno.land/std@0.212.0/text/word_similarity_sort.ts": "579760a2cb4075a6d5960bce161eb8bb84ea3d15f0747bb55f190a2b122b94fb",
-    "https://deno.land/x/clite_parser@0.1.1/clite_parser.ts": "925bbc1351c27d1a48c67ae4f510d8a29bc8b2fbc154e5afbe270e5b36098032"
+    "https://deno.land/x/clite_parser@0.1.1/clite_parser.ts": "925bbc1351c27d1a48c67ae4f510d8a29bc8b2fbc154e5afbe270e5b36098032",
+    "https://deno.land/x/clite_parser@0.1.2/clite_parser.ts": "cefb536853720fafc34f0957e23180e97ad4bd874ce1a62aa887e21a948ef43a"
   }
 }

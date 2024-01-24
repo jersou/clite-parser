@@ -11,7 +11,7 @@ class Tool {
   }
 
   up() {
-    console.log("main", this);
+    console.log("up command", this);
   }
 
   down(force: boolean, timeout: number) {
