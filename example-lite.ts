@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.2/clite_parser.ts";
 
 class Tool {
   retry = 2;
