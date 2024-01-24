@@ -4,6 +4,7 @@
 field generate an "option" :
 
 ```
+#!/usr/bin/env -S deno run -A
 import { cliteRun } from "https://deno.land/x/clite_parser/clite_parser.ts";
 
 class Tool {
@@ -15,10 +16,12 @@ class Tool {
     console.log("main", this);
   }
 
+  up() {
+    console.log("main", this);
+  }
+
   down(force: boolean, timeout: number) {
-    console.log("down command");
-    console.log("command args :", { force, timeout });
-    console.log("options :", this);
+    console.log("down command", { force, timeout }, this);
   }
 }
 
@@ -28,10 +31,10 @@ cliteRun(new Tool());
 ## The help is generated automatically:
 
 ```
-$ ./example.ts --help
+$ ./example-lite.ts --help
 Usage: Tool [Options] [command [command args]]
 Commands:
-  main
+  main (default)
   up
   down <force> <timeout>
 Options:
@@ -45,15 +48,28 @@ Fields and methods that start with "_" are ignored.
 ## Example with options and command arguments
 
 ```
-$ ./example.ts --retry=4 --web-url=tttt --no-color down true 14
-down command
-command args : { force: "true", timeout: "14" }
-options : Tool { retry: "4", webUrl: "tttt", no_color: true }
+$ ./example-lite.ts --retry=4 --web-url=tttt --no-color down true 14
+down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
+
+$ ./example-lite.ts down true 14
+down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
+
+$ ./example-lite.ts  --retry=4 --web-url=tttt --no-color
+main Tool { retry: "4", webUrl: "tttt", no_color: true }
 ```
 
 ## Default command
 
 ```
-$ ./example.ts       
+$ ./example-lite.ts
 main Tool { retry: 2, webUrl: "none", no_color: undefined }
 ```
+
+### boolean option
+
+```
+$ ./example-lite.ts --no-color
+main Tool { retry: 2, webUrl: "none", no_color: true }
+```
+
+
