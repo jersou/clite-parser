@@ -156,5 +156,5 @@ main command Tool { retry: 2, webUrl: "none", no_color: "true" }
 
 # TODO
 
-- `--autosugest`
 - align default/descriptions in help
+- completion
