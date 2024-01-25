@@ -1,4 +1,9 @@
 import {
+  bold,
+  gray,
+  underline,
+} from "https://deno.land/std@0.212.0/fmt/colors.ts";
+import {
   toCamelCase,
   toKebabCase,
   toSnakeCase,
@@ -35,37 +40,57 @@ function getDefaultMethod(methods: string[]) {
     : (methods.includes("main") ? "main" : undefined);
 }
 
+function boldUnder(str: string) {
+  return bold(underline(str));
+}
+
 // deno-lint-ignore no-explicit-any
 export function genHelp(obj: { [index: string]: any }): string {
-  const methods = getMethodNames(obj)
-    .filter((method) => !method.startsWith("_"));
+  const allMethods = getMethodNames(obj);
+  const methods = allMethods.filter((method) => !method.startsWith("_"));
   const defaultCommand = getDefaultMethod(methods);
-  const fields = getFieldNames(obj).filter((method) => !method.startsWith("_"));
+  const allFields = getFieldNames(obj);
+  const fields = allFields.filter((method) => !method.startsWith("_"));
   const name = Object.getPrototypeOf(obj).constructor.name;
   const helpLines: string[] = [];
-  helpLines.push(`${name} Help`);
-  helpLines.push(`Usage: <${name} file> [Options] [command [command args]]`);
+  if (obj._desc) {
+    helpLines.push(obj._desc + "\n");
+  }
+  const usage = boldUnder("Usage:");
+  helpLines.push(`${usage} <${name} file> [Options] [command [command args]]`);
   if (methods.length > 0) {
-    helpLines.push(`Command${methods.length > 1 ? "s" : ""}:`);
+    helpLines.push(boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`));
     for (const method of methods) {
-      let line = `  ${method}${method === defaultCommand ? " (default)" : ""}`;
+      let line = bold(`  ${method}`);
+      if (method === defaultCommand) {
+        line += gray(" (default)");
+      }
       const args = getMethodArgNames(obj, method);
       if (args.length > 0) {
         line += " " + args.map((arg) => `<${arg}>`).join(" ");
       }
+      const desc = obj[`_${method}_desc`] ?? "";
+      if (desc) {
+        line += gray(`  ${desc}`);
+      }
       helpLines.push(line);
     }
   }
-  if (fields.length > 0) {
-    helpLines.push(`Option${fields.length > 1 ? "s" : ""}:`);
-    for (const field of fields) {
-      const defaultValue = obj[field];
-      const fieldHelp = defaultValue != undefined
-        ? `  --${toKebabCase(field)}=<value>   (default "${defaultValue}")`
-        : `  --${toKebabCase(field)}=<value>`;
-      helpLines.push(fieldHelp);
+  helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
+  for (const field of fields) {
+    let fieldHelp = bold(`  --${toKebabCase(field)}`) +
+      gray(`=<${toSnakeCase(field).toUpperCase()}>`);
+    const desc = obj[`_${field}_desc`] ?? "";
+    if (desc) {
+      fieldHelp += gray(`  ${desc}`);
     }
+    const defaultValue = obj[field];
+    if (defaultValue != undefined) {
+      fieldHelp += gray(` (default "${defaultValue}")`);
+    }
+    helpLines.push(fieldHelp);
   }
+  helpLines.push(bold(`  --help`) + gray("  Show this help"));
   return helpLines.join("\n");
 }
 

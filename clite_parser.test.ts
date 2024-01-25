@@ -9,6 +9,7 @@ import {
   parseArgs,
   ParseResult,
 } from "./clite_parser.ts";
+import { stripAnsiCode } from "https://deno.land/std@0.212.0/fmt/colors.ts";
 
 Deno.test("getFunctionArgNames", () => {
   function funcTest(arg1: string, arg2: boolean, arg3: number) {
@@ -20,19 +21,22 @@ Deno.test("getFunctionArgNames", () => {
 });
 
 class Tool {
+  _desc = "test data";
   opt1 = 123;
   opt2 = true;
   opt3 = "azer";
   opt_snake_case?: string;
   optCamelCase?: string;
   _hidden = 5;
+  _opt3_desc = "option 3 desc";
+  _clean_desc = "clean all data";
 
   up() {
-    console.log("up", this);
+    console.log("up command", this);
   }
 
   down(force: boolean, timeout = 10) {
-    console.log("down", force, timeout, this);
+    console.log("down command", force, timeout, this);
     return `down force=${force} timeout=${timeout}
     opt1=${this.opt1}
     opt2=${this.opt2}
@@ -41,12 +45,16 @@ class Tool {
     optCamelCase=${this.optCamelCase}`;
   }
 
+  clean() {
+    console.log("clean command", this);
+  }
+
   _priv() {
     console.log("this method is not visible in the help (starts with '_')");
   }
 
   main() {
-    console.log("main", this);
+    console.log("main command", this);
   }
 }
 
@@ -55,6 +63,7 @@ Deno.test("getMethodNames", () => {
   assertEquals(getMethodNames(tool), [
     "up",
     "down",
+    "clean",
     "_priv",
     "main",
   ]);
@@ -63,12 +72,15 @@ Deno.test("getMethodNames", () => {
 Deno.test("getFieldNames", () => {
   const tool = new Tool();
   assertEquals(getFieldNames(tool), [
+    "_desc",
     "opt1",
     "opt2",
     "opt3",
     "opt_snake_case",
     "optCamelCase",
     "_hidden",
+    "_opt3_desc",
+    "_clean_desc",
   ]);
 });
 
@@ -91,19 +103,24 @@ Deno.test("getMethodArgNames", () => {
 
 Deno.test("genHelp", () => {
   const tool = new Tool();
-  const expected = `Tool Help
+  const expected = `test data
+
 Usage: <Tool file> [Options] [command [command args]]
+
 Commands:
   up
   down <force> <timeout>
+  clean  clean all data
   main (default)
+
 Options:
-  --opt1=<value>   (default "123")
-  --opt2=<value>   (default "true")
-  --opt3=<value>   (default "azer")
-  --opt-snake-case=<value>
-  --opt-camel-case=<value>`;
-  assertEquals(genHelp(tool), expected);
+  --opt1=<OPT1> (default "123")
+  --opt2=<OPT2> (default "true")
+  --opt3=<OPT3>  option 3 desc (default "azer")
+  --opt-snake-case=<OPT_SNAKE_CASE>
+  --opt-camel-case=<OPT_CAMEL_CASE>
+  --help  Show this help`;
+  assertEquals(stripAnsiCode(genHelp(tool)), expected);
 });
 Deno.test("parseArgs", () => {
   const parseResult = parseArgs([

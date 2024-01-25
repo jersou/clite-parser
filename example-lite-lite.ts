@@ -2,12 +2,9 @@
 import { cliteRun } from "./clite_parser.ts";
 
 class Tool {
-  _desc = "This tool is a little example of CliteParser"; // optional description
   retry = 2;
   webUrl = "none"; // fields are convert to Camel Case as global options
   no_color?: boolean; // → --no-color
-  _no_color_desc = "skip colorize"; // optional description for "no_color" field
-  _up_desc = "create and start"; // optional description for "up" command
 
   main() {
     console.log("main command", this);
@@ -22,6 +19,4 @@ class Tool {
   }
 }
 
-if (import.meta.main) { // if the file is imported, do not execute this block
-  cliteRun(new Tool());
-}
+cliteRun(new Tool());

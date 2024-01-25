@@ -2,9 +2,16 @@
 import { cliteRun } from "./clite_parser.ts";
 
 class Tool {
+  _desc = "This tool is a full example\nof CliteParser usage";
   retry = 2;
   webUrl = "none";
+  _webUrl_desc = "web URL ...";
   no_color?: boolean;
+  _no_color_desc = "skip colorize";
+  _clean_desc = "clean all data";
+  _main_desc = "do nothing...";
+  _up_desc = "create and start the services";
+  _down_desc = "stop and delete the services";
 
   main() {
     console.log("main command", this);
@@ -12,6 +19,10 @@ class Tool {
 
   up() {
     console.log("up command", this);
+  }
+
+  clean() {
+    console.log("clean command", this);
   }
 
   down(force: boolean, timeout: number) {
@@ -25,7 +36,7 @@ class Tool {
   }
 }
 
-if (import.meta.main) {
+if (import.meta.main) { // if the file is imported, do not execute this block
   cliteRun(new Tool());
 }
 
