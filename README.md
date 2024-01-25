@@ -9,7 +9,7 @@ import { cliteRun } from "https://deno.land/x/clite_parser@0.1.4/clite_parser.ts
 
 class Tool {
   retry = 2;
-  webUrl = "none"; // fields are convert to kebab case as global options
+  webUrl = "none"; // fields are converted to kebab case as global options
   no_color?: boolean; // → --no-color
 
   main() {
@@ -61,7 +61,7 @@ import { cliteRun } from "https://deno.land/x/clite_parser@0.1.4/clite_parser.ts
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
   retry = 2;
-  webUrl = "none"; // fields are convert to kebab case as global options
+  webUrl = "none"; // fields are converted to kebab case as global options
   no_color?: boolean; // → --no-color
   _no_color_desc = "skip colorize"; // optional description for "no_color" field
   _up_desc = "create and start"; // optional description for "up" command
