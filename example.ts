@@ -17,8 +17,10 @@ class Tool {
     console.log("main command", this);
   }
 
-  up() {
+  async up() {
     console.log("up command", this);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    return "up ok";
   }
 
   clean() {

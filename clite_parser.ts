@@ -153,7 +153,7 @@ export function cliteRun(obj: { [index: string]: any }, args?: string[]) {
       result != undefined &&
       Deno.env.get("CLITE_RUN_DONT_PRINT_RESULT") !== "true"
     ) {
-      console.log(result);
+      Promise.resolve(result).then(console.log);
     }
     return result;
   }
