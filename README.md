@@ -5,7 +5,7 @@ field generate an "option" :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.4/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.5/clite_parser.ts";
 
 class Tool {
   retry = 2;
@@ -56,7 +56,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.4/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.5/clite_parser.ts";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
@@ -154,7 +154,19 @@ $ ./example-lite.ts --no-color=true
 main command Tool { retry: 2, webUrl: "none", no_color: "true" }
 ```
 
-# TODO
+## Return value
 
+If the method run by `cliteRun` return a value != undefined, it will be print in
+stdout.
+
+This behavior can be disabled with the env var `CLITE_RUN_DONT_PRINT_RESULT`:
+
+```shell
+export CLITE_RUN_DONT_PRINT_RESULT=false
+```
+
+## TODO
+
+- command as kebab case ?
 - align default/descriptions in help
 - completion

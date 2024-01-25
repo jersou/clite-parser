@@ -148,6 +148,13 @@ export function cliteRun(obj: { [index: string]: any }, args?: string[]) {
         throw new Error(`The option "${option}" doesn't exist`);
       }
     }
-    return obj[command](...parseResult.commandArgs);
+    const result = obj[command](...parseResult.commandArgs);
+    if (
+      result != undefined &&
+      Deno.env.get("CLITE_RUN_DONT_PRINT_RESULT") !== "true"
+    ) {
+      console.log(result);
+    }
+    return result;
   }
 }

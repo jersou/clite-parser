@@ -23,6 +23,7 @@ class Tool {
 
   clean() {
     console.log("clean command", this);
+    return "clean ok";
   }
 
   down(force: boolean, timeout: number) {
