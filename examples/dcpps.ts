@@ -11,6 +11,7 @@ import {
   bgYellow,
   black,
 } from "https://deno.land/std@0.212.0/fmt/colors.ts";
+import { parse as parseYaml } from "https://deno.land/std@0.213.0/yaml/mod.ts";
 
 type DockerComposePsLine = {
   "Service": string;
@@ -46,17 +47,28 @@ class DockerComposePs {
     }
   }
 
+  _getYamlPath() {
+    if ($.path("./docker-compose.yml").existsSync()) {
+      return "./docker-compose.yml";
+    } else if ($.path("./docker-compose.yaml").existsSync()) {
+      return "./docker-compose.yaml";
+    }
+    return undefined;
+  }
   _check() {
-    const isOk = $.path("./docker-compose.yml").existsSync() ||
-      $.path("./docker-compose.yaml").existsSync();
     assert(
-      isOk,
+      this._getYamlPath(),
       `No file docker-compose.yml or docker-compose.yaml in "${Deno.cwd()}" !`,
     );
   }
 
   _getServices() {
-    return $`docker compose config --services`.lines();
+    const yaml = parseYaml($.path(this._getYamlPath()!).readTextSync()) as any;
+    return Object.entries(yaml.services)
+      .filter(([_, service]: [string, any]) =>
+        !(service.labels?.["hide-from-dcpps"])
+      )
+      .map(([key]) => key).sort();
   }
 
   async _getDockerComposePsData() {
@@ -150,3 +162,4 @@ class DockerComposePs {
 if (import.meta.main) {
   cliteRun(new DockerComposePs());
 }
+
