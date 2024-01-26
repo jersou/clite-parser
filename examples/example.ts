@@ -1,12 +1,12 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "./clite_parser.ts";
+import { cliteRun } from "../clite_parser.ts";
 
 class Tool {
   _desc = "This tool is a full example\nof CliteParser usage";
   retry = 2;
   webUrl = "none";
   _webUrl_desc = "web URL ...";
-  no_color?: boolean;
+  no_color?: string | boolean;
   _no_color_desc = "skip colorize";
   _clean_desc = "clean all data";
   _main_desc = "do nothing...";
