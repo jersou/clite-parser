@@ -95,7 +95,7 @@ export function genOptionsHelp(obj: Obj, helpLines: string[]) {
     let col2 = "";
     const desc = obj[`_${field}_desc`] ?? "";
     if (desc) {
-      col2 += gray(`${desc} `);
+      col2 += gray(desc) + " ";
     }
     const defaultValue = obj[field];
     if (defaultValue != undefined) {

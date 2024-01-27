@@ -12,6 +12,7 @@ class Tool {
   _main_desc = "do up/down/clean";
   _up_desc = "create and start the services";
   _down_desc = "stop and delete the services";
+  _priv_field = 123;
 
   main() {
     console.log("main command", this);

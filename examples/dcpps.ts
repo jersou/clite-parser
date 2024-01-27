@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run -A
 // Colorize the "docker compose ps" command and watch changes
 
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.8/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.9/clite_parser.ts";
 import $ from "https://deno.land/x/dax@0.36.0/mod.ts";
 import { assert } from "https://deno.land/std@0.213.0/assert/assert.ts";
 import {

@@ -31,6 +31,7 @@ class Tool {
   _hidden = 5;
   _opt3_desc = "option 3 desc";
   _clean_desc = "clean all data";
+  _optCamelCase_desc = "optCamelCase desc";
 
   up() {
     console.log("up command", this);
@@ -82,6 +83,7 @@ Deno.test("getFieldNames", () => {
     "_hidden",
     "_opt3_desc",
     "_clean_desc",
+    "_optCamelCase_desc",
   ]);
 });
 
@@ -119,7 +121,7 @@ Options:
   --opt2=<OPT2>                      (default "true")
   --opt3=<OPT3>                      option 3 desc (default "azer")
   --opt-snake-case=<OPT_SNAKE_CASE>
-  --opt-camel-case=<OPT_CAMEL_CASE>
+  --opt-camel-case=<OPT_CAMEL_CASE>  optCamelCase desc
   --help                             Show this help`;
   assertEquals(stripAnsiCode(genHelp(tool)), expected);
 });

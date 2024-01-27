@@ -5,7 +5,7 @@ each field generate an "option" :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.8/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.9/clite_parser.ts";
 
 class Tool {
   retry = 2;
@@ -35,24 +35,26 @@ cliteRun(new Tool());
 Plain text (without color and styles in markdown):
 
 ```
+$ ./example-lite-lite.ts --help
 Usage: <Tool file> [Options] [command [command args]]
 
 Commands:
-  main (default)
+  main                    (default)
   up
   down <force> <timeout>
 
 Options:
-  --retry=<RETRY> (default "2")
-  --web-url=<WEB_URL> (default "none")
+  --retry=<RETRY>        (default "2")
+  --web-url=<WEB_URL>    (default "none")
   --no-color=<NO_COLOR>
-  --help  Show this help
+  --help                 Show this help
 ```
 
-## Run example with options and command arguments
+## Run the commands with options and arguments
 
 ```shell
-$ ./example-lite.ts --retry=4 --web-url=tttt --no-color down true 14
+#                   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓ ↓command↓ ↓cmd args↓
+$ ./example-lite.ts --retry=4 --web-url=tttt --no-color   down     true  14
 down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
 
 $ ./example-lite.ts down true 14
@@ -69,7 +71,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.8/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.9/clite_parser.ts";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
@@ -107,15 +109,15 @@ This tool is a little example of CliteParser
 Usage: <Tool file> [Options] [command [command args]]
 
 Commands:
-  main (default)
-  up  create and start
+  main                    (default)
+  up                      create and start
   down <force> <timeout>
 
 Options:
-  --retry=<RETRY> (default "2")
-  --web-url=<WEB_URL> (default "none")
+  --retry=<RETRY>        (default "2")
+  --web-url=<WEB_URL>    (default "none")
   --no-color=<NO_COLOR>  skip colorize
-  --help  Show this help
+  --help                 Show this help
 ```
 
 ## Default command
