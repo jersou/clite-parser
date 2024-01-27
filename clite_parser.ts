@@ -12,6 +12,8 @@ import {
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
 
+export type Obj = { [index: string]: any };
+
 // deno-lint-ignore ban-types
 export function getFunctionArgNames(func: Function): string[] {
   const fnStr = func.toString().replace(COMMENTS_REGEX, "");
@@ -45,7 +47,7 @@ function boldUnder(str: string) {
 }
 
 // deno-lint-ignore no-explicit-any
-export function genHelp(obj: { [index: string]: any }): string {
+export function genHelp(obj: Obj): string {
   const allMethods = getMethodNames(obj);
   const methods = allMethods.filter((method) => !method.startsWith("_"));
   const defaultCommand = getDefaultMethod(methods);
@@ -122,9 +124,14 @@ export function parseArgs(args: string[]): ParseResult {
   return argsResult;
 }
 
+export type CliteRunConfig = {
+  args?: string[]; // default : Deno.args
+  dontPrintResult?: boolean; // default : false
+};
+
 // deno-lint-ignore no-explicit-any
-export function cliteRun(obj: { [index: string]: any }, args?: string[]) {
-  const parseResult = parseArgs(args ?? Deno.args);
+export function cliteRun(obj: Obj, config?: CliteRunConfig) {
+  const parseResult = parseArgs(config?.args ?? Deno.args);
   if (getFieldNames(parseResult.options).includes("help")) {
     const help = genHelp(obj);
     console.log(help);
@@ -150,7 +157,7 @@ export function cliteRun(obj: { [index: string]: any }, args?: string[]) {
     }
     const result = obj[command](...parseResult.commandArgs);
     if (
-      result != undefined &&
+      result != undefined && !config?.dontPrintResult &&
       Deno.env.get("CLITE_RUN_DONT_PRINT_RESULT") !== "true"
     ) {
       Promise.resolve(result).then((res) => {

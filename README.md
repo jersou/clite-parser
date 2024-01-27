@@ -1,7 +1,7 @@
 # CLI lite parser for Deno
 
-**CliteParser generate CLI from class**, each method generate a "command", each
-field generate an "option" :
+**CliteParser generate CLI from a class**, each method generate a "command",
+each field generate an "option" :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
@@ -47,6 +47,19 @@ Options:
   --web-url=<WEB_URL> (default "none")
   --no-color=<NO_COLOR>
   --help  Show this help
+```
+
+## Run example with options and command arguments
+
+```shell
+$ ./example-lite.ts --retry=4 --web-url=tttt --no-color down true 14
+down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
+
+$ ./example-lite.ts down true 14
+down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
+
+$ ./example-lite.ts  --retry=4 --web-url=tttt --no-color
+main command Tool { retry: "4", webUrl: "tttt", no_color: true }
 ```
 
 ## Help description
@@ -105,23 +118,10 @@ Options:
   --help  Show this help
 ```
 
-## Run example with options and command arguments
-
-```shell
-$ ./example-lite.ts --retry=4 --web-url=tttt --no-color down true 14
-down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
-
-$ ./example-lite.ts down true 14
-down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
-
-$ ./example-lite.ts  --retry=4 --web-url=tttt --no-color
-main command Tool { retry: "4", webUrl: "tttt", no_color: true }
-```
-
 ## Default command
 
-- If only one method/command => this method is the default
-- If main method exist => main is the default
+- If there is only one method/command => this method is the default
+- If the main method exist => main is the default
 - else => no default method
 
 ```shell
@@ -129,7 +129,7 @@ $ ./example-lite.ts
 main command Tool { retry: 2, webUrl: "none", no_color: undefined }
 ```
 
-## Ignore _* methods and fields (in help)
+## Ignore _* methods and fields (in the help)
 
 Fields and methods that start with "_" are ignored.
 
@@ -140,6 +140,9 @@ _privmethod();
   console.log("this method is not visible in the help (starts with '_')");
 }
 ```
+
+Note: this "private" method can be run by the CLI, it's useful during the
+development.
 
 ## Boolean options
 
@@ -163,6 +166,19 @@ This behavior can be disabled with the env var `CLITE_RUN_DONT_PRINT_RESULT`:
 
 ```shell
 export CLITE_RUN_DONT_PRINT_RESULT=false
+```
+
+or with the config : `cliteRun(new Tool(), { dontPrintResult: true } )`
+
+## cliteRun config
+
+`cliteRun(new Tool(), { args: ... } )`
+
+```typescript
+type CliteRunConfig = {
+  args?: string[]; // default : Deno.args
+  dontPrintResult?: boolean; // default : false
+};
 ```
 
 ## TODO

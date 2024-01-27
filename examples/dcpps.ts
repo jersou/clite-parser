@@ -162,4 +162,3 @@ class DockerComposePs {
 if (import.meta.main) {
   cliteRun(new DockerComposePs());
 }
-

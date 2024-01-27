@@ -146,15 +146,17 @@ Deno.test("parseArgs", () => {
 });
 
 Deno.test("cliteRun", () => {
-  const result = cliteRun(new Tool(), [
-    "--opt2=false",
-    "--opt3=qsdf",
-    "--opt-snake-case=123",
-    "--opt-camel-case=456",
-    "down",
-    "true",
-    "12s",
-  ]);
+  const result = cliteRun(new Tool(), {
+    args: [
+      "--opt2=false",
+      "--opt3=qsdf",
+      "--opt-snake-case=123",
+      "--opt-camel-case=456",
+      "down",
+      "true",
+      "12s",
+    ],
+  });
   const expected = `down force=true timeout=12s
     opt1=123
     opt2=false
@@ -165,9 +167,9 @@ Deno.test("cliteRun", () => {
 });
 
 Deno.test("cliteRun help", () => {
-  const result = cliteRun(new Tool(), [
-    "--help",
-  ]);
+  const result = cliteRun(new Tool(), {
+    args: ["--help"],
+  });
   const expected = genHelp(new Tool());
   assertEquals(result, expected);
 });
