@@ -1,5 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.212.0/assert/mod.ts";
 import {
+  allign,
   cliteRun,
   genHelp,
   getFieldNames,
@@ -110,16 +111,16 @@ Usage: <Tool file> [Options] [command [command args]]
 Commands:
   up
   down <force> <timeout>
-  clean  clean all data
-  main (default)
+  clean                   clean all data
+  main                    (default)
 
 Options:
-  --opt1=<OPT1> (default "123")
-  --opt2=<OPT2> (default "true")
-  --opt3=<OPT3>  option 3 desc (default "azer")
+  --opt1=<OPT1>                      (default "123")
+  --opt2=<OPT2>                      (default "true")
+  --opt3=<OPT3>                      option 3 desc (default "azer")
   --opt-snake-case=<OPT_SNAKE_CASE>
   --opt-camel-case=<OPT_CAMEL_CASE>
-  --help  Show this help`;
+  --help                             Show this help`;
   assertEquals(stripAnsiCode(genHelp(tool)), expected);
 });
 Deno.test("parseArgs", () => {
@@ -171,5 +172,12 @@ Deno.test("cliteRun help", () => {
     args: ["--help"],
   });
   const expected = genHelp(new Tool());
+  assertEquals(result, expected);
+});
+
+Deno.test("allign", () => {
+  const input: [string, string][] = [["az", "t"], ["azert", "t"]];
+  const result = allign(input);
+  const expected = ["az     t", "azert  t"];
   assertEquals(result, expected);
 });

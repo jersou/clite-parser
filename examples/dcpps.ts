@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run -A
 // Colorize the "docker compose ps" command and watch changes
 
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.7/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.8/clite_parser.ts";
 import $ from "https://deno.land/x/dax@0.36.0/mod.ts";
 import { assert } from "https://deno.land/std@0.213.0/assert/assert.ts";
 import {
@@ -55,6 +55,7 @@ class DockerComposePs {
     }
     return undefined;
   }
+
   _check() {
     assert(
       this._getYamlPath(),
@@ -63,8 +64,10 @@ class DockerComposePs {
   }
 
   _getServices() {
+    // deno-lint-ignore no-explicit-any
     const yaml = parseYaml($.path(this._getYamlPath()!).readTextSync()) as any;
     return Object.entries(yaml.services)
+      // deno-lint-ignore no-explicit-any
       .filter(([_, service]: [string, any]) =>
         !(service.labels?.["hide-from-dcpps"])
       )

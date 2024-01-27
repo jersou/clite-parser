@@ -12,6 +12,7 @@ import {
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
 
+// deno-lint-ignore no-explicit-any
 export type Obj = { [index: string]: any };
 
 // deno-lint-ignore ban-types
@@ -46,53 +47,76 @@ function boldUnder(str: string) {
   return bold(underline(str));
 }
 
-// deno-lint-ignore no-explicit-any
-export function genHelp(obj: Obj): string {
+export function allign(input: [string, string][]): string[] {
+  const max: number = input.reduce(
+    (prev, curr) => Math.max(prev, curr[0].trimEnd().length),
+    0,
+  );
+  return input.map(([col1, col2]) =>
+    `${col1.padEnd(max)}  ${col2 ?? ""}`.trimEnd()
+  );
+}
+
+export function genCommandHelp(obj: Obj, helpLines: string[]) {
   const allMethods = getMethodNames(obj);
   const methods = allMethods.filter((method) => !method.startsWith("_"));
   const defaultCommand = getDefaultMethod(methods);
+  if (methods.length > 0) {
+    helpLines.push(boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`));
+    const linesCols: [string, string][] = [];
+    for (const method of methods) {
+      let col1 = bold(`  ${method}`);
+      let col2 = "";
+      const args = getMethodArgNames(obj, method);
+      if (args.length > 0) {
+        col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
+      }
+      const desc = obj[`_${method}_desc`] ?? "";
+      if (desc) {
+        col2 += gray(desc) + " ";
+      }
+      if (method === defaultCommand) {
+        col2 += gray("(default)");
+      }
+      linesCols.push([col1, col2]);
+    }
+    helpLines.push(...allign(linesCols));
+  }
+}
+
+export function genOptionsHelp(obj: Obj, helpLines: string[]) {
   const allFields = getFieldNames(obj);
   const fields = allFields.filter((method) => !method.startsWith("_"));
-  const name = Object.getPrototypeOf(obj).constructor.name;
+  helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
+  const linesCols: [string, string][] = [];
+  for (const field of fields) {
+    const col1 = bold(`  --${toKebabCase(field)}`) +
+      gray(`=<${toSnakeCase(field).toUpperCase()}>`);
+    let col2 = "";
+    const desc = obj[`_${field}_desc`] ?? "";
+    if (desc) {
+      col2 += gray(`${desc} `);
+    }
+    const defaultValue = obj[field];
+    if (defaultValue != undefined) {
+      col2 += gray(`(default "${defaultValue}")`);
+    }
+    linesCols.push([col1, col2]);
+  }
+  linesCols.push([bold(`  --help`) + gray(""), gray("Show this help")]);
+  helpLines.push(...allign(linesCols));
+}
+
+export function genHelp(obj: Obj): string {
   const helpLines: string[] = [];
   if (obj._desc) {
     helpLines.push(obj._desc + "\n");
   }
   const usage = boldUnder("Usage:");
+  const name = Object.getPrototypeOf(obj).constructor.name;
   helpLines.push(`${usage} <${name} file> [Options] [command [command args]]`);
-  if (methods.length > 0) {
-    helpLines.push(boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`));
-    for (const method of methods) {
-      let line = bold(`  ${method}`);
-      if (method === defaultCommand) {
-        line += gray(" (default)");
-      }
-      const args = getMethodArgNames(obj, method);
-      if (args.length > 0) {
-        line += " " + args.map((arg) => `<${arg}>`).join(" ");
-      }
-      const desc = obj[`_${method}_desc`] ?? "";
-      if (desc) {
-        line += gray(`  ${desc}`);
-      }
-      helpLines.push(line);
-    }
-  }
-  helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
-  for (const field of fields) {
-    let fieldHelp = bold(`  --${toKebabCase(field)}`) +
-      gray(`=<${toSnakeCase(field).toUpperCase()}>`);
-    const desc = obj[`_${field}_desc`] ?? "";
-    if (desc) {
-      fieldHelp += gray(`  ${desc}`);
-    }
-    const defaultValue = obj[field];
-    if (defaultValue != undefined) {
-      fieldHelp += gray(` (default "${defaultValue}")`);
-    }
-    helpLines.push(fieldHelp);
-  }
-  helpLines.push(bold(`  --help`) + gray("  Show this help"));
+  genCommandHelp(obj, helpLines);
+  genOptionsHelp(obj, helpLines);
   return helpLines.join("\n");
 }
 
@@ -129,7 +153,6 @@ export type CliteRunConfig = {
   dontPrintResult?: boolean; // default : false
 };
 
-// deno-lint-ignore no-explicit-any
 export function cliteRun(obj: Obj, config?: CliteRunConfig) {
   const parseResult = parseArgs(config?.args ?? Deno.args);
   if (getFieldNames(parseResult.options).includes("help")) {

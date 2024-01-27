@@ -2,19 +2,22 @@
 import { cliteRun } from "../clite_parser.ts";
 
 class Tool {
-  _desc = "This tool is a full example\nof CliteParser usage";
+  _desc = "This tool is a full example of CliteParser usage";
   retry = 2;
   webUrl = "none";
   _webUrl_desc = "web URL ...";
   no_color?: string | boolean;
   _no_color_desc = "skip colorize";
   _clean_desc = "clean all data";
-  _main_desc = "do nothing...";
+  _main_desc = "do up/down/clean";
   _up_desc = "create and start the services";
   _down_desc = "stop and delete the services";
 
   main() {
     console.log("main command", this);
+    this.up();
+    this.down(false, 2);
+    this.clean();
   }
 
   async up() {
