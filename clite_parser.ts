@@ -8,6 +8,10 @@ import {
   toKebabCase,
   toSnakeCase,
 } from "https://deno.land/std@0.213.0/text/mod.ts";
+import $ from "https://deno.land/x/dax@0.37.1/mod.ts";
+// to remove dax dependency and select feature, comment line above and uncomment the line below
+// const $ = { select: (opt: unknown) => { throw new Error("select not implemented"); }};
+// "10 unique / 28.75KB" vs "150 unique / 708.1KB" dependencies
 
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
@@ -153,6 +157,7 @@ export function parseArgs(args: string[]): ParseResult {
 export type CliteRunConfig = {
   args?: string[]; // default : Deno.args
   dontPrintResult?: boolean; // default : false
+  selectCommandIfMissing?: boolean;
 };
 
 function fillFields(parseResult: ParseResult, obj: Obj) {
@@ -192,6 +197,21 @@ function runCommand(
   return result;
 }
 
+async function selectCommand(
+  obj: Obj,
+  parseResult: ParseResult,
+  methods: string[],
+  config?: CliteRunConfig,
+) {
+  const index = await $.select({
+    message: parseResult.command
+      ? "Select the command to execute :"
+      : "No command specified, select the command to execute :",
+    options: methods.filter((method) => !method.startsWith("_")),
+  });
+  return runCommand(obj, methods[index], parseResult.commandArgs, config);
+}
+
 export function cliteRun(obj: Obj, config?: CliteRunConfig) {
   const parseResult = parseArgs(config?.args ?? Deno.args);
   if (getFieldNames(parseResult.options).includes("help")) {
@@ -201,13 +221,13 @@ export function cliteRun(obj: Obj, config?: CliteRunConfig) {
   } else {
     const methods = getMethodNames(obj);
     const command = parseResult.command ?? getDefaultMethod(methods);
-    if (!command) {
-      throw new Error(`no method defined or no "main" method`);
-    }
-    if (!methods.includes(command)) {
-      throw new Error(`The command "${command}" doesn't exist`);
-    }
     fillFields(parseResult, obj);
-    return runCommand(obj, command, parseResult.commandArgs, config);
+    if (!command || config?.selectCommandIfMissing && !parseResult.command) {
+      return selectCommand(obj, parseResult, methods, config);
+    } else if (!methods.includes(command)) {
+      throw new Error(`The command "${command}" doesn't exist`);
+    } else {
+      return runCommand(obj, command, parseResult.commandArgs, config);
+    }
   }
 }

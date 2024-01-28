@@ -45,6 +45,7 @@ class Tool {
 
 if (import.meta.main) { // if the file is imported, do not execute this block
   cliteRun(new Tool());
+  // cliteRun(new Tool(), { selectCommandIfMissing: true });
 }
 
 // $ ./example.ts --retry=4 --web-url=tttt --no-color down true 14
