@@ -2,12 +2,12 @@ import {
   bold,
   gray,
   underline,
-} from "https://deno.land/std@0.212.0/fmt/colors.ts";
+} from "https://deno.land/std@0.213.0/fmt/colors.ts";
 import {
   toCamelCase,
   toKebabCase,
   toSnakeCase,
-} from "https://deno.land/std@0.212.0/text/mod.ts";
+} from "https://deno.land/std@0.213.0/text/mod.ts";
 
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
@@ -38,9 +38,11 @@ export function getMethodArgNames(obj: object, methodName: string): string[] {
 }
 
 function getDefaultMethod(methods: string[]) {
-  return methods.length == 1
-    ? methods[0]
-    : (methods.includes("main") ? "main" : undefined);
+  if (methods.length == 1) {
+    return methods[0];
+  } else {
+    return (methods.includes("main") ? "main" : undefined);
+  }
 }
 
 function boldUnder(str: string) {
@@ -153,6 +155,43 @@ export type CliteRunConfig = {
   dontPrintResult?: boolean; // default : false
 };
 
+function fillFields(parseResult: ParseResult, obj: Obj) {
+  const fields = getFieldNames(obj);
+  for (const option of getFieldNames(parseResult.options)) {
+    if (fields.includes(option)) {
+      obj[option] = parseResult.options[option];
+    } else if (fields.includes(toSnakeCase(option))) {
+      obj[toSnakeCase(option)] = parseResult.options[option];
+    } else {
+      throw new Error(`The option "${option}" doesn't exist`);
+    }
+  }
+}
+
+function processResult(result: unknown, config?: CliteRunConfig) {
+  if (
+    result != undefined && !config?.dontPrintResult &&
+    Deno.env.get("CLITE_RUN_DONT_PRINT_RESULT") !== "true"
+  ) {
+    Promise.resolve(result).then((res) => {
+      if (res != undefined) {
+        console.log(res);
+      }
+    });
+  }
+}
+
+function runCommand(
+  obj: Obj,
+  command: string,
+  cmdArgs: string[],
+  config?: CliteRunConfig,
+) {
+  const result = obj[command](...cmdArgs);
+  processResult(result, config);
+  return result;
+}
+
 export function cliteRun(obj: Obj, config?: CliteRunConfig) {
   const parseResult = parseArgs(config?.args ?? Deno.args);
   if (getFieldNames(parseResult.options).includes("help")) {
@@ -161,7 +200,6 @@ export function cliteRun(obj: Obj, config?: CliteRunConfig) {
     return help;
   } else {
     const methods = getMethodNames(obj);
-    const fields = getFieldNames(obj);
     const command = parseResult.command ?? getDefaultMethod(methods);
     if (!command) {
       throw new Error(`no method defined or no "main" method`);
@@ -169,26 +207,7 @@ export function cliteRun(obj: Obj, config?: CliteRunConfig) {
     if (!methods.includes(command)) {
       throw new Error(`The command "${command}" doesn't exist`);
     }
-    for (const option of getFieldNames(parseResult.options)) {
-      if (fields.includes(option)) {
-        obj[option] = parseResult.options[option];
-      } else if (fields.includes(toSnakeCase(option))) {
-        obj[toSnakeCase(option)] = parseResult.options[option];
-      } else {
-        throw new Error(`The option "${option}" doesn't exist`);
-      }
-    }
-    const result = obj[command](...parseResult.commandArgs);
-    if (
-      result != undefined && !config?.dontPrintResult &&
-      Deno.env.get("CLITE_RUN_DONT_PRINT_RESULT") !== "true"
-    ) {
-      Promise.resolve(result).then((res) => {
-        if (res != undefined) {
-          console.log(res);
-        }
-      });
-    }
-    return result;
+    fillFields(parseResult, obj);
+    return runCommand(obj, command, parseResult.commandArgs, config);
   }
 }

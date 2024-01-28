@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.212.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.213.0/assert/mod.ts";
 import {
   allign,
   cliteRun,
@@ -10,7 +10,7 @@ import {
   parseArgs,
   ParseResult,
 } from "./clite_parser.ts";
-import { stripAnsiCode } from "https://deno.land/std@0.212.0/fmt/colors.ts";
+import { stripAnsiCode } from "https://deno.land/std@0.213.0/fmt/colors.ts";
 
 Deno.test("getFunctionArgNames", () => {
   function funcTest(arg1: string, arg2: boolean, arg3: number) {

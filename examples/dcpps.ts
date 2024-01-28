@@ -2,7 +2,7 @@
 // Colorize the "docker compose ps" command and watch changes
 
 import { cliteRun } from "https://deno.land/x/clite_parser@0.1.9/clite_parser.ts";
-import $ from "https://deno.land/x/dax@0.36.0/mod.ts";
+import $ from "https://deno.land/x/dax@0.37.1/mod.ts";
 import { assert } from "https://deno.land/std@0.213.0/assert/assert.ts";
 import {
   bgBrightGreen,
@@ -10,7 +10,7 @@ import {
   bgRed,
   bgYellow,
   black,
-} from "https://deno.land/std@0.212.0/fmt/colors.ts";
+} from "https://deno.land/std@0.213.0/fmt/colors.ts";
 import { parse as parseYaml } from "https://deno.land/std@0.213.0/yaml/mod.ts";
 
 type DockerComposePsLine = {
