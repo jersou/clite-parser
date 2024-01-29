@@ -1,7 +1,20 @@
 #!/usr/bin/env -S deno run -A
-// Colorize the "docker compose ps" command and watch changes
 
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.9/clite_parser.ts";
+// deno install -f --name dcpps -A https://deno.land/x/clite_parser@0.1.10/examples/dcpps.ts
+
+// Colorize the "docker compose ps" command and watch changes
+//
+// Usage: <DockerComposePs file> [Options] [command [command args]]
+//
+// Commands:
+//   main   Colorize the ps one time (default)
+//   watch  Repeat the colorization of the "docker compose ps" command
+//
+// Options:
+//   --interval=<INTERVAL>  repeat watch every <INTERVAL> sec (default "1")
+//   --help                 Show this help
+
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.10/clite_parser.ts";
 import $ from "https://deno.land/x/dax@0.37.1/mod.ts";
 import { assert } from "https://deno.land/std@0.213.0/assert/assert.ts";
 import {
@@ -19,12 +32,12 @@ type DockerComposePsLine = {
   "Health": string;
 };
 
-class DockerComposePs {
+export class DockerComposePs {
   interval = 1;
   _interval_desc = "repeat watch every <INTERVAL> sec";
   _desc = `Colorize the "docker compose ps" command and watch changes`;
   _main_desc = "Colorize the ps one time";
-  _watch_desc = "Repeat the colorize of the ps";
+  _watch_desc = 'Repeat the colorization of the "docker compose ps" command';
 
   async main() {
     this._check();
