@@ -1,11 +1,37 @@
-# CLI lite parser for Deno
+# CLI lite parser for Node and Deno
 
 **CliteParser generate CLI from a class**, each method generate a "command",
 each field generate an "option" :
 
+For Node and Deno (prefer ts import for deno):
+
 ```typescript
-#!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.11/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.mjs";
+
+class Tool {
+  retry = 2;
+  webUrl = "none"; // fields are converted to kebab case as global options
+  no_color; // → --no-color
+
+  main() {
+    console.log("main command", this);
+  }
+  up() {
+    console.log("up command", this);
+  }
+  down(force, timeout) {
+    console.log("down command", { force, timeout }, this);
+  }
+}
+
+cliteRun(new Tool());
+```
+
+For Deno only (Typescript & shebang) :
+
+```typescript
+#!/usr/bin/env -S deno run
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.ts";
 
 class Tool {
   retry = 2;
@@ -15,11 +41,9 @@ class Tool {
   main() {
     console.log("main command", this);
   }
-
   up() {
     console.log("up command", this);
   }
-
   down(force: boolean, timeout: number) {
     console.log("down command", { force, timeout }, this);
   }
@@ -35,6 +59,8 @@ cliteRun(new Tool());
 Plain text (without color and styles in markdown):
 
 ```
+$ # with Node : "node example-lite-lite.mjs"
+$ # with Deno : "deno run example-lite-lite.mjs --help" or :
 $ ./example-lite-lite.ts --help
 Usage: <Tool file> [Options] [command [command args]]
 
@@ -71,7 +97,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.11/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.ts";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
@@ -176,4 +202,18 @@ type CliteRunConfig = {
   args?: string[]; // default : Deno.args
   dontPrintResult?: boolean; // default : false
 };
+```
+
+## Node support : npm i clite-parser
+
+```javascript
+import { cliteRun } from "clite-parser"; // after "npm i clite-parser"
+...
+cliteRun(new Tool());
+```
+
+or :
+
+```javascript
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.mjs"; // after "npm i clite-parser"
 ```

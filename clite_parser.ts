@@ -189,8 +189,25 @@ function runCommand(
   return result;
 }
 
+// use globalThis instead of Deno/process to be compatible with Node & Deno
+function getArgs(config?: CliteRunConfig) {
+  if (config?.args) {
+    return config?.args;
+    // deno-lint-ignore no-explicit-any
+  } else if ((globalThis as any)["Deno"]?.args) {
+    // deno-lint-ignore no-explicit-any
+    return (globalThis as any)["Deno"]?.args;
+    // deno-lint-ignore no-explicit-any
+  } else if ((globalThis as any)["process"]) {
+    // deno-lint-ignore no-explicit-any
+    return (globalThis as any)["process"].argv.slice(2);
+  } else {
+    return [];
+  }
+}
+
 export function cliteRun(obj: Obj, config?: CliteRunConfig) {
-  const parseResult = parseArgs(config?.args ?? Deno.args);
+  const parseResult = parseArgs(getArgs(config));
   if (getFieldNames(parseResult.options).includes("help")) {
     const help = genHelp(obj);
     console.log(help);
