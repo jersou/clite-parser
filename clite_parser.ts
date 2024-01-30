@@ -169,10 +169,7 @@ function fillFields(parseResult: ParseResult, obj: Obj) {
 }
 
 function processResult(result: unknown, config?: CliteRunConfig) {
-  if (
-    result != undefined && !config?.dontPrintResult &&
-    Deno.env.get("CLITE_RUN_DONT_PRINT_RESULT") !== "true"
-  ) {
+  if (result != undefined && !config?.dontPrintResult) {
     Promise.resolve(result).then((res) => {
       if (res != undefined) {
         console.log(res);

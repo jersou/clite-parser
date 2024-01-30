@@ -164,13 +164,8 @@ main command Tool { retry: 2, webUrl: "none", no_color: "true" }
 If the method run by `cliteRun` return a value != undefined, it will be print in
 stdout.
 
-This behavior can be disabled with the env var `CLITE_RUN_DONT_PRINT_RESULT`:
-
-```shell
-export CLITE_RUN_DONT_PRINT_RESULT=false
-```
-
-or with the config : `cliteRun(new Tool(), { dontPrintResult: true } )`
+This behavior can be disabled with the config :
+`cliteRun(new Tool(), { dontPrintResult: true } )`
 
 ## cliteRun config
 
