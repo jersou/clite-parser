@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A
 
-// deno install -f --name dcpps -A https://deno.land/x/clite_parser@0.1.10/examples/dcpps.ts
+// deno install -f --name dcpps -A https://deno.land/x/clite_parser@0.1.11/examples/dcpps.ts
 
 // Colorize the "docker compose ps" command and watch changes
 //
@@ -14,7 +14,7 @@
 //   --interval=<INTERVAL>  repeat watch every <INTERVAL> sec (default "1")
 //   --help                 Show this help
 
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.10/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.11/clite_parser.ts";
 import $ from "https://deno.land/x/dax@0.37.1/mod.ts";
 import { assert } from "https://deno.land/std@0.213.0/assert/assert.ts";
 import {

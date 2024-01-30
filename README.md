@@ -5,7 +5,7 @@ each field generate an "option" :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.10/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.11/clite_parser.ts";
 
 class Tool {
   retry = 2;
@@ -71,7 +71,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.1.10/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.1.11/clite_parser.ts";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
