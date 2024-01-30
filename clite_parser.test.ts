@@ -1,6 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.213.0/assert/mod.ts";
 import {
-  allign,
+  align,
   cliteRun,
   genHelp,
   getFieldNames,
@@ -177,9 +177,9 @@ Deno.test("cliteRun help", () => {
   assertEquals(result, expected);
 });
 
-Deno.test("allign", () => {
+Deno.test("align", () => {
   const input: [string, string][] = [["az", "t"], ["azert", "t"]];
-  const result = allign(input);
+  const result = align(input);
   const expected = ["az     t", "azert  t"];
   assertEquals(result, expected);
 });

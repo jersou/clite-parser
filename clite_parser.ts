@@ -49,7 +49,7 @@ function boldUnder(str: string) {
   return bold(underline(str));
 }
 
-export function allign(input: [string, string][]): string[] {
+export function align(input: [string, string][]): string[] {
   const max: number = input.reduce(
     (prev, curr) => Math.max(prev, curr[0].trimEnd().length),
     0,
@@ -59,7 +59,7 @@ export function allign(input: [string, string][]): string[] {
   );
 }
 
-export function genCommandHelp(obj: Obj, helpLines: string[]) {
+function genCommandHelp(obj: Obj, helpLines: string[]) {
   const allMethods = getMethodNames(obj);
   const methods = allMethods.filter((method) => !method.startsWith("_"));
   const defaultCommand = getDefaultMethod(methods);
@@ -82,11 +82,11 @@ export function genCommandHelp(obj: Obj, helpLines: string[]) {
       }
       linesCols.push([col1, col2]);
     }
-    helpLines.push(...allign(linesCols));
+    helpLines.push(...align(linesCols));
   }
 }
 
-export function genOptionsHelp(obj: Obj, helpLines: string[]) {
+function genOptionsHelp(obj: Obj, helpLines: string[]) {
   const allFields = getFieldNames(obj);
   const fields = allFields.filter((method) => !method.startsWith("_"));
   helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
@@ -106,7 +106,7 @@ export function genOptionsHelp(obj: Obj, helpLines: string[]) {
     linesCols.push([col1, col2]);
   }
   linesCols.push([bold(`  --help`) + gray(""), gray("Show this help")]);
-  helpLines.push(...allign(linesCols));
+  helpLines.push(...align(linesCols));
 }
 
 export function genHelp(obj: Obj): string {
