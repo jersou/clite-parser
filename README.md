@@ -172,13 +172,13 @@ stdout.
 This behavior can be disabled with the config :
 `cliteRun(new Tool(), { dontPrintResult: true } )`
 
-## cliteRun config
+## CliteRunConfig
 
-`cliteRun(new Tool(), { args: ... } )`
+`cliteRun(new Tool(), < optional CliteRunConfig > )`
 
 ```typescript
 type CliteRunConfig = {
-  args?: string[]; // default : Deno.args
+  args?: string[]; // default : Deno.args or process.argv.slice(2)
   dontPrintResult?: boolean; // default : false
 };
 ```
@@ -196,7 +196,10 @@ class Tool { ... }
 cliteRun(new Tool());
 ```
 
-→ See [example/node/simple](example/node/simple) folder example
+See node usage examples:
+
+- [example/node/simple](example/node/simple)
+- [example/node/zx](example/node/zx)
 
 ### Usage with [--experimental-network-imports](https://nodejs.org/api/esm.html#https-and-http-imports) node option :
 

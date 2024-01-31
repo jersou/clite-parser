@@ -151,7 +151,7 @@ export function parseArgs(args: string[]): ParseResult {
 }
 
 export type CliteRunConfig = {
-  args?: string[]; // default : Deno.args
+  args?: string[]; // default : Deno.args or process.argv.slice(2)
   dontPrintResult?: boolean; // default : false
 };
 
