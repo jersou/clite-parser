@@ -220,3 +220,8 @@ or with
 // with "node --experimental-network-imports ..."
 import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.mjs";
 ```
+
+## Links
+
+- https://deno.land/x/clite_parser/
+- https://www.npmjs.com/package/clite-parser
