@@ -59,7 +59,8 @@ cliteRun(new Tool());
 Plain text (without color and styles in markdown):
 
 ```
-$ # with Node : "node example-lite-lite.mjs"
+$ # with Node : "node example-lite-lite.mjs --help"
+$ #          or "node --experimental-network-imports example-lite-lite.mjs --help"
 $ # with Deno : "deno run example-lite-lite.mjs --help" or :
 $ ./example-lite-lite.ts --help
 Usage: <Tool file> [Options] [command [command args]]
@@ -212,8 +213,10 @@ import { cliteRun } from "clite-parser"; // after "npm i clite-parser"
 cliteRun(new Tool());
 ```
 
-or :
+or with
+[--experimental-network-imports](https://nodejs.org/api/esm.html#https-and-http-imports):
 
 ```javascript
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.mjs"; // after "npm i clite-parser"
+// with "node --experimental-network-imports ..."
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.mjs";
 ```
