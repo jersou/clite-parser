@@ -8,7 +8,8 @@
   "scripts": {
     "run": "node example.mjs",
     "run-help": "node example.mjs --help",
-    "run-full": "node example.mjs --retry=4 --web-url=tttt --no-color down true 14"
+    "run-full": "node example.mjs --retry=4 --web-url=tttt --no-color down true 14",
+    "shebang-run": "./example.mjs --retry=4 --web-url=tttt --no-color down true 14"
   },
   "dependencies": {
     "clite-parser": "0.2.0"

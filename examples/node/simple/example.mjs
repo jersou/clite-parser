@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { cliteRun } from "clite-parser";
 
 class Tool {

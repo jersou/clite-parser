@@ -5,6 +5,7 @@ each field generate an "option" :
 
 ```typescript
 // for Node usage:
+#!/usr/bin/env node
 import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
 // or for Deno usage:
 #!/usr/bin/env -S deno run
@@ -37,7 +38,7 @@ Plain text (without color and styles in markdown):
 
 ```
 $ # with Node : "node example-lite-lite.mjs --help"
-$ #          or "node --experimental-network-imports example-lite-lite.mjs --help"
+$ #          or if the is shebang is present: "./example-lite-lite.mjs --help"
 $ # with Deno : "deno run example-lite-lite.mjs --help"
 $ #          or if the is shebang is present:
 $ ./example-lite-lite.ts --help
