@@ -6,7 +6,11 @@ each field generate an "option" :
 For Node and Deno (prefer ts import for deno):
 
 ```typescript
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.mjs";
+// for Node usage:
+import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
+// or for Deno usage:
+#!/usr/bin/env -S deno run
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.ts";
 
 class Tool {
   retry = 2;
@@ -27,31 +31,6 @@ class Tool {
 cliteRun(new Tool());
 ```
 
-For Deno only (Typescript & shebang) :
-
-```typescript
-#!/usr/bin/env -S deno run
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.ts";
-
-class Tool {
-  retry = 2;
-  webUrl = "none"; // fields are converted to kebab case as global options
-  no_color?: string | boolean; // → --no-color
-
-  main() {
-    console.log("main command", this);
-  }
-  up() {
-    console.log("up command", this);
-  }
-  down(force: boolean, timeout: number) {
-    console.log("down command", { force, timeout }, this);
-  }
-}
-
-cliteRun(new Tool());
-```
-
 ## The help is generated automatically:
 
 ![help image](./help-lite-lite.png)
@@ -61,7 +40,8 @@ Plain text (without color and styles in markdown):
 ```
 $ # with Node : "node example-lite-lite.mjs --help"
 $ #          or "node --experimental-network-imports example-lite-lite.mjs --help"
-$ # with Deno : "deno run example-lite-lite.mjs --help" or :
+$ # with Deno : "deno run example-lite-lite.mjs --help"
+$ #          or if the is shebang is present:
 $ ./example-lite-lite.ts --help
 Usage: <Tool file> [Options] [command [command args]]
 
@@ -205,20 +185,34 @@ type CliteRunConfig = {
 };
 ```
 
-## Node support : npm i clite-parser
+## Node support : npm install clite-parser
+
+### Usage from NPM
+
+Run `npm i clite-parser` and import with
+`import { cliteRun } from "clite-parser";` :
 
 ```javascript
 import { cliteRun } from "clite-parser"; // after "npm i clite-parser"
-...
+class Tool { ... }
 cliteRun(new Tool());
 ```
 
-or with
-[--experimental-network-imports](https://nodejs.org/api/esm.html#https-and-http-imports):
+→ See [example/node/simple](example/node/simple) folder example
+
+### Usage with [--experimental-network-imports](https://nodejs.org/api/esm.html#https-and-http-imports) node option :
+
+Import directly by http :
 
 ```javascript
-// with "node --experimental-network-imports ..."
+// run with "node --experimental-network-imports ./example.mjs"
 import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.mjs";
+```
+
+And run the script with:
+
+```shell
+$ node --experimental-network-imports ./example.mjs
 ```
 
 ## Links

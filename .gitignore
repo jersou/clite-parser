@@ -1,3 +1,4 @@
 /**/.idea/
 /tmp*
 /.cov_profile
+**/node_modules
