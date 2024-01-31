@@ -3,8 +3,6 @@
 **CliteParser generate CLI from a class**, each method generate a "command",
 each field generate an "option" :
 
-For Node and Deno (prefer ts import for deno):
-
 ```typescript
 // for Node usage:
 import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
