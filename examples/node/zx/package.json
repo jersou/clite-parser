@@ -12,7 +12,7 @@
     "shebang-run": "./example-zx.mjs --retry=4 --web-url=tttt --no-color down true 14"
   },
   "dependencies": {
-    "clite-parser": "0.2.0",
+    "clite-parser": "0.2.1",
     "zx": "^7.2.3"
   }
 }

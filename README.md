@@ -9,7 +9,7 @@ each field generate an "option" :
 import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
 // or for Deno usage:
 #!/usr/bin/env -S deno run
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.1/clite_parser.ts";
 
 class Tool {
   retry = 2;
@@ -77,7 +77,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.1/clite_parser.ts";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
@@ -208,7 +208,7 @@ Import directly by http :
 
 ```javascript
 // run with "node --experimental-network-imports ./example.mjs"
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.0/clite_parser.mjs";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.1/clite_parser.mjs";
 ```
 
 And run the script with:
@@ -225,6 +225,7 @@ $ node --experimental-network-imports ./example.mjs
 ## Playground
 
 ### NodeJs
+
 From https://stackblitz.com/edit/node-uywg3x?file=index.mjs&view=editor :
 
 In the terminal :
@@ -243,5 +244,6 @@ main command Tool { retry: 2, webUrl: 'none', no_color: undefined }
 
 ### Deno
 
-From https://codesandbox.io/p/devbox/clite-parser-deno-hw33ww?file=%2Findex.ts%3A8%2C1 see Terminal
-
+From
+https://codesandbox.io/p/devbox/clite-parser-deno-hw33ww?file=%2Findex.ts%3A8%2C1
+see Terminal
