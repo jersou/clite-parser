@@ -12,6 +12,11 @@
   "module": "./clite_parser.mjs",
   "types": "./clite_parser.ts",
   "repository": "https://github.com/jersou/clite-parser",
+  "keywords": [
+    "cli",
+    "parser",
+    "command-line-tool"
+  ],
   "exports": {
     ".": {
       "import": "./clite_parser.mjs",

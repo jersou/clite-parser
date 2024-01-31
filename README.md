@@ -221,3 +221,27 @@ $ node --experimental-network-imports ./example.mjs
 
 - https://deno.land/x/clite_parser/
 - https://www.npmjs.com/package/clite-parser
+
+## Playground
+
+### NodeJs
+From https://stackblitz.com/edit/node-uywg3x?file=index.mjs&view=editor :
+
+In the terminal :
+
+```shell
+$ node ./index.mjs
+```
+
+or
+
+```shell
+$ chmod +x ./index.mjs
+$ ./index.mjs
+main command Tool { retry: 2, webUrl: 'none', no_color: undefined }
+```
+
+### Deno
+
+From https://codesandbox.io/p/devbox/clite-parser-deno-hw33ww?file=%2Findex.ts%3A8%2C1 see Terminal
+
