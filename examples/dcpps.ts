@@ -15,7 +15,7 @@
 //   --help                 Show this help
 
 import { cliteRun } from "https://deno.land/x/clite_parser@0.2.1/clite_parser.ts";
-import $ from "https://deno.land/x/dax@0.37.1/mod.ts";
+import $ from "https://deno.land/x/dax@0.38.0/mod.ts";
 import { assert } from "https://deno.land/std@0.213.0/assert/assert.ts";
 import {
   bgBrightGreen,
@@ -41,12 +41,12 @@ export class DockerComposePs {
 
   async main() {
     this._check();
-    console.log(await this._getDockerComposePsLines(await this._getServices()));
+    console.log(await this._getDockerComposePsLines(this._getServices()));
   }
 
   async watch() {
     this._check();
-    const services = await this._getServices();
+    const services = this._getServices();
     console.clear();
     let prevPs = "";
     while (true) {
@@ -87,10 +87,9 @@ export class DockerComposePs {
       .map(([key]) => key).sort();
   }
 
-  async _getDockerComposePsData() {
-    return (await $`docker compose ps --format json`.lines())
-      .filter((line) => line.length)
-      .map((line) => JSON.parse(line)) as DockerComposePsLine[];
+  _getDockerComposePsData() {
+    return $`docker compose ps --format json`
+      .json() as unknown as DockerComposePsLine[];
   }
 
   _getColor(state: string, Health: string) {
