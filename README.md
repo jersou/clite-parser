@@ -181,7 +181,27 @@ This behavior can be disabled with the config :
 type CliteRunConfig = {
   args?: string[]; // default : Deno.args or process.argv.slice(2)
   dontPrintResult?: boolean; // default : false
+  noCommand?: boolean; // default : false
 };
+```
+
+### noCommand
+
+<!-- TODO -->
+
+`cliteRun(new Tool(), { noCommand: true });` → `./example-no-command.ts ---help`
+give :
+
+```
+This tool is a full example of CliteParser usage
+
+Usage: <Tool file> [Options] [args]
+
+Options:
+  --retry=<RETRY>        (default "2")
+  --web-url=<WEB_URL>    web URL ... (default "none")
+  --no-color=<NO_COLOR>  skip colorize
+  --help                 Show this help
 ```
 
 ## Node support : npm install clite-parser

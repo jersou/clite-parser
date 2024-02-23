@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run -A
 import { cliteRun } from "../clite_parser.ts";
 
-class Tool {
+export class Tool {
   _desc = "This tool is a full example of CliteParser usage";
   retry = 2;
   webUrl = "none";

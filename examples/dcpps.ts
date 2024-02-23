@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A
 
-// deno install -f --name dcpps -A https://deno.land/x/clite_parser@@0.2.1/examples/dcpps.ts
+// deno install -f --name dcpps -A https://deno.land/x/clite_parser@0.2.1/examples/dcpps.ts
 
 // Colorize the "docker compose ps" command and watch changes
 //

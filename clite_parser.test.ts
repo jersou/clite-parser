@@ -125,16 +125,35 @@ Options:
   --help                             Show this help`;
   assertEquals(stripAnsiCode(genHelp(tool)), expected);
 });
+
+Deno.test("genHelp  noCommand", () => {
+  const tool = new Tool();
+  const expected = `test data
+
+Usage: <Tool file> [Options] [args]
+
+Options:
+  --opt1=<OPT1>                      (default "123")
+  --opt2=<OPT2>                      (default "true")
+  --opt3=<OPT3>                      option 3 desc (default "azer")
+  --opt-snake-case=<OPT_SNAKE_CASE>
+  --opt-camel-case=<OPT_CAMEL_CASE>  optCamelCase desc
+  --help                             Show this help`;
+  assertEquals(stripAnsiCode(genHelp(tool, { noCommand: true })), expected);
+});
+
 Deno.test("parseArgs", () => {
-  const parseResult = parseArgs([
-    "--opt2=false",
-    "--opt3=qsdf",
-    "--opt-snake-case=123",
-    "--opt-camel-case=456",
-    "down",
-    "true",
-    "12s",
-  ]);
+  const parseResult = parseArgs({
+    args: [
+      "--opt2=false",
+      "--opt3=qsdf",
+      "--opt-snake-case=123",
+      "--opt-camel-case=456",
+      "down",
+      "true",
+      "12s",
+    ],
+  });
   const expected: ParseResult = {
     options: {
       opt2: "false",
@@ -144,6 +163,32 @@ Deno.test("parseArgs", () => {
     },
     command: "down",
     commandArgs: ["true", "12s"],
+  };
+  assertEquals(parseResult, expected);
+});
+
+Deno.test("parseArgs noCommand", () => {
+  const parseResult = parseArgs({
+    args: [
+      "--opt2=false",
+      "--opt3=qsdf",
+      "--opt-snake-case=123",
+      "--opt-camel-case=456",
+      "down",
+      "true",
+      "12s",
+    ],
+    noCommand: true,
+  });
+  const expected: ParseResult = {
+    options: {
+      opt2: "false",
+      opt3: "qsdf",
+      optSnakeCase: "123",
+      optCamelCase: "456",
+    },
+    command: "main",
+    commandArgs: ["down", "true", "12s"],
   };
   assertEquals(parseResult, expected);
 });

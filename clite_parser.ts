@@ -9,11 +9,11 @@ import {
   toSnakeCase,
 } from "https://deno.land/std@0.213.0/text/mod.ts";
 
-const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
-
 // deno-lint-ignore no-explicit-any
 export type Obj = { [index: string]: any };
+
+const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
 
 // deno-lint-ignore ban-types
 export function getFunctionArgNames(func: Function): string[] {
@@ -109,15 +109,21 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
   helpLines.push(...align(linesCols));
 }
 
-export function genHelp(obj: Obj): string {
+export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   const helpLines: string[] = [];
   if (obj._desc) {
     helpLines.push(obj._desc + "\n");
   }
   const usage = boldUnder("Usage:");
   const name = Object.getPrototypeOf(obj).constructor.name;
-  helpLines.push(`${usage} <${name} file> [Options] [command [command args]]`);
-  genCommandHelp(obj, helpLines);
+  if (config?.noCommand) {
+    helpLines.push(`${usage} <${name} file> [Options] [args]`);
+  } else {
+    helpLines.push(
+      `${usage} <${name} file> [Options] [command [command args]]`,
+    );
+    genCommandHelp(obj, helpLines);
+  }
   genOptionsHelp(obj, helpLines);
   return helpLines.join("\n");
 }
@@ -128,7 +134,11 @@ export type ParseResult = {
   commandArgs: string[];
 };
 
-export function parseArgs(args: string[]): ParseResult {
+export function parseArgs(
+  config?: CliteRunConfig,
+  defaultMethod = "main",
+): ParseResult {
+  const args = getArgs(config);
   const argsResult: ParseResult = {
     options: {},
     commandArgs: [],
@@ -143,17 +153,15 @@ export function parseArgs(args: string[]): ParseResult {
       } else {
         argsResult.options[toCamelCase(arg.substring(2))] = true;
       }
+    } else if (config?.noCommand) {
+      argsResult.command = defaultMethod;
+      argsResult.commandArgs.push(arg);
     } else {
       argsResult.command = arg;
     }
   }
   return argsResult;
 }
-
-export type CliteRunConfig = {
-  args?: string[]; // default : Deno.args or process.argv.slice(2)
-  dontPrintResult?: boolean; // default : false
-};
 
 function fillFields(parseResult: ParseResult, obj: Obj) {
   const fields = getFieldNames(obj);
@@ -167,6 +175,12 @@ function fillFields(parseResult: ParseResult, obj: Obj) {
     }
   }
 }
+
+export type CliteRunConfig = {
+  args?: string[]; // default : Deno.args or process.argv.slice(2)
+  dontPrintResult?: boolean; // default : false
+  noCommand?: boolean;
+};
 
 function processResult(result: unknown, config?: CliteRunConfig) {
   if (result != undefined && !config?.dontPrintResult) {
@@ -207,14 +221,15 @@ function getArgs(config?: CliteRunConfig) {
 }
 
 export function cliteRun(obj: Obj, config?: CliteRunConfig) {
-  const parseResult = parseArgs(getArgs(config));
+  const methods = getMethodNames(obj);
+  const defaultMethod = getDefaultMethod(methods);
+  const parseResult = parseArgs(config, defaultMethod);
   if (getFieldNames(parseResult.options).includes("help")) {
-    const help = genHelp(obj);
+    const help = genHelp(obj, config);
     console.log(help);
     return help;
   } else {
-    const methods = getMethodNames(obj);
-    const command = parseResult.command ?? getDefaultMethod(methods);
+    const command = parseResult.command ?? defaultMethod;
     if (!command) {
       throw new Error(`no method defined or no "main" method`);
     }
