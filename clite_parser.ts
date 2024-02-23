@@ -138,7 +138,7 @@ export function parseArgs(args: string[]): ParseResult {
       argsResult.commandArgs.push(arg);
     } else if (arg.startsWith("--")) {
       if (arg.includes("=")) {
-        const [key, value] = /^([^=]+)=(.*)$/.exec(arg).slice(1);
+        const [key, value] = /^--([^=]+)=(.*)$/.exec(arg)!.slice(1);
         argsResult.options[toCamelCase(key)] = value;
       } else {
         argsResult.options[toCamelCase(arg.substring(2))] = true;
