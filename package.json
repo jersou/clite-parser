@@ -1,7 +1,7 @@
 {
   "name": "clite-parser",
   "description": "CliteParser generate CLI from a class, each method generate a \"command\", each field generate an \"option\". The help is generated automatically",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "author": {
     "name": "jersou"

@@ -147,19 +147,24 @@ function genOptionsHelp(obj, helpLines) {
     ]);
     helpLines.push(...align(linesCols));
 }
-function genHelp(obj) {
+function genHelp(obj, config) {
     const helpLines = [];
     if (obj._desc) {
         helpLines.push(obj._desc + "\n");
     }
     const usage = boldUnder("Usage:");
     const name = Object.getPrototypeOf(obj).constructor.name;
-    helpLines.push(`${usage} <${name} file> [Options] [command [command args]]`);
-    genCommandHelp(obj, helpLines);
+    if (config?.noCommand) {
+        helpLines.push(`${usage} <${name} file> [Options] [args]`);
+    } else {
+        helpLines.push(`${usage} <${name} file> [Options] [command [command args]]`);
+        genCommandHelp(obj, helpLines);
+    }
     genOptionsHelp(obj, helpLines);
     return helpLines.join("\n");
 }
-function parseArgs(args) {
+function parseArgs(config, defaultMethod = "main") {
+    const args = getArgs(config);
     const argsResult = {
         options: {},
         commandArgs: []
@@ -169,11 +174,14 @@ function parseArgs(args) {
             argsResult.commandArgs.push(arg);
         } else if (arg.startsWith("--")) {
             if (arg.includes("=")) {
-                const [key, value] = arg.substring(2).split("=");
+                const [key, value] = /^--([^=]+)=(.*)$/.exec(arg).slice(1);
                 argsResult.options[toCamelCase(key)] = value;
             } else {
                 argsResult.options[toCamelCase(arg.substring(2))] = true;
             }
+        } else if (config?.noCommand) {
+            argsResult.command = defaultMethod;
+            argsResult.commandArgs.push(arg);
         } else {
             argsResult.command = arg;
         }
@@ -218,14 +226,15 @@ function getArgs(config) {
     }
 }
 function cliteRun(obj, config) {
-    const parseResult = parseArgs(getArgs(config));
+    const methods = getMethodNames(obj);
+    const defaultMethod = getDefaultMethod(methods);
+    const parseResult = parseArgs(config, defaultMethod);
     if (getFieldNames(parseResult.options).includes("help")) {
-        const help = genHelp(obj);
+        const help = genHelp(obj, config);
         console.log(help);
         return help;
     } else {
-        const methods = getMethodNames(obj);
-        const command = parseResult.command ?? getDefaultMethod(methods);
+        const command = parseResult.command ?? defaultMethod;
         if (!command) {
             throw new Error(`no method defined or no "main" method`);
         }

@@ -9,7 +9,7 @@ each field generate an "option" :
 import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
 // or for Deno usage:
 #!/usr/bin/env -S deno run
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.1/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.2/clite_parser.ts";
 
 class Tool {
   retry = 2;
@@ -77,7 +77,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.1/clite_parser.ts";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.2/clite_parser.ts";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
@@ -228,7 +228,7 @@ Import directly by http :
 
 ```javascript
 // run with "node --experimental-network-imports ./example.mjs"
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.1/clite_parser.mjs";
+import { cliteRun } from "https://deno.land/x/clite_parser@0.2.2/clite_parser.mjs";
 ```
 
 And run the script with:
