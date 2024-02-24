@@ -165,14 +165,6 @@ $ ./example-lite.ts --no-color=true
 main command Tool { retry: 2, webUrl: "none", no_color: "true" }
 ```
 
-## Return value
-
-If the method run by `cliteRun` return a value != undefined, it will be print in
-stdout.
-
-This behavior can be disabled with the config :
-`cliteRun(new Tool(), { dontPrintResult: true } )`
-
 ## CliteRunConfig
 
 `cliteRun(new Tool(), < optional CliteRunConfig > )`
@@ -185,6 +177,14 @@ type CliteRunConfig = {
 };
 ```
 
+### Return value
+
+If the method run by `cliteRun` return a value != undefined, it will be print in
+stdout.
+
+This behavior can be disabled with the config :
+`cliteRun(new Tool(), { dontPrintResult: true } )`
+
 ### noCommand
 
 <!-- TODO -->
@@ -193,7 +193,7 @@ type CliteRunConfig = {
 give :
 
 ```
-This tool is a full example of CliteParser usage
+This tool is a "no-command" example of CliteParser usage
 
 Usage: <Tool file> [Options] [args]
 
@@ -222,7 +222,7 @@ See node usage examples:
 - [example/node/simple](example/node/simple)
 - [example/node/zx](example/node/zx)
 
-### Usage with [--experimental-network-imports](https://nodejs.org/api/esm.html#https-and-http-imports) node option :
+### Usage with [--experimental-network-imports](https://nodejs.org/api/esm.html#https-and-http-imports) NodeJS option (without npm install) :
 
 Import directly by http :
 
