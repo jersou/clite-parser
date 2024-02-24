@@ -195,6 +195,7 @@
     "https://deno.land/std@0.213.0/yaml/type.ts": "708dde5f20b01cc1096489b7155b6af79a217d585afb841128e78c3c2391eb5c",
     "https://deno.land/x/clite_parser@0.1.9/clite_parser.ts": "549e15b7310495fe6bdf896e5545923750fbf4febb32fddf8513c50e9c540162",
     "https://deno.land/x/clite_parser@0.2.1/clite_parser.ts": "4028aa821b983bd74dc8836c2875186d1df7ffeb2657f5b5072842cd2090342a",
+    "https://deno.land/x/clite_parser@0.2.2/clite_parser.ts": "4117e10a70b76b8a307d6d46038d91a3f17a2bdbe1ddb186749b0e43cbaff8ff",
     "https://deno.land/x/dax@0.37.1/mod.ts": "a3339010cb06de8a1ac1b05c4af7e5ae8be24b5126c5b0689937c7ba9339617c",
     "https://deno.land/x/dax@0.37.1/src/command.ts": "c99ed17365cbd3ccbb3a5f054af04ce040d6007f51913e46b85086b685c72385",
     "https://deno.land/x/dax@0.37.1/src/command_handler.ts": "56ee6893bf5ec829c370fe5a9367f60b3590e571f7b69153d48686779ab14d98",
