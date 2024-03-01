@@ -142,6 +142,28 @@ Options:
   assertEquals(stripAnsiCode(genHelp(tool, { noCommand: true })), expected);
 });
 
+Deno.test("genHelp  mainFile", () => {
+  const tool = new Tool();
+  const expected = `test data
+
+Usage: the_tool_file [Options] [command [command args]]
+
+Commands:
+  up
+  down <force> <timeout>
+  clean                   clean all data
+  main                    (default)
+
+Options:
+  --opt1=<OPT1>                      (default "123")
+  --opt2=<OPT2>                      (default "true")
+  --opt3=<OPT3>                      option 3 desc (default "azer")
+  --opt-snake-case=<OPT_SNAKE_CASE>
+  --opt-camel-case=<OPT_CAMEL_CASE>  optCamelCase desc
+  --help                             Show this help`;
+  assertEquals(stripAnsiCode(genHelp(tool, { mainFile: "the_tool_file" })), expected);
+});
+
 Deno.test("parseArgs", () => {
   const parseResult = parseArgs({
     args: [

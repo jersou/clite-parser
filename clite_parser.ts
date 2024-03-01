@@ -116,11 +116,12 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   }
   const usage = boldUnder("Usage:");
   const name = Object.getPrototypeOf(obj).constructor.name;
+  const mainFile = config?.mainFile || `<${name} file>`;
   if (config?.noCommand) {
-    helpLines.push(`${usage} <${name} file> [Options] [args]`);
+    helpLines.push(`${usage} ${mainFile} [Options] [args]`);
   } else {
     helpLines.push(
-      `${usage} <${name} file> [Options] [command [command args]]`,
+      `${usage} ${mainFile} [Options] [command [command args]]`,
     );
     genCommandHelp(obj, helpLines);
   }
@@ -180,6 +181,7 @@ export type CliteRunConfig = {
   args?: string[]; // default : Deno.args or process.argv.slice(2)
   dontPrintResult?: boolean; // default : false
   noCommand?: boolean;
+  mainFile?: string; // default : `<${name} file>`
 };
 
 function processResult(result: unknown, config?: CliteRunConfig) {

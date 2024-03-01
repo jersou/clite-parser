@@ -174,6 +174,7 @@ type CliteRunConfig = {
   args?: string[]; // default : Deno.args or process.argv.slice(2)
   dontPrintResult?: boolean; // default : false
   noCommand?: boolean; // default : false
+  mainFile?: string; // default : `<${name} file>`
 };
 ```
 
@@ -203,6 +204,22 @@ Options:
   --no-color=<NO_COLOR>  skip colorize
   --help                 Show this help
 ```
+
+### mainFile
+
+Allows to change the name of the file in the help, instead of the default
+for example `<Tool file>`.
+
+```typescript
+cliteRun(new Tool(), { mainFile: "my-tool" });
+```
+
+...will change the usage line in the help :
+
+```
+Usage: my-tool [Options] [command [command args]]
+```
+
 
 ## Node support : npm install clite-parser
 

@@ -154,10 +154,11 @@ function genHelp(obj, config) {
     }
     const usage = boldUnder("Usage:");
     const name = Object.getPrototypeOf(obj).constructor.name;
+    const mainFile = config?.mainFile || `<${name} file>`;
     if (config?.noCommand) {
-        helpLines.push(`${usage} <${name} file> [Options] [args]`);
+        helpLines.push(`${usage} ${mainFile} [Options] [args]`);
     } else {
-        helpLines.push(`${usage} <${name} file> [Options] [command [command args]]`);
+        helpLines.push(`${usage} ${mainFile} [Options] [command [command args]]`);
         genCommandHelp(obj, helpLines);
     }
     genOptionsHelp(obj, helpLines);
