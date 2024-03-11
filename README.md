@@ -152,6 +152,16 @@ _privmethod();
 Note: this "private" method can be run by the CLI, it's useful during the
 development.
 
+Note2: js private fields `#*` are also ignored :
+
+```typescript
+#privateData = 12;
+#privmethod();
+{
+  console.log("this method is not visible in the help (starts with '#')");
+}
+```
+
 ## Boolean options
 
 ```shell
@@ -219,8 +229,8 @@ cliteRun(new Tool());
 
 See node usage examples:
 
-- [example/node/simple](example/node/simple)
-- [example/node/zx](example/node/zx)
+- [examples/node/simple](examples/node/simple)
+- [examples/node/zx](examples/node/zx)
 
 ### Usage with [--experimental-network-imports](https://nodejs.org/api/esm.html#https-and-http-imports) NodeJS option (without npm install) :
 
