@@ -2,7 +2,7 @@
 
 // deno install -f --name dcpm -A https://deno.land/x/clite_parser@0.2.2/examples/dcpm.ts
 
-import { cliteRun } from "jsr:jersou/clite-parser@0.3.0";
+import { cliteRun } from "jsr:@jersou/clite@0.3.1";
 import $ from "jsr:@david/dax@0.41.0";
 import { DockerComposePs } from "./dcpps.ts";
 

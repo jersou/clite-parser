@@ -9,7 +9,7 @@ each field generate an "option" :
 import { cliteRun } from "@jersou/clite"; // after "npx jsr add @jersou/clite"
 // or for Deno usage:
 #!/usr/bin/env -S deno run
-import { cliteRun } from "jsr:@jersou/clite@0.3.0";
+import { cliteRun } from "jsr:@jersou/clite@0.3.1";
 // or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
 
 class Tool {
@@ -76,7 +76,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.3.0";
+import { cliteRun } from "jsr:@jersou/clite@0.3.1";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
