@@ -14,17 +14,17 @@
 //   --interval=<INTERVAL>  repeat watch every <INTERVAL> sec (default "1")
 //   --help                 Show this help
 
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.2/clite_parser.ts";
-import $ from "https://deno.land/x/dax@0.38.0/mod.ts";
-import { assert } from "https://deno.land/std@0.213.0/assert/assert.ts";
+import { cliteRun } from "jsr:jersou/clite-parser@0.3.0";
+import $ from "jsr:@david/dax@0.41.0";
+import { assert } from "jsr:@std/assert@^1.0.4";
 import {
   bgBrightGreen,
   bgGreen,
   bgRed,
   bgYellow,
   black,
-} from "https://deno.land/std@0.213.0/fmt/colors.ts";
-import { parse as parseYaml } from "https://deno.land/std@0.213.0/yaml/mod.ts";
+} from "jsr:@std/fmt@^1.0.2/colors";
+import { parse as parseYaml } from "jsr:@std/yaml@1.0.5";
 
 type DockerComposePsLine = {
   "Service": string;
@@ -89,7 +89,9 @@ export class DockerComposePs {
 
   async _getDockerComposePsData() {
     return (await $`docker compose ps --format json`
-      .text()).split('\n').filter(l=>l).map(t=>JSON.parse(t)) as unknown as DockerComposePsLine[];
+      .text()).split("\n").filter((l) => l).map((t) =>
+        JSON.parse(t)
+      ) as unknown as DockerComposePsLine[];
   }
 
   _getColor(state: string, Health: string) {

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cliteRun } from "clite-parser";
+import { cliteRun } from "@jersou/clite";
 
 class Tool {
   retry = 2;

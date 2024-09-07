@@ -1,12 +1,16 @@
 {
+  "name": "@jersou/clite",
+  "version": "0.3.0",
+  "exports": "./clite_parser.ts",
+  "license": "MIT",
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.4",
+    "@std/fmt": "jsr:@std/fmt@^1.0.2",
+    "@std/text": "jsr:@std/text@^1.0.5"
+  },
   "tasks": {
     "fmt": "deno fmt --ignore=vendor",
     "run": "deno run -A example.ts",
-    "bundle": "deno bundle clite_parser.ts clite_parser.mjs",
-    "run-example-mjs-help-deno": "deno run examples/example-lite.mjs --help",
-    "run-example-mjs-help-node": "node examples/example-lite.mjs --help",
-    "run-example-mjs-deno": "deno run examples/example-lite.mjs --retry=7 down true 3",
-    "run-example-mjs-node": "node examples/example-lite.mjs --retry=7 down true 3",
-    "run-example-ts-deno": "deno run examples/example-lite.ts --retry=7 down true 3"
+    "run-example": "deno run examples/example-lite.ts --retry=7 down true 3"
   }
 }

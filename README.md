@@ -6,10 +6,11 @@ each field generate an "option" :
 ```typescript
 // for Node usage:
 #!/usr/bin/env node
-import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
+import { cliteRun } from "@jersou/clite"; // after "npx jsr add @jersou/clite"
 // or for Deno usage:
 #!/usr/bin/env -S deno run
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.2/clite_parser.ts";
+import { cliteRun } from "jsr:@jersou/clite@0.3.0";
+// or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
 
 class Tool {
   retry = 2;
@@ -37,9 +38,7 @@ cliteRun(new Tool());
 Plain text (without color and styles in markdown):
 
 ```
-$ # with Node : "node example-lite-lite.mjs --help"
-$ #          or if the is shebang is present: "./example-lite-lite.mjs --help"
-$ # with Deno : "deno run example-lite-lite.mjs --help"
+$ # with Deno : "deno run example-lite-lite.ts --help"
 $ #          or if the is shebang is present:
 $ ./example-lite-lite.ts --help
 Usage: <Tool file> [Options] [command [command args]]
@@ -77,7 +76,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.2/clite_parser.ts";
+import { cliteRun } from "jsr:@jersou/clite@0.3.0";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
@@ -143,8 +142,7 @@ Fields and methods that start with "_" are ignored.
 
 ```typescript
 _privateData = 12;
-_privmethod();
-{
+_privmethod() {
   console.log("this method is not visible in the help (starts with '_')");
 }
 ```
@@ -156,8 +154,7 @@ Note2: js private fields `#*` are also ignored :
 
 ```typescript
 #privateData = 12;
-#privmethod();
-{
+#privmethod() {
   console.log("this method is not visible in the help (starts with '#')");
 }
 ```
@@ -218,11 +215,11 @@ Options:
 
 ### Usage from NPM
 
-Run `npm i clite-parser` and import with
-`import { cliteRun } from "clite-parser";` :
+Run `npx jsr add @jersou/clite` and import with
+`import { cliteRun } from "@jersou/clite";` :
 
 ```javascript
-import { cliteRun } from "clite-parser"; // after "npm i clite-parser"
+import { cliteRun } from "@jersou/clite"; // after "npx jsr add @jersou/clite"
 class Tool { ... }
 cliteRun(new Tool());
 ```
@@ -249,6 +246,7 @@ $ node --experimental-network-imports ./example.mjs
 
 ## Links
 
+- https://jsr.io/@jersou/clite
 - https://deno.land/x/clite_parser/
 - https://www.npmjs.com/package/clite-parser
 

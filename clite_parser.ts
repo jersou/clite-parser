@@ -1,13 +1,5 @@
-import {
-  bold,
-  gray,
-  underline,
-} from "https://deno.land/std@0.213.0/fmt/colors.ts";
-import {
-  toCamelCase,
-  toKebabCase,
-  toSnakeCase,
-} from "https://deno.land/std@0.213.0/text/mod.ts";
+import { bold, gray, underline } from "@std/fmt/colors";
+import { toCamelCase, toKebabCase, toSnakeCase } from "@std/text";
 
 // deno-lint-ignore no-explicit-any
 export type Obj = { [index: string]: any };
@@ -220,7 +212,7 @@ function getArgs(config?: CliteRunConfig) {
   }
 }
 
-export function cliteRun(obj: Obj, config?: CliteRunConfig) {
+export function cliteRun(obj: Obj, config?: CliteRunConfig): unknown {
   const methods = getMethodNames(obj);
   const defaultMethod = getDefaultMethod(methods);
   const parseResult = parseArgs(config, defaultMethod);

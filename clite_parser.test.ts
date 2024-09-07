@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.213.0/assert/mod.ts";
+import { assertEquals } from "@std/assert";
 import {
   align,
   cliteRun,
@@ -8,9 +8,9 @@ import {
   getMethodArgNames,
   getMethodNames,
   parseArgs,
-  ParseResult,
+  type ParseResult,
 } from "./clite_parser.ts";
-import { stripAnsiCode } from "https://deno.land/std@0.213.0/fmt/colors.ts";
+import { stripAnsiCode } from "@std/fmt/colors";
 
 Deno.test("getFunctionArgNames", () => {
   function funcTest(arg1: string, arg2: boolean, arg3: number) {
@@ -117,9 +117,9 @@ Commands:
   main                    (default)
 
 Options:
-  --opt1=<OPT1>                      (default "123")
-  --opt2=<OPT2>                      (default "true")
-  --opt3=<OPT3>                      option 3 desc (default "azer")
+  --opt-1=<OPT_1>                    (default "123")
+  --opt-2=<OPT_2>                    (default "true")
+  --opt-3=<OPT_3>                    option 3 desc (default "azer")
   --opt-snake-case=<OPT_SNAKE_CASE>
   --opt-camel-case=<OPT_CAMEL_CASE>  optCamelCase desc
   --help                             Show this help`;
@@ -133,9 +133,9 @@ Deno.test("genHelp  noCommand", () => {
 Usage: <Tool file> [Options] [args]
 
 Options:
-  --opt1=<OPT1>                      (default "123")
-  --opt2=<OPT2>                      (default "true")
-  --opt3=<OPT3>                      option 3 desc (default "azer")
+  --opt-1=<OPT_1>                    (default "123")
+  --opt-2=<OPT_2>                    (default "true")
+  --opt-3=<OPT_3>                    option 3 desc (default "azer")
   --opt-snake-case=<OPT_SNAKE_CASE>
   --opt-camel-case=<OPT_CAMEL_CASE>  optCamelCase desc
   --help                             Show this help`;

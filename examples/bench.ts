@@ -47,4 +47,9 @@ if (import.meta.main) { // if the file is imported, do not execute this block
   const t3 = performance.now();
   console.log(`cliteRun() : ${(t3 - t2).toFixed(3)} milliseconds.`);
   // → cliteRun() : 0.007 milliseconds.
+} else {
+  const tool = new Tool();
+  Deno.bench("cliteRun-doNothing", () => {
+    cliteRun(tool, { args: ["doNothing"] });
+  });
 }
