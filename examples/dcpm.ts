@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A
 
-// deno install -f --name dcpm -A https://deno.land/x/clite_parser@0.2.2/examples/dcpm.ts
+// deno install -g -f --name dcpm -A https://jsr.io/@jersou/clite/0.3.1/examples/dcpm.ts
 
 import { cliteRun } from "jsr:@jersou/clite@0.3.1";
 import $ from "jsr:@david/dax@0.41.0";
