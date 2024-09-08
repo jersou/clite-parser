@@ -89,9 +89,9 @@ export class DockerComposePs {
 
   async _getDockerComposePsData() {
     return (await $`docker compose ps --format json`
-      .text()).split("\n").filter((l) => l).map((t) =>
-        JSON.parse(t)
-      ) as unknown as DockerComposePsLine[];
+      .lines())
+      .filter((l: string) => l)
+      .map((l: string) => JSON.parse(l)) as unknown as DockerComposePsLine[];
   }
 
   _getColor(state: string, Health: string) {
