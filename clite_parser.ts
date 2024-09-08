@@ -1,12 +1,19 @@
 import { bold, gray, underline } from "@std/fmt/colors";
 import { toCamelCase, toKebabCase, toSnakeCase } from "@std/text";
 
+/**
+ * Obj type
+ */
 // deno-lint-ignore no-explicit-any
 export type Obj = { [index: string]: any };
 
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
 
+/**
+ * @param func to analyse
+ * @returns argument names of the func function
+ */
 // deno-lint-ignore ban-types
 export function getFunctionArgNames(func: Function): string[] {
   const fnStr = func.toString().replace(COMMENTS_REGEX, "");
@@ -16,15 +23,28 @@ export function getFunctionArgNames(func: Function): string[] {
         .map((arg) => arg.replace(/[\s()]+/g, "")) || [];
 }
 
+/**
+ * @param obj Object to analyse
+ * @returns method names of the object
+ */
 export function getMethodNames(obj: object): string[] {
   return Object.getOwnPropertyNames(Object.getPrototypeOf(obj))
     .filter((n) => n !== "constructor");
 }
 
+/**
+ * @param obj Object to analyse
+ * @returns field names of the object
+ */
 export function getFieldNames(obj: object): string[] {
   return Object.getOwnPropertyNames(obj);
 }
 
+/**
+ * @param obj Object to analyse
+ * @param methodName method name to analyse
+ * @returns arguments of methodName of obj
+ */
 export function getMethodArgNames(obj: object, methodName: string): string[] {
   return getFunctionArgNames(Object.getPrototypeOf(obj)[methodName]);
 }
@@ -41,6 +61,12 @@ function boldUnder(str: string) {
   return bold(underline(str));
 }
 
+/**
+ * Align the 2 columns
+ *
+ * @param input array of string pairs
+ * @returns array of string of aligned pairs
+ */
 export function align(input: [string, string][]): string[] {
   const max: number = input.reduce(
     (prev, curr) => Math.max(prev, curr[0].trimEnd().length),
@@ -101,6 +127,13 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
   helpLines.push(...align(linesCols));
 }
 
+/**
+ * Generate the CLI help of obj
+ *
+ * @param obj to analyse
+ * @param config CliteRunConfig
+ * @returns the help as string
+ */
 export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   const helpLines: string[] = [];
   if (obj._desc) {
@@ -120,12 +153,22 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   return helpLines.join("\n");
 }
 
+/**
+ * Result of parseArgs()
+ */
 export type ParseResult = {
   options: { [index: string]: string | boolean };
   command?: string;
   commandArgs: string[];
 };
 
+/**
+ * parse config?.args, or Deno arguments (Deno.args) or node arguments (process.argv)
+ *
+ * @param config - to use to parse
+ * @param defaultMethod - to run if no arg
+ * @returns the parse result
+ */
 export function parseArgs(
   config?: CliteRunConfig,
   defaultMethod = "main",
@@ -168,9 +211,21 @@ function fillFields(parseResult: ParseResult, obj: Obj) {
   }
 }
 
+/**
+ * CliteRunConfig
+ */
 export type CliteRunConfig = {
-  args?: string[]; // default : Deno.args or process.argv.slice(2)
-  dontPrintResult?: boolean; // default : false
+  /**
+   * default : Deno.args or process.argv.slice(2)
+   */
+  args?: string[];
+  /**
+   * default : false, print the command return
+   */
+  dontPrintResult?: boolean;
+  /**
+   * no default command : do not run "main" methode if no arg
+   */
   noCommand?: boolean;
 };
 
@@ -212,6 +267,11 @@ function getArgs(config?: CliteRunConfig) {
   }
 }
 
+/**
+ * Run the command of obj depending on the Deno/Node script arguments
+ * @param obj instance of the object to parse by clite-parser
+ * @param config - of clite-parser
+ */
 export function cliteRun(obj: Obj, config?: CliteRunConfig): unknown {
   const methods = getMethodNames(obj);
   const defaultMethod = getDefaultMethod(methods);
