@@ -1,14 +1,12 @@
 # CLI lite parser for Node and Deno
 
 **CliteParser generate CLI from a class**, each method generate a "command",
-each field generate an "option" :
+each field generate an "option". **example-lite.ts example** :
 
 ```typescript
-// for Node usage:
-#!/usr/bin/env node
-import { cliteRun } from "@jersou/clite"; // after "npx jsr add @jersou/clite"
-// or for Deno usage:
 #!/usr/bin/env -S deno run
+// or for Node usage : #!/usr/bin/env node
+// and after "npx jsr add @jersou/clite" : import { cliteRun } from "@jersou/clite";
 import { cliteRun } from "jsr:@jersou/clite@0.3.1";
 // or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
 
@@ -31,13 +29,26 @@ class Tool {
 cliteRun(new Tool());
 ```
 
+## Run the commands with options and arguments
+
+```shell
+#                   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓ ↓command↓ ↓cmd args↓
+$ ./example-lite.ts --retry=4 --web-url=tttt --no-color   down     true  14
+down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
+
+$ ./example-lite.ts down true 14
+down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
+
+$ ./example-lite.ts  --retry=4 --web-url=tttt --no-color
+main command Tool { retry: "4", webUrl: "tttt", no_color: true }
+```
+
 ## The help is generated automatically:
 
 ![help image](./help-lite-lite.png)
 
-Plain text (without color and styles in markdown):
+<!-- Plain text (without color and styles in markdown):
 
-```
 $ # with Deno : "deno run example-lite-lite.ts --help"
 $ #          or if the is shebang is present:
 $ ./example-lite-lite.ts --help
@@ -53,21 +64,8 @@ Options:
   --web-url=<WEB_URL>    (default "none")
   --no-color=<NO_COLOR>
   --help                 Show this help
-```
 
-## Run the commands with options and arguments
-
-```shell
-#                   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓ ↓command↓ ↓cmd args↓
-$ ./example-lite.ts --retry=4 --web-url=tttt --no-color   down     true  14
-down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
-
-$ ./example-lite.ts down true 14
-down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
-
-$ ./example-lite.ts  --retry=4 --web-url=tttt --no-color
-main command Tool { retry: "4", webUrl: "tttt", no_color: true }
-```
+-->
 
 ## Help description
 
@@ -106,9 +104,8 @@ if (import.meta.main) { // if the file is imported, do not execute this block
 
 ![help image](./help-lite.png)
 
-Plain text (without color and styles in markdown):
+<!-- Plain text (without color and styles in markdown):
 
-```
 This tool is a little example of CliteParser
 
 Usage: <Tool file> [Options] [command [command args]]
@@ -123,7 +120,8 @@ Options:
   --web-url=<WEB_URL>    (default "none")
   --no-color=<NO_COLOR>  skip colorize
   --help                 Show this help
-```
+
+-->
 
 ## Default command
 
