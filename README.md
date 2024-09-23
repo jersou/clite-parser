@@ -212,6 +212,42 @@ Options:
   --help                 Show this help
 ```
 
+### printHelpOnError
+
+Print the help if an error is thrown and then re-throw the error:
+
+```typescript
+import { cliteRun } from "jsr:@jersou/clite@0.3.3";
+export class Tool {
+  throw = "true";
+  main() {
+    if (this.throw === "true") {
+      throw new Error("add --throw=false option !");
+    }
+    console.log("OK !");
+  }
+}
+cliteRun(new Tool(), { printHelpOnError: true });
+```
+
+To print help on specific error without `printHelpOnError=true`, use
+`{ cause: { clite: true } }` :
+
+```typescript
+import { cliteRun } from "jsr:@jersou/clite@0.3.3";
+export class Tool {
+  noThrow = false;
+
+  main() {
+    if (!this.noThrow) {
+      throw new Error("add --no-throw option !", { cause: { clite: true } });
+    }
+    console.log("OK !");
+  }
+}
+cliteRun(new Tool());
+```
+
 ## Node support : npm install clite-parser
 
 ### Usage from NPM

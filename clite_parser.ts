@@ -1,4 +1,4 @@
-import { bold, gray, underline } from "jsr:@std/fmt@1.0.2/colors";
+import { bgRed, bold, gray, underline, white } from "jsr:@std/fmt@1.0.2/colors";
 import { toCamelCase, toKebabCase, toSnakeCase } from "jsr:@std/text@1.0.6";
 
 /**
@@ -206,7 +206,9 @@ function fillFields(parseResult: ParseResult, obj: Obj) {
     } else if (fields.includes(toSnakeCase(option))) {
       obj[toSnakeCase(option)] = parseResult.options[option];
     } else {
-      throw new Error(`The option "${option}" doesn't exist`);
+      throw new Error(`The option "${option}" doesn't exist`, {
+        cause: { clite: true },
+      });
     }
   }
 }
@@ -227,6 +229,10 @@ export type CliteRunConfig = {
    * no default command : do not run "main" methode if no arg
    */
   noCommand?: boolean;
+  /**
+   * print the help if an error is thrown and then re-throw the error
+   */
+  printHelpOnError?: boolean;
 };
 
 function processResult(result: unknown, config?: CliteRunConfig) {
@@ -273,22 +279,38 @@ function getArgs(config?: CliteRunConfig) {
  * @param config - of clite-parser
  */
 export function cliteRun(obj: Obj, config?: CliteRunConfig): unknown {
-  const methods = getMethodNames(obj);
-  const defaultMethod = getDefaultMethod(methods);
-  const parseResult = parseArgs(config, defaultMethod);
-  if (getFieldNames(parseResult.options).includes("help")) {
-    const help = genHelp(obj, config);
-    console.log(help);
-    return help;
-  } else {
-    const command = parseResult.command ?? defaultMethod;
-    if (!command) {
-      throw new Error(`no method defined or no "main" method`);
+  const help = genHelp(obj, config);
+  try {
+    const methods = getMethodNames(obj);
+    const defaultMethod = getDefaultMethod(methods);
+    const parseResult = parseArgs(config, defaultMethod);
+    if (getFieldNames(parseResult.options).includes("help")) {
+      console.error(help);
+      return help;
+    } else {
+      const command = parseResult.command ?? defaultMethod;
+      if (!command) {
+        throw new Error(`no method defined or no "main" method`, {
+          cause: { clite: true },
+        });
+      }
+      if (!methods.includes(command)) {
+        throw new Error(`The command "${command}" doesn't exist`, {
+          cause: { clite: true },
+        });
+      }
+      fillFields(parseResult, obj);
+      return runCommand(obj, command, parseResult.commandArgs, config);
     }
-    if (!methods.includes(command)) {
-      throw new Error(`The command "${command}" doesn't exist`);
+  } catch (e) {
+    if (e.cause?.clite || config?.printHelpOnError) {
+      console.error(
+        bgRed(bold("An error occurred ! The help :")),
+      );
+      console.error(help);
+      console.error();
+      console.error(bgRed(bold("The error :")));
     }
-    fillFields(parseResult, obj);
-    return runCommand(obj, command, parseResult.commandArgs, config);
+    throw e;
   }
 }

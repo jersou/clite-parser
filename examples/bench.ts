@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A --allow-hrtime
-import { cliteRun } from "jsr:@jersou/clite@0.3.3";
+import { cliteRun } from "../clite_parser.ts";
 
 class Tool {
   _desc = "This tool is a full example of CliteParser usage";
@@ -49,7 +49,10 @@ if (import.meta.main) { // if the file is imported, do not execute this block
   // → cliteRun() : 0.007 milliseconds.
 } else {
   const tool = new Tool();
-  Deno.bench("cliteRun-doNothing", () => {
+  Deno.bench("./tool.ts doNothing", () => {
     cliteRun(tool, { args: ["doNothing"] });
+  });
+  Deno.bench("tool.doNothing()", () => {
+    tool.doNothing();
   });
 }
