@@ -1,6 +1,7 @@
 #!/usr/bin/env -S deno run -A
 import { cliteRun } from "jsr:@jersou/clite@0.4.0";
-// or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
+// or after "deno add @jersou/clite" : import { cliteRun } from "@jersou/clite";
+// or for Node usage, after "npx jsr add @jersou/clite" (same import from "@jersou/clite")
 
 export class Tool {
   _desc = "This tool is a full example of CliteParser usage";
