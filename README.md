@@ -184,6 +184,7 @@ type CliteRunConfig = {
   noCommand?: boolean; // no default command : do not run "main" methode if no arg
   printHelpOnError?: boolean; // print the help if an error is thrown and then re-throw the error
   mainFile?: string; // allows to change the name of the file in the help, instead of the default <{Class name} file>
+  meta?: ImportMeta; // import.meta to use : don't run if the file is imported, and use import.meta.url in the help
 };
 ```
 
@@ -264,6 +265,25 @@ cliteRun(new Tool(), { mainFile: "my-tool" });
 ```
 Usage: my-tool [Options] [command [command args]]
 ```
+
+### meta
+
+Use meta to avoid the import.meta.main check :
+
+```typescript
+if (import.meta.main) { // if the file is imported, do not execute this block
+  cliteRun(new Tool());
+}
+```
+
+is equivalent to :
+
+```typescript
+cliteRun(new Tool(), { meta: import.meta });
+```
+
+The basename of import.meta.url will be used in the generated help, as
+"mainFile".
 
 ## Node support : npm install clite-parser
 

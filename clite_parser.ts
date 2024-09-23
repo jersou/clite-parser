@@ -1,4 +1,4 @@
-import { bgRed, bold, gray, underline, white } from "jsr:@std/fmt@1.0.2/colors";
+import { bgRed, bold, gray, underline } from "jsr:@std/fmt@1.0.2/colors";
 import { toCamelCase, toKebabCase, toSnakeCase } from "jsr:@std/text@1.0.6";
 
 /**
@@ -141,7 +141,9 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   }
   const usage = boldUnder("Usage:");
   const name = Object.getPrototypeOf(obj).constructor.name;
-  const mainFile = config?.mainFile || `<${name} file>`;
+  const mainFile = config?.mainFile ??
+    config?.meta?.url?.replace(/.*\//, "./") ??
+    `<${name} file>`;
   if (config?.noCommand) {
     helpLines.push(`${usage} ${mainFile} [Options] [args]`);
   } else {
@@ -238,6 +240,10 @@ export type CliteRunConfig = {
    * allows to change the name of the file in the help, instead of the default <{Class name} file>
    */
   mainFile?: string;
+  /**
+   * import.meta to use : don't run if the file is imported, and use the basename of import.meta.url in the help
+   */
+  meta?: ImportMeta;
 };
 
 function processResult(result: unknown, config?: CliteRunConfig) {
@@ -284,38 +290,40 @@ function getArgs(config?: CliteRunConfig) {
  * @param config - of clite-parser
  */
 export function cliteRun(obj: Obj, config?: CliteRunConfig): unknown {
-  const help = genHelp(obj, config);
-  try {
-    const methods = getMethodNames(obj);
-    const defaultMethod = getDefaultMethod(methods);
-    const parseResult = parseArgs(config, defaultMethod);
-    if (getFieldNames(parseResult.options).includes("help")) {
-      console.error(help);
-      return help;
-    } else {
-      const command = parseResult.command ?? defaultMethod;
-      if (!command) {
-        throw new Error(`no method defined or no "main" method`, {
-          cause: { clite: true },
-        });
+  if (!config?.meta || config?.meta.main) {
+    const help = genHelp(obj, config);
+    try {
+      const methods = getMethodNames(obj);
+      const defaultMethod = getDefaultMethod(methods);
+      const parseResult = parseArgs(config, defaultMethod);
+      if (getFieldNames(parseResult.options).includes("help")) {
+        console.error(help);
+        return help;
+      } else {
+        const command = parseResult.command ?? defaultMethod;
+        if (!command) {
+          throw new Error(`no method defined or no "main" method`, {
+            cause: { clite: true },
+          });
+        }
+        if (!methods.includes(command)) {
+          throw new Error(`The command "${command}" doesn't exist`, {
+            cause: { clite: true },
+          });
+        }
+        fillFields(parseResult, obj);
+        return runCommand(obj, command, parseResult.commandArgs, config);
       }
-      if (!methods.includes(command)) {
-        throw new Error(`The command "${command}" doesn't exist`, {
-          cause: { clite: true },
-        });
+    } catch (e) {
+      if (e.cause?.clite || config?.printHelpOnError) {
+        console.error(
+          bgRed(bold("An error occurred ! The help :")),
+        );
+        console.error(help);
+        console.error();
+        console.error(bgRed(bold("The error :")));
       }
-      fillFields(parseResult, obj);
-      return runCommand(obj, command, parseResult.commandArgs, config);
+      throw e;
     }
-  } catch (e) {
-    if (e.cause?.clite || config?.printHelpOnError) {
-      console.error(
-        bgRed(bold("An error occurred ! The help :")),
-      );
-      console.error(help);
-      console.error();
-      console.error(bgRed(bold("The error :")));
-    }
-    throw e;
   }
 }
