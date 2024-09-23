@@ -1,5 +1,9 @@
 # CLI lite parser for Node and Deno
 
+[![JSR](https://jsr.io/badges/@jersou/clite)](https://jsr.io/@jersou/clite)
+[![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
+[![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
+
 **CliteParser generate CLI from a class**, each method generate a "command",
 each field generate an "option". **example-lite.ts example** :
 
