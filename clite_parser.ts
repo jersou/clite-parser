@@ -141,11 +141,12 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   }
   const usage = boldUnder("Usage:");
   const name = Object.getPrototypeOf(obj).constructor.name;
+  const mainFile = config?.mainFile || `<${name} file>`;
   if (config?.noCommand) {
-    helpLines.push(`${usage} <${name} file> [Options] [args]`);
+    helpLines.push(`${usage} ${mainFile} [Options] [args]`);
   } else {
     helpLines.push(
-      `${usage} <${name} file> [Options] [command [command args]]`,
+      `${usage} ${mainFile} [Options] [command [command args]]`,
     );
     genCommandHelp(obj, helpLines);
   }
@@ -233,6 +234,10 @@ export type CliteRunConfig = {
    * print the help if an error is thrown and then re-throw the error
    */
   printHelpOnError?: boolean;
+  /**
+   * allows to change the name of the file in the help, instead of the default (`<{Class name} file>`)
+   */
+  mainFile?: string;
 };
 
 function processResult(result: unknown, config?: CliteRunConfig) {
