@@ -7,7 +7,7 @@ each field generate an "option". **example-lite.ts example** :
 #!/usr/bin/env -S deno run
 // or for Node usage : #!/usr/bin/env node
 // and after "npx jsr add @jersou/clite" : import { cliteRun } from "@jersou/clite";
-import { cliteRun } from "jsr:@jersou/clite@0.3.3";
+import { cliteRun } from "jsr:@jersou/clite@0.4.0";
 // or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
 
 class Tool {
@@ -77,7 +77,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.3.3";
+import { cliteRun } from "jsr:@jersou/clite@0.4.0";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
@@ -220,7 +220,7 @@ Options:
 Print the help if an error is thrown and then re-throw the error:
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.3.3";
+import { cliteRun } from "jsr:@jersou/clite@0.4.0";
 export class Tool {
   throw = "true";
   main() {
@@ -237,7 +237,7 @@ To print help on specific error without `printHelpOnError=true`, use
 `{ cause: { clite: true } }` :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.3.3";
+import { cliteRun } from "jsr:@jersou/clite@0.4.0";
 export class Tool {
   noThrow = false;
 

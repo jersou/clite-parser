@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.3.3";
+import { cliteRun } from "jsr:@jersou/clite@0.4.0";
 // or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
 
 export class Tool {
