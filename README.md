@@ -285,6 +285,8 @@ cliteRun(new Tool(), { meta: import.meta });
 The basename of import.meta.url will be used in the generated help, as
 "mainFile".
 
+This feature does not work with NodeJS (no import.meta.main).
+
 ## Node support : npm install clite-parser
 
 ### Usage from NPM
@@ -349,9 +351,3 @@ main command Tool { retry: 2, webUrl: 'none', no_color: undefined }
 From
 https://codesandbox.io/p/devbox/clite-parser-deno-hw33ww?file=%2Findex.ts%3A8%2C1
 see Terminal
-
-## Contributors
-
-- [@jersou](https://github.com/jersou)
-- [@hugojosefson](https://github.com/hugojosefson) ("mainFile" config
-  6ebebf6ebd4799aef4217cd83140a500bf470a54)
