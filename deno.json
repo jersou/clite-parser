@@ -3,11 +3,6 @@
   "version": "0.3.2",
   "exports": "./clite_parser.ts",
   "license": "MIT",
-  "imports": {
-    "@std/assert": "jsr:@std/assert@^1.0.4",
-    "@std/fmt": "jsr:@std/fmt@^1.0.2",
-    "@std/text": "jsr:@std/text@^1.0.5"
-  },
   "tasks": {
     "fmt": "deno fmt --ignore=vendor",
     "run": "deno run -A example.ts",

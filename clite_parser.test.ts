@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals } from "jsr:@std/assert@1.0.5";
 import {
   align,
   cliteRun,
@@ -10,7 +10,7 @@ import {
   parseArgs,
   type ParseResult,
 } from "./clite_parser.ts";
-import { stripAnsiCode } from "@std/fmt/colors";
+import { stripAnsiCode } from "jsr:@std/fmt@1.0.2/colors";
 
 Deno.test("getFunctionArgNames", () => {
   function funcTest(arg1: string, arg2: boolean, arg3: number) {

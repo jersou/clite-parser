@@ -14,16 +14,16 @@
 //   --interval=<INTERVAL>  repeat watch every <INTERVAL> sec (default "1")
 //   --help                 Show this help
 
-import { cliteRun } from "jsr:@jersou/clite@0.3.1";
-import $ from "jsr:@david/dax@0.41.0";
-import { assert } from "jsr:@std/assert@^1.0.4";
+import { cliteRun } from "jsr:@jersou/clite@0.3.3";
+import $ from "jsr:@david/dax@0.42.0";
+import { assert } from "jsr:@std/assert@1.0.5";
 import {
   bgBrightGreen,
   bgGreen,
   bgRed,
   bgYellow,
   black,
-} from "jsr:@std/fmt@^1.0.2/colors";
+} from "jsr:@std/fmt@1.0.2/colors";
 import { parse as parseYaml } from "jsr:@std/yaml@1.0.5";
 
 type DockerComposePsLine = {

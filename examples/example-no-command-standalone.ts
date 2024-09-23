@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.3.2";
+import { cliteRun } from "jsr:@jersou/clite@0.3.3";
 
 export class Tool {
   retry = 2;

@@ -1,5 +1,5 @@
-import { bold, gray, underline } from "@std/fmt/colors";
-import { toCamelCase, toKebabCase, toSnakeCase } from "@std/text";
+import { bold, gray, underline } from "jsr:@std/fmt@1.0.2/colors";
+import { toCamelCase, toKebabCase, toSnakeCase } from "jsr:@std/text@1.0.6";
 
 /**
  * Obj type

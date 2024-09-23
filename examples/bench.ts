@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A --allow-hrtime
-import { cliteRun } from "jsr:@jersou/clite@0.3.2";
+import { cliteRun } from "jsr:@jersou/clite@0.3.3";
 
 class Tool {
   _desc = "This tool is a full example of CliteParser usage";

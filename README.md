@@ -7,7 +7,7 @@ each field generate an "option". **example-lite.ts example** :
 #!/usr/bin/env -S deno run
 // or for Node usage : #!/usr/bin/env node
 // and after "npx jsr add @jersou/clite" : import { cliteRun } from "@jersou/clite";
-import { cliteRun } from "jsr:@jersou/clite@0.3.1";
+import { cliteRun } from "jsr:@jersou/clite@0.3.3";
 // or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
 
 class Tool {
@@ -33,14 +33,17 @@ cliteRun(new Tool());
 
 ```shell
 #                   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓ ↓command↓ ↓cmd args↓
-$ ./example-lite.ts --retry=4 --web-url=tttt --no-color   down     true  14
+$ ./example-lite-lite.ts --retry=4 --web-url=tttt --no-color   down     true  14
 down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
 
-$ ./example-lite.ts down true 14
+$ ./example-lite-lite.ts down true 14
 down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
 
-$ ./example-lite.ts  --retry=4 --web-url=tttt --no-color
+$ ./example-lite-lite.ts  --retry=4 --web-url=tttt --no-color
 main command Tool { retry: "4", webUrl: "tttt", no_color: true }
+
+$ deno https://raw.githubusercontent.com/jersou/clite-parser/refs/heads/main/examples/example-lite-lite.ts  --retry=4 --web-url=tttt --no-color   down     true  14
+down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
 ```
 
 ## The help is generated automatically:
@@ -74,7 +77,7 @@ the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.3.1";
+import { cliteRun } from "jsr:@jersou/clite@0.3.3";
 
 class Tool {
   _desc = "This tool is a little example of CliteParser"; // optional description
