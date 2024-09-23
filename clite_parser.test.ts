@@ -155,13 +155,16 @@ Commands:
   main                    (default)
 
 Options:
-  --opt1=<OPT1>                      (default "123")
-  --opt2=<OPT2>                      (default "true")
-  --opt3=<OPT3>                      option 3 desc (default "azer")
+  --opt-1=<OPT_1>                    (default "123")
+  --opt-2=<OPT_2>                    (default "true")
+  --opt-3=<OPT_3>                    option 3 desc (default "azer")
   --opt-snake-case=<OPT_SNAKE_CASE>
   --opt-camel-case=<OPT_CAMEL_CASE>  optCamelCase desc
   --help                             Show this help`;
-  assertEquals(stripAnsiCode(genHelp(tool, { mainFile: "the_tool_file" })), expected);
+  assertEquals(
+    stripAnsiCode(genHelp(tool, { mainFile: "the_tool_file" })),
+    expected,
+  );
 });
 
 Deno.test("parseArgs", () => {

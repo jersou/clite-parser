@@ -180,9 +180,10 @@ main command Tool { retry: 2, webUrl: "none", no_color: "true" }
 ```typescript
 type CliteRunConfig = {
   args?: string[]; // default : Deno.args or process.argv.slice(2)
-  dontPrintResult?: boolean; // default : false
-  noCommand?: boolean; // default : false
-  mainFile?: string; // default : `<${name} file>`
+  dontPrintResult?: boolean; // default false : false, print the command return
+  noCommand?: boolean; // no default command : do not run "main" methode if no arg
+  printHelpOnError?: boolean; // print the help if an error is thrown and then re-throw the error
+  mainFile?: string; // allows to change the name of the file in the help, instead of the default <{Class name} file>
 };
 ```
 
@@ -251,8 +252,8 @@ cliteRun(new Tool());
 
 ### mainFile
 
-Allows to change the name of the file in the help, instead of the default
-for example `<Tool file>`.
+Allows to change the name of the file in the help, instead of the default for
+example `<Tool file>`.
 
 ```typescript
 cliteRun(new Tool(), { mainFile: "my-tool" });
@@ -263,7 +264,6 @@ cliteRun(new Tool(), { mainFile: "my-tool" });
 ```
 Usage: my-tool [Options] [command [command args]]
 ```
-
 
 ## Node support : npm install clite-parser
 
@@ -329,3 +329,9 @@ main command Tool { retry: 2, webUrl: 'none', no_color: undefined }
 From
 https://codesandbox.io/p/devbox/clite-parser-deno-hw33ww?file=%2Findex.ts%3A8%2C1
 see Terminal
+
+## Contributors
+
+- [@jersou](https://github.com/jersou)
+- [@hugojosefson](https://github.com/hugojosefson) ("mainFile" config
+  6ebebf6ebd4799aef4217cd83140a500bf470a54)

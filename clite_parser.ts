@@ -227,7 +227,7 @@ export type CliteRunConfig = {
    */
   dontPrintResult?: boolean;
   /**
-   * no default command : do not run "main" methode if no arg
+   * no default command : do not run "main" method if no arg
    */
   noCommand?: boolean;
   /**
@@ -235,7 +235,7 @@ export type CliteRunConfig = {
    */
   printHelpOnError?: boolean;
   /**
-   * allows to change the name of the file in the help, instead of the default (`<{Class name} file>`)
+   * allows to change the name of the file in the help, instead of the default <{Class name} file>
    */
   mainFile?: string;
 };
