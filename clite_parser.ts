@@ -285,6 +285,34 @@ function getArgs(config?: CliteRunConfig) {
 }
 
 /**
+ * decorator on classes/methods/properties : `@help("description...")`
+ * @param description - to display in the help
+ */
+// deno-lint-ignore no-explicit-any
+export function help(description: string): any {
+  // deno-lint-ignore no-explicit-any
+  return function (target: any, prop?: any) {
+    if (typeof prop === "string") { // case "compilerOptions": { "experimentalDecorators": true }
+      if (prop) { // decorator on property
+        target[`_${prop}_desc`] = description;
+      } else { // decorator on class
+        target.prototype._desc = description;
+      }
+    } else { // experimentalDecorators = false
+      prop.addInitializer(function () {
+        if (prop.kind === "class") {
+          // @ts-ignore
+          this.prototype._desc = description;
+        } else {
+          // @ts-ignore
+          this[`_${prop.name}_desc`] = description;
+        }
+      });
+    }
+  };
+}
+
+/**
  * Run the command of obj depending on the Deno/Node script arguments
  * @param obj instance of the object to parse by clite-parser
  * @param config - of clite-parser

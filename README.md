@@ -75,6 +75,8 @@ Options:
 
 ## Help description
 
+**The decorator @help can also be used, see bellow.**
+
 Optional fields `_<filed or method name>_desc` are displayed as description in
 the help :
 
@@ -128,6 +130,36 @@ Options:
   --help                 Show this help
 
 -->
+
+## Help description with the `@help` decorator
+
+```typescript
+import { cliteRun, help } from "jsr:@jersou/clite@0.4.1";
+
+@help("This tool is a little example of CliteParser")
+class Tool {
+  retry = 2;
+  webUrl = "none"; // fields are converted to kebab case as global options
+
+  @help("skip colorize") // optional description for "no_color" field
+  no_color?: string | boolean; // → --no-color
+
+  main() {
+    console.log("main command", this);
+  }
+
+  @help("create and start") // optional description for "up" command
+  up() {
+    console.log("up command", this);
+  }
+
+  down(force: boolean, timeout: number) {
+    console.log("down command", { force, timeout }, this);
+  }
+}
+
+cliteRun(new Tool());
+```
 
 ## Default command
 
