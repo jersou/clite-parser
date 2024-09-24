@@ -22,16 +22,16 @@ Deno.test("getFunctionArgNames", () => {
 });
 
 class Tool {
-  _desc = "test data";
+  _help = "test data";
   opt1 = 123;
   opt2 = true;
   opt3 = "azer";
   opt_snake_case?: string;
   optCamelCase?: string;
   _hidden = 5;
-  _opt3_desc = "option 3 desc";
-  _clean_desc = "clean all data";
-  _optCamelCase_desc = "optCamelCase desc";
+  _opt3_help = "option 3 desc";
+  _clean_help = "clean all data";
+  _optCamelCase_help = "optCamelCase desc";
 
   up() {
     console.log("up command", this);
@@ -74,16 +74,16 @@ Deno.test("getMethodNames", () => {
 Deno.test("getFieldNames", () => {
   const tool = new Tool();
   assertEquals(getFieldNames(tool), [
-    "_desc",
+    "_help",
     "opt1",
     "opt2",
     "opt3",
     "opt_snake_case",
     "optCamelCase",
     "_hidden",
-    "_opt3_desc",
-    "_clean_desc",
-    "_optCamelCase_desc",
+    "_opt3_help",
+    "_clean_help",
+    "_optCamelCase_help",
   ]);
 });
 

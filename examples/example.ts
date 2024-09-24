@@ -4,16 +4,16 @@ import { cliteRun } from "jsr:@jersou/clite@0.4.0";
 // or for Node usage, after "npx jsr add @jersou/clite" (same import from "@jersou/clite")
 
 export class Tool {
-  _desc = "This tool is a full example of CliteParser usage";
+  _help = "This tool is a full example of CliteParser usage";
   retry = 2;
   webUrl = "none";
-  _webUrl_desc = "web URL ...";
+  _webUrl_help = "web URL ...";
   no_color?: string | boolean;
-  _no_color_desc = "skip colorize";
-  _clean_desc = "clean all data";
-  _main_desc = "do up/down/clean";
-  _up_desc = "create and start the services";
-  _down_desc = "stop and delete the services";
+  _no_color_help = "skip colorize";
+  _clean_help = "clean all data";
+  _main_help = "do up/down/clean";
+  _up_help = "create and start the services";
+  _down_help = "stop and delete the services";
   _priv_field = 123;
 
   main() {

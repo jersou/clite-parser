@@ -34,10 +34,10 @@ type DockerComposePsLine = {
 
 export class DockerComposePs {
   interval = 1;
-  _interval_desc = "repeat watch every <INTERVAL> sec";
-  _desc = `Colorize the "docker compose ps" command and watch changes`;
-  _main_desc = "Colorize the ps one time";
-  _watch_desc = 'Repeat the colorization of the "docker compose ps" command';
+  _interval_help = "repeat watch every <INTERVAL> sec";
+  _help = `Colorize the "docker compose ps" command and watch changes`;
+  _main_help = "Colorize the ps one time";
+  _watch_help = 'Repeat the colorization of the "docker compose ps" command';
 
   async main() {
     this._check();

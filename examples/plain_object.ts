@@ -6,9 +6,9 @@ function ext(param1: string) {
 }
 
 cliteRun({
-  _desc: "plain object example",
+  _help: "plain object example",
   retry: 2,
-  _no_color_desc: "skip colorize",
+  _no_color_help: "skip colorize",
   no_color: undefined,
   main() {
     console.log("main command", this);
@@ -16,7 +16,7 @@ cliteRun({
   down() {
     console.log("down command", this);
   },
-  _up_desc: "create and start the services",
+  _up_help: "create and start the services",
   up(svc: string, timeout = 10) {
     console.log("up command", svc, timeout, this);
   },

@@ -6,7 +6,7 @@ cliteRun({
   main() {
     console.log("main command", this);
   },
-  _up_desc: "create and start the services",
+  _up_help: "create and start the services",
   up(svc: string, timeout = 10) {
     console.log("up command", { svc, timeout, retry: this.retry });
   },

@@ -7,7 +7,7 @@ import $ from "jsr:@david/dax@0.42.0";
 import { DockerComposePs } from "./dcpps.ts";
 
 class DockerComposeUpMenu {
-  _desc = `Print menu to select services to up with docker compose`;
+  _help = `Print menu to select services to up with docker compose`;
 
   _getServices() {
     const dcpPs = new DockerComposePs();

@@ -77,20 +77,20 @@ Options:
 
 **The decorator @help can also be used, see bellow.**
 
-Optional fields `_<filed or method name>_desc` are displayed as description in
-the help :
+Optional fields `_<filed or method name>_help` or `_<filed or method name>_desc`
+(_desc is deprecated) are displayed as description in the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
 import { cliteRun } from "jsr:@jersou/clite@0.4.0";
 
 class Tool {
-  _desc = "This tool is a little example of CliteParser"; // optional description
+  _help = "This tool is a little example of CliteParser"; // optional description
   retry = 2;
   webUrl = "none"; // fields are converted to kebab case as global options
   no_color?: string | boolean; // → --no-color
-  _no_color_desc = "skip colorize"; // optional description for "no_color" field
-  _up_desc = "create and start"; // optional description for "up" command
+  _no_color_help = "skip colorize"; // optional description for "no_color" field
+  _up_help = "create and start"; // optional description for "up" command
 
   main() {
     console.log("main command", this);
@@ -207,7 +207,7 @@ cliteRun({
   main() {
     console.log("main command", this);
   },
-  _up_desc: "create and start the services",
+  _up_help: "create and start the services",
   up(svc: string, timeout = 10) {
     console.log("up command", { svc, timeout, retry: this.retry });
   },

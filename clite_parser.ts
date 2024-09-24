@@ -106,7 +106,7 @@ function genCommandHelp(obj: Obj, helpLines: string[]) {
       if (args.length > 0) {
         col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
       }
-      const desc = obj[`_${method}_desc`] ?? "";
+      const desc = obj[`_${method}_help`] ?? obj[`_${method}_desc`] ?? "";
       if (desc) {
         col2 += gray(desc) + " ";
       }
@@ -128,7 +128,7 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
     const col1 = bold(`  --${toKebabCase(field)}`) +
       gray(`=<${toSnakeCase(field).toUpperCase()}>`);
     let col2 = "";
-    const desc = obj[`_${field}_desc`] ?? "";
+    const desc = obj[`_${field}_help`] ?? obj[`_${field}_desc`] ?? "";
     if (desc) {
       col2 += gray(desc) + " ";
     }
@@ -151,8 +151,8 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
  */
 export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   const helpLines: string[] = [];
-  if (obj._desc) {
-    helpLines.push(obj._desc + "\n");
+  if (obj._help || obj._desc) {
+    helpLines.push((obj._help || obj._desc) + "\n");
   }
   const usage = boldUnder("Usage:");
   const name = Object.getPrototypeOf(obj).constructor.name;
@@ -309,18 +309,18 @@ export function help(description: string): any {
   return function (target: any, prop?: any) {
     if (typeof prop === "string") { // case "compilerOptions": { "experimentalDecorators": true }
       if (prop) { // decorator on property
-        target[`_${prop}_desc`] = description;
+        target[`_${prop}_help`] = description;
       } else { // decorator on class
-        target.prototype._desc = description;
+        target.prototype._help = description;
       }
     } else { // experimentalDecorators = false
       prop.addInitializer(function () {
         if (prop.kind === "class") {
           // @ts-ignore dyn help
-          this.prototype._desc = description;
+          this.prototype._help = description;
         } else {
           // @ts-ignore dyn help
-          this[`_${prop.name}_desc`] = description;
+          this[`_${prop.name}_help`] = description;
         }
       });
     }

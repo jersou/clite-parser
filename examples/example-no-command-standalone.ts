@@ -3,9 +3,9 @@ import { cliteRun } from "jsr:@jersou/clite@0.4.0";
 
 export class Tool {
   retry = 2;
-  _desc = "This tool is a full example of CliteParser usage";
+  _help = "This tool is a full example of CliteParser usage";
   no_color?: string | boolean;
-  _no_color_desc = "skip colorize";
+  _no_color_help = "skip colorize";
 
   main(...services: string[]) {
     console.log("main command", this, { services });
