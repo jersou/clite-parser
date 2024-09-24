@@ -28,8 +28,15 @@ export function getFunctionArgNames(func: Function): string[] {
  * @returns method names of the object
  */
 export function getMethodNames(obj: object): string[] {
-  return Object.getOwnPropertyNames(Object.getPrototypeOf(obj))
-    .filter((n) => n !== "constructor");
+  const prototype = Object.getPrototypeOf(obj);
+  if (prototype.constructor.name === "Object") {
+    return Object.getOwnPropertyNames(obj)
+      // @ts-ignore dyn
+      .filter((n) => (typeof obj[n]) === "function");
+  } else {
+    return Object.getOwnPropertyNames(prototype)
+      .filter((n) => n !== "constructor");
+  }
 }
 
 /**
@@ -37,7 +44,9 @@ export function getMethodNames(obj: object): string[] {
  * @returns field names of the object
  */
 export function getFieldNames(obj: object): string[] {
-  return Object.getOwnPropertyNames(obj);
+  return Object.getOwnPropertyNames(obj)
+    // @ts-ignore dyn
+    .filter((n) => (typeof obj[n]) !== "function");
 }
 
 /**
@@ -46,7 +55,13 @@ export function getFieldNames(obj: object): string[] {
  * @returns arguments of methodName of obj
  */
 export function getMethodArgNames(obj: object, methodName: string): string[] {
-  return getFunctionArgNames(Object.getPrototypeOf(obj)[methodName]);
+  const prototype = Object.getPrototypeOf(obj);
+  if (prototype.constructor.name === "Object") {
+    // @ts-ignore dyn
+    return getFunctionArgNames(obj[methodName]);
+  } else {
+    return getFunctionArgNames(prototype[methodName]);
+  }
 }
 
 function getDefaultMethod(methods: string[]) {
@@ -301,10 +316,10 @@ export function help(description: string): any {
     } else { // experimentalDecorators = false
       prop.addInitializer(function () {
         if (prop.kind === "class") {
-          // @ts-ignore
+          // @ts-ignore dyn help
           this.prototype._desc = description;
         } else {
-          // @ts-ignore
+          // @ts-ignore dyn help
           this[`_${prop.name}_desc`] = description;
         }
       });

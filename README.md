@@ -35,8 +35,8 @@ cliteRun(new Tool());
 ## Run the commands with options and arguments
 
 ```shell
-#                   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓ ↓command↓ ↓cmd args↓
-$ ./example-lite-lite.ts --retry=4 --web-url=tttt --no-color   down     true  14
+#                        ↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓↓↓  ↓ command ↓  ↓ cmd args ↓
+$ ./example-lite-lite.ts --retry=4 --web-url=tttt --no-color     down        true  14
 down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
 
 $ ./example-lite-lite.ts down true 14
@@ -195,6 +195,45 @@ Note2: js private fields `#*` are also ignored :
 }
 ```
 
+## Plain Object
+
+A plain JS Object can be used :
+
+```typescript
+import { cliteRun } from "jsr:@jersou/clite@0.4.2";
+
+cliteRun({
+  retry: 2,
+  main() {
+    console.log("main command", this);
+  },
+  _up_desc: "create and start the services",
+  up(svc: string, timeout = 10) {
+    console.log("up command", { svc, timeout, retry: this.retry });
+  },
+  down(svc: string) {
+    console.log("down command", { svc, retry: this.retry });
+  },
+});
+```
+
+```shell
+$ ./plain_object_lite.ts --retry=77 up foo 123
+up command { svc: "foo", timeout: "123", retry: "77" }
+
+$ /plain_object_lite.ts --help
+Usage: <Object file> [Options] [command [command args]]
+
+Commands:
+  main                (default)
+  up <svc> <timeout>  create and start the services
+  down <svc>
+
+Options:
+  --retry=<RETRY>  (default "2")
+  --help           Show this help
+```
+
 ## Boolean options
 
 ```shell
@@ -207,6 +246,11 @@ main command Tool { retry: 2, webUrl: "none", no_color: "false" }
 $ ./example-lite.ts --no-color=true
 main command Tool { retry: 2, webUrl: "none", no_color: "true" }
 ```
+
+## Warning
+
+All options and command arguments are strings ! There is no boolean/number/...
+conversion !
 
 ## CliteRunConfig
 
@@ -229,7 +273,7 @@ If the method run by `cliteRun` return a value != undefined, it will be print in
 stdout.
 
 This behavior can be disabled with the config :
-`cliteRun(new Tool(), { dontPrintResult: true } )`
+`cliteRun(new Tool(), { dontPrintResult: true })`
 
 ### noCommand
 
