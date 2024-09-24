@@ -4,8 +4,9 @@
 [![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**CliteParser generate CLI from a class**, each method generate a "command",
-each field generate an "option". **example-lite.ts example** :
+**CliteParser generate CLI from a class** (or plain object), each method
+generate a "command", each field generate an "option". **example-lite.ts
+example** :
 
 ```typescript
 #!/usr/bin/env -S deno run
@@ -75,10 +76,10 @@ Options:
 
 ## Help description
 
-**The decorator @help can also be used, see bellow.**
+**The decorator @help can also be used, see the next section.**
 
 Optional fields `_<filed or method name>_help` or `_<filed or method name>_desc`
-(_desc is deprecated) are displayed as description in the help :
+are displayed as description in the help (_desc is deprecated) :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
@@ -366,11 +367,9 @@ The basename of import.meta.url will be used in the generated help, as
 
 This feature does not work with NodeJS (no import.meta.main).
 
-## Node support : npm install clite-parser
+## Node support : `npx jsr add @jersou/clite`
 
-### Usage from NPM
-
-Run `npx jsr add @jersou/clite` and import with
+Run `npx jsr add @jersou/clite` and then, import with
 `import { cliteRun } from "@jersou/clite";` :
 
 ```javascript
@@ -379,54 +378,12 @@ class Tool { ... }
 cliteRun(new Tool());
 ```
 
-See node usage examples:
+See node usage examples :
 
 - [examples/node/simple](examples/node/simple)
 - [examples/node/zx](examples/node/zx)
 
-### Usage with [--experimental-network-imports](https://nodejs.org/api/esm.html#https-and-http-imports) NodeJS option (without npm install) :
-
-Import directly by http :
-
-```javascript
-// run with "node --experimental-network-imports ./example.mjs"
-import { cliteRun } from "https://deno.land/x/clite_parser@0.2.2/clite_parser.mjs";
-```
-
-And run the script with:
-
-```shell
-$ node --experimental-network-imports ./example.mjs
-```
-
 ## Links
 
 - https://jsr.io/@jersou/clite
-- https://deno.land/x/clite_parser/
-- https://www.npmjs.com/package/clite-parser
-
-## Playground
-
-### NodeJs
-
-From https://stackblitz.com/edit/node-uywg3x?file=index.mjs&view=editor :
-
-In the terminal :
-
-```shell
-$ node ./index.mjs
-```
-
-or
-
-```shell
-$ chmod +x ./index.mjs
-$ ./index.mjs
-main command Tool { retry: 2, webUrl: 'none', no_color: undefined }
-```
-
-### Deno
-
-From
-https://codesandbox.io/p/devbox/clite-parser-deno-hw33ww?file=%2Findex.ts%3A8%2C1
-see Terminal
+- https://github.com/jersou/clite-parser
