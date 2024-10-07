@@ -176,9 +176,16 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
  * Result of parseArgs()
  */
 export type ParseResult = {
-  options: { [index: string]: string | boolean };
+  options: {
+    [index: string]:
+      | string
+      | boolean
+      | number
+      | undefined
+      | (string | number)[];
+  };
   command?: string;
-  commandArgs: string[];
+  commandArgs: (string | number)[];
 };
 
 /**
@@ -189,36 +196,54 @@ export type ParseResult = {
  * @returns the parse result
  */
 export function parseArgs(
+  obj: Obj,
   config?: CliteRunConfig,
   defaultMethod = "main",
 ): ParseResult {
-  const args = getArgs(config);
-  stdParseArgs(args, {});
-  // TODO use @std/cli/parse-args
-
   const argsResult: ParseResult = {
     options: {},
     commandArgs: [],
   };
-  for (const arg of args) {
-    if (argsResult.command) {
-      argsResult.commandArgs.push(arg);
-    } else if (arg.startsWith("--")) {
-      if (arg.includes("=")) {
-        const [key, value] = /^--([^=]+)=(.*)$/.exec(arg)!.slice(1);
-        argsResult.options[toCamelCase(key)] = value;
-      } else {
-        argsResult.options[toCamelCase(arg.substring(2))] = true;
+  const args = getArgs(config);
+  const stringProp: string[] = [];
+  const arrayProp: string[] = [];
+  const booleanProp: string[] = [];
+  const negatable: string[] = []; // TODO @negatable
+  const alias: Record<string, string | readonly string[]> = {}; // TODO @alias
+
+  for (const name of getFieldNames(obj)) {
+    switch (typeof obj[name]) {
+      case "boolean":
+        booleanProp.push(name);
+        break;
+      case "string":
+        stringProp.push(name);
+        break;
+      case "object":
+        if (Array.isArray(obj[name])) {
+          arrayProp.push(name);
+        }
+    }
+  }
+
+  const stdRes = stdParseArgs(args, {
+    negatable,
+    string: stringProp,
+    boolean: booleanProp,
+    collect: arrayProp,
+    alias,
+  });
+  for (const [key, value] of Object.entries(stdRes)) {
+    if (key === "_") {
+      if (config?.noCommand) {
+        argsResult.command = defaultMethod;
+        argsResult.commandArgs = stdRes._;
+      } else if (stdRes._.length > 0) {
+        argsResult.command = stdRes._[0].toString();
+        argsResult.commandArgs = stdRes._.slice(1);
       }
-    } else if (arg.startsWith("-")) {
-      const shorts = arg.substring(1).split("");
-      // TODO
-      console.log(shorts);
-    } else if (config?.noCommand) {
-      argsResult.command = defaultMethod;
-      argsResult.commandArgs.push(arg);
     } else {
-      argsResult.command = arg;
+      argsResult.options[toCamelCase(key)] = value;
     }
   }
   return argsResult;
@@ -282,7 +307,7 @@ function processResult(result: unknown, config?: CliteRunConfig) {
 function runCommand(
   obj: Obj,
   command: string,
-  cmdArgs: string[],
+  cmdArgs: (string | number)[],
   config?: CliteRunConfig,
 ) {
   const result = obj[command](...cmdArgs);
@@ -378,7 +403,7 @@ export function cliteRun(obj: Obj, config?: CliteRunConfig): unknown {
     try {
       const methods = getMethodNames(obj);
       const defaultMethod = getDefaultMethod(methods);
-      const parseResult = parseArgs(config, defaultMethod);
+      const parseResult = parseArgs(obj, config, defaultMethod);
       if (getFieldNames(parseResult.options).includes("help")) {
         console.error(help);
         return help;
