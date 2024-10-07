@@ -1,5 +1,6 @@
 import { bgRed, bold, gray, underline } from "jsr:@std/fmt@1.0.2/colors";
 import { toCamelCase, toKebabCase, toSnakeCase } from "jsr:@std/text@1.0.6";
+import { parseArgs as stdParseArgs } from "jsr:@std/cli@1.0.6/parse-args";
 
 /**
  * Obj type
@@ -192,6 +193,9 @@ export function parseArgs(
   defaultMethod = "main",
 ): ParseResult {
   const args = getArgs(config);
+  stdParseArgs(args, {});
+  // TODO use @std/cli/parse-args
+
   const argsResult: ParseResult = {
     options: {},
     commandArgs: [],
@@ -206,6 +210,10 @@ export function parseArgs(
       } else {
         argsResult.options[toCamelCase(arg.substring(2))] = true;
       }
+    } else if (arg.startsWith("-")) {
+      const shorts = arg.substring(1).split("");
+      // TODO
+      console.log(shorts);
     } else if (config?.noCommand) {
       argsResult.command = defaultMethod;
       argsResult.commandArgs.push(arg);
@@ -321,6 +329,38 @@ export function help(description: string): any {
         } else {
           // @ts-ignore dyn help
           this[`_${prop.name}_help`] = description;
+        }
+      });
+    }
+  };
+}
+
+/**
+ * decorator on properties : `@alias("p")`
+ * @param alias - to use as short alias
+ */
+// deno-lint-ignore no-explicit-any
+export function alias(alias: string): any {
+  // deno-lint-ignore no-explicit-any
+  return function (target: any, prop?: any) {
+    if (typeof prop === "string") { // case "compilerOptions": { "experimentalDecorators": true }
+      if (prop && typeof target[prop] !== "function") { // decorator on property
+        if (!target[`_${prop}_alias`]) {
+          target[`_${prop}_alias`] = [];
+        }
+        target[`_${prop}_alias`].push(alias);
+      }
+    } else { // experimentalDecorators = false
+      prop.addInitializer(function () {
+        // @ts-ignore dyn help
+        if (prop.kind !== "class" && typeof this[prop.name] !== "function") {
+          // @ts-ignore dyn help
+          if (!this[`_${prop.name}_alias`]) {
+            // @ts-ignore dyn help
+            this[`_${prop.name}_alias`] = [];
+          }
+          // @ts-ignore dyn help
+          this[`_${prop.name}_alias`].push(alias);
         }
       });
     }

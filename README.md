@@ -33,23 +33,6 @@ class Tool {
 cliteRun(new Tool());
 ```
 
-## Run the commands with options and arguments
-
-```shell
-#                        ↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓↓↓  ↓ command ↓  ↓ cmd args ↓
-$ ./example-lite-lite.ts --retry=4 --web-url=tttt --no-color     down        true  14
-down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
-
-$ ./example-lite-lite.ts down true 14
-down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
-
-$ ./example-lite-lite.ts  --retry=4 --web-url=tttt --no-color
-main command Tool { retry: "4", webUrl: "tttt", no_color: true }
-
-$ deno https://raw.githubusercontent.com/jersou/clite-parser/refs/heads/main/examples/example-lite-lite.ts  --retry=4 --web-url=tttt --no-color   down     true  14
-down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
-```
-
 ## The help is generated automatically:
 
 ![help image](./help-lite-lite.png)
@@ -73,6 +56,23 @@ Options:
   --help                 Show this help
 
 -->
+
+## Run the commands with options and arguments
+
+```shell
+#                        ↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓↓↓  ↓ command ↓  ↓ cmd args ↓
+$ ./example-lite-lite.ts --retry=4 --web-url=tttt --no-color     down        true  14
+down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
+
+$ ./example-lite-lite.ts down true 14
+down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
+
+$ ./example-lite-lite.ts  --retry=4 --web-url=tttt --no-color
+main command Tool { retry: "4", webUrl: "tttt", no_color: true }
+
+$ deno https://raw.githubusercontent.com/jersou/clite-parser/refs/heads/main/examples/example-lite-lite.ts  --retry=4 --web-url=tttt --no-color   down     true  14
+down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
+```
 
 ## Help description
 
@@ -380,6 +380,7 @@ cliteRun(new Tool());
 
 See node usage examples :
 
+- [examples/node/dax](examples/node/dax)
 - [examples/node/simple](examples/node/simple)
 - [examples/node/zx](examples/node/zx)
 
