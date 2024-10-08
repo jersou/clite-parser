@@ -8,7 +8,7 @@ import { parseArgs as stdParseArgs } from "jsr:@std/cli@1.0.6/parse-args";
 // deno-lint-ignore no-explicit-any
 export type Obj = { [index: string]: any };
 
-const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
 
 /**
@@ -19,9 +19,14 @@ const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
 export function getFunctionArgNames(func: Function): string[] {
   const fnStr = func.toString().replace(COMMENTS_REGEX, "");
   const argNames = ARGUMENT_NAMES_REGEX.exec(fnStr);
-  return argNames?.[1].length && argNames?.[1]?.replace(/\s*=\s*[^,]+\s*/g, "")
+  return (
+    (argNames?.[1].length &&
+      argNames?.[1]
+        ?.replace(/\s*=\s*[^,]+\s*/g, "")
         .split(",")
-        .map((arg) => arg.replace(/[\s()]+/g, "")) || [];
+        .map((arg) => arg.replace(/[\s()]+/g, ""))) ||
+    []
+  );
 }
 
 /**
@@ -31,12 +36,15 @@ export function getFunctionArgNames(func: Function): string[] {
 export function getMethodNames(obj: object): string[] {
   const prototype = Object.getPrototypeOf(obj);
   if (prototype.constructor.name === "Object") {
-    return Object.getOwnPropertyNames(obj)
-      // @ts-ignore dyn
-      .filter((n) => (typeof obj[n]) === "function");
+    return (
+      Object.getOwnPropertyNames(obj)
+        // @ts-ignore dyn
+        .filter((n) => typeof obj[n] === "function")
+    );
   } else {
-    return Object.getOwnPropertyNames(prototype)
-      .filter((n) => n !== "constructor");
+    return Object.getOwnPropertyNames(prototype).filter(
+      (n) => n !== "constructor",
+    );
   }
 }
 
@@ -45,9 +53,11 @@ export function getMethodNames(obj: object): string[] {
  * @returns field names of the object
  */
 export function getFieldNames(obj: object): string[] {
-  return Object.getOwnPropertyNames(obj)
-    // @ts-ignore dyn
-    .filter((n) => (typeof obj[n]) !== "function");
+  return (
+    Object.getOwnPropertyNames(obj)
+      // @ts-ignore dyn
+      .filter((n) => typeof obj[n] !== "function")
+  );
 }
 
 /**
@@ -69,7 +79,7 @@ function getDefaultMethod(methods: string[]) {
   if (methods.length == 1) {
     return methods[0];
   } else {
-    return (methods.includes("main") ? "main" : undefined);
+    return methods.includes("main") ? "main" : undefined;
   }
 }
 
@@ -97,6 +107,7 @@ function genCommandHelp(obj: Obj, helpLines: string[]) {
   const allMethods = getMethodNames(obj);
   const methods = allMethods.filter((method) => !method.startsWith("_"));
   const defaultCommand = getDefaultMethod(methods);
+  const helpMetadata = getMetadata(obj, "clite_help");
   if (methods.length > 0) {
     helpLines.push(boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`));
     const linesCols: [string, string][] = [];
@@ -107,7 +118,10 @@ function genCommandHelp(obj: Obj, helpLines: string[]) {
       if (args.length > 0) {
         col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
       }
-      const desc = obj[`_${method}_help`] ?? obj[`_${method}_desc`] ?? "";
+      const desc = helpMetadata?.[method] ??
+        obj[`_${method}_help`] ??
+        obj[`_${method}_desc`] ??
+        "";
       if (desc) {
         col2 += gray(desc) + " ";
       }
@@ -121,15 +135,26 @@ function genCommandHelp(obj: Obj, helpLines: string[]) {
 }
 
 function genOptionsHelp(obj: Obj, helpLines: string[]) {
+  const helpMetadata = getMetadata(obj, "clite_help");
+  // deno-lint-ignore no-explicit-any
+  const aliasMetadata = getMetadata(obj, "clite_alias") as Record<string, any>;
   const allFields = getFieldNames(obj);
   const fields = allFields.filter((method) => !method.startsWith("_"));
   helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
   const linesCols: [string, string][] = [];
   for (const field of fields) {
-    const col1 = bold(`  --${toKebabCase(field)}`) +
-      gray(`=<${toSnakeCase(field).toUpperCase()}>`);
+    // TODO  add alias
+    const alias = aliasMetadata?.[field] || [];
+    if (obj[`_${name}_alias`]) {
+      alias.push(...obj[`_${name}_alias`]);
+    }
+
+    const col1 = bold(`  --${toKebabCase(field)}`);
     let col2 = "";
-    const desc = obj[`_${field}_help`] ?? obj[`_${field}_desc`] ?? "";
+    const desc = helpMetadata?.[field] ??
+      obj[`_${field}_help`] ??
+      obj[`_${field}_desc`] ??
+      "";
     if (desc) {
       col2 += gray(desc) + " ";
     }
@@ -139,7 +164,7 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
     }
     linesCols.push([col1, col2]);
   }
-  linesCols.push([bold(`  --help`) + gray(""), gray("Show this help")]);
+  linesCols.push([bold(`  --help`), gray("Show this help")]);
   helpLines.push(...align(linesCols));
 }
 
@@ -152,8 +177,12 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
  */
 export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   const helpLines: string[] = [];
-  if (obj._help || obj._desc) {
-    helpLines.push((obj._help || obj._desc) + "\n");
+  const helpMetadata = getMetadata(obj, "clite_help");
+  const objHelp = helpMetadata?.[Object.getPrototypeOf(obj).constructor.name] ??
+    obj._help ??
+    obj._desc;
+  if (objHelp) {
+    helpLines.push(objHelp + "\n");
   }
   const usage = boldUnder("Usage:");
   const name = Object.getPrototypeOf(obj).constructor.name;
@@ -163,9 +192,7 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   if (config?.noCommand) {
     helpLines.push(`${usage} ${mainFile} [Options] [args]`);
   } else {
-    helpLines.push(
-      `${usage} ${mainFile} [Options] [command [command args]]`,
-    );
+    helpLines.push(`${usage} ${mainFile} [Options] [command [command args]]`);
     genCommandHelp(obj, helpLines);
   }
   genOptionsHelp(obj, helpLines);
@@ -209,8 +236,7 @@ export function parseArgs(
   const arrayProp: string[] = [];
   const booleanProp: string[] = [];
   const negatable: string[] = []; // TODO @negatable
-  const alias: Record<string, string | readonly string[]> = {}; // TODO @alias
-
+  const alias: Record<string, string[]> = {};
   for (const name of getFieldNames(obj)) {
     switch (typeof obj[name]) {
       case "boolean":
@@ -223,6 +249,22 @@ export function parseArgs(
         if (Array.isArray(obj[name])) {
           arrayProp.push(name);
         }
+    }
+    if (obj[`_${name}_alias`]) {
+      if (!alias[name]) {
+        alias[name] = [];
+      }
+      (alias[name] as string[]).push(obj[`_${name}_alias`]);
+    }
+  }
+  // deno-lint-ignore no-explicit-any
+  const aliasMetadata = getMetadata(obj, "clite_alias") as Record<string, any>;
+  if (aliasMetadata) {
+    for (const [prop, aliasName] of Object.entries(aliasMetadata)) {
+      if (!alias[prop]) {
+        alias[prop] = [];
+      }
+      alias[prop].push(aliasName);
     }
   }
 
@@ -250,16 +292,30 @@ export function parseArgs(
 }
 
 function fillFields(parseResult: ParseResult, obj: Obj) {
+  // deno-lint-ignore no-explicit-any
+  const aliasMetadata = getMetadata(obj, "clite_alias") as Record<string, any>;
+  const aliasNames = aliasMetadata ? Object.values(aliasMetadata).flat() : [];
   const fields = getFieldNames(obj);
+  const publicFields = fields.filter(
+    (f) => !f.startsWith("_") && !f.startsWith("#"),
+  );
+  for (const field of publicFields) {
+    if (obj[`_${field}_alias`]) {
+      aliasNames.push(...obj[`_${field}_alias`]);
+    }
+  }
+
   for (const option of getFieldNames(parseResult.options)) {
     if (fields.includes(option)) {
       obj[option] = parseResult.options[option];
     } else if (fields.includes(toSnakeCase(option))) {
       obj[toSnakeCase(option)] = parseResult.options[option];
     } else {
-      throw new Error(`The option "${option}" doesn't exist`, {
-        cause: { clite: true },
-      });
+      if (!aliasNames.includes(option)) {
+        throw new Error(`The option "${option}" doesn't exist`, {
+          cause: { clite: true },
+        });
+      }
     }
   }
 }
@@ -332,6 +388,34 @@ function getArgs(config?: CliteRunConfig) {
   }
 }
 
+// from decorator with experimentalDecorators = false or true
+// deno-lint-ignore no-explicit-any
+function addMetadata(target: any, prop: any, key: string, val: any) {
+  let metadata;
+  let propName;
+  if (prop.addInitializer) {
+    // experimentalDecorators = false
+    metadata = prop.metadata;
+    propName = prop.name;
+  } else {
+    // experimentalDecorators = true
+    if (!target.constructor[Symbol.metadata]) {
+      target.constructor[Symbol.metadata] = {};
+    }
+    metadata = target.constructor[Symbol.metadata];
+    propName = prop;
+  }
+  if (!metadata[key]) {
+    metadata[key] = {};
+  }
+  metadata[key][propName] = val;
+}
+
+// deno-lint-ignore no-explicit-any
+function getMetadata(obj: any, key: string) {
+  return Object.getPrototypeOf(obj).constructor[Symbol.metadata]?.[key];
+}
+
 /**
  * decorator on classes/methods/properties : `@help("description...")`
  * @param description - to display in the help
@@ -340,23 +424,7 @@ function getArgs(config?: CliteRunConfig) {
 export function help(description: string): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    if (typeof prop === "string") { // case "compilerOptions": { "experimentalDecorators": true }
-      if (prop) { // decorator on property
-        target[`_${prop}_help`] = description;
-      } else { // decorator on class
-        target.prototype._help = description;
-      }
-    } else { // experimentalDecorators = false
-      prop.addInitializer(function () {
-        if (prop.kind === "class") {
-          // @ts-ignore dyn help
-          this.prototype._help = description;
-        } else {
-          // @ts-ignore dyn help
-          this[`_${prop.name}_help`] = description;
-        }
-      });
-    }
+    addMetadata(target, prop, "clite_help", description);
   };
 }
 
@@ -368,27 +436,7 @@ export function help(description: string): any {
 export function alias(alias: string): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    if (typeof prop === "string") { // case "compilerOptions": { "experimentalDecorators": true }
-      if (prop && typeof target[prop] !== "function") { // decorator on property
-        if (!target[`_${prop}_alias`]) {
-          target[`_${prop}_alias`] = [];
-        }
-        target[`_${prop}_alias`].push(alias);
-      }
-    } else { // experimentalDecorators = false
-      prop.addInitializer(function () {
-        // @ts-ignore dyn help
-        if (prop.kind !== "class" && typeof this[prop.name] !== "function") {
-          // @ts-ignore dyn help
-          if (!this[`_${prop.name}_alias`]) {
-            // @ts-ignore dyn help
-            this[`_${prop.name}_alias`] = [];
-          }
-          // @ts-ignore dyn help
-          this[`_${prop.name}_alias`].push(alias);
-        }
-      });
-    }
+    addMetadata(target, prop, "clite_alias", alias);
   };
 }
 
@@ -424,9 +472,7 @@ export function cliteRun(obj: Obj, config?: CliteRunConfig): unknown {
       }
     } catch (e) {
       if (e.cause?.clite || config?.printHelpOnError) {
-        console.error(
-          bgRed(bold("An error occurred ! The help :")),
-        );
+        console.error(bgRed(bold("An error occurred ! The help :")));
         console.error(help);
         console.error();
         console.error(bgRed(bold("The error :")));
