@@ -1,5 +1,6 @@
 #!/usr/bin/env -S deno run -A
-import { alias, cliteRun, defaultHelp, help, type } from "../clite_parser.ts";
+import { cliteRun } from "../clite_parser.ts";
+import { alias, defaultHelp, help, type } from "../src/decorators.ts";
 
 // CLI of https://github.com/jersou/studio-pack-generator
 

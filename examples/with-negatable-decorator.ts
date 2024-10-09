@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun, help, negatable } from "jsr:@jersou/clite@0.5.0";
+import { cliteRun, help, negatable } from "../clite_parser.ts";
 
 class Tool {
   @negatable("disable TTY")
