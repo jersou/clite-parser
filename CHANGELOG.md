@@ -2,9 +2,10 @@
 
 - feat: use [@std/cli](https://jsr.io/@std/cli/doc/parse-args) ! based on
   [minimist](https://github.com/minimistjs/minimist).
-- feat: add alias decorator & _<prop>_alias
-- feat: add types decorator & _<prop>_types
-- feat: add defaultHelp decorator & _<prop>_default
+- feat: add `@alias` decorator & `_<prop>_alias`
+- feat: add `@types` decorator & `_<prop>_types`
+- feat: add `@defaultHelp` decorator & `_<prop>_default`
+- feat: add `@negatable` decorator & `_<prop>_negatable`
 - feat: update help format
 
 ## [0.5.0](https://github.com/jersou/clite-parser/compare/0.4.0...0.5.0) (2024-09-24)

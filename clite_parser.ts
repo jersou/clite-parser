@@ -4,7 +4,6 @@ import { parseArgs as stdParseArgs } from "jsr:@std/cli@1.0.6/parse-args";
 
 // TODO split this file
 // TODO @negatable
-// TODO option "--config" to import parameter values
 
 /**
  * Obj type
@@ -150,6 +149,8 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
   const aliasMetadata = getMetadata(obj, "clite_alias") as MetadataMap;
   const typesMetadata = getMetadata(obj, "clite_types") as MetadataMap;
   const defaultMetadata = getMetadata(obj, "clite_defaults") as MetadataMap;
+  const negatableMetadata = getMetadata(obj, "clite_negatables") as MetadataMap;
+  const negatables = Object.keys(negatableMetadata ?? {});
   const allFields = getFieldNames(obj);
   const fields = allFields.filter((method) => !method.startsWith("_"));
   helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
@@ -171,7 +172,6 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
       .join(" ");
 
     const col0 = bold(` ${aliasHelp}`);
-
     const col1 = bold(` --${toKebabCase(field)}`);
     let col2 = "";
     let col3 = "";
@@ -195,6 +195,24 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
       }
     }
     linesCols.push([col0, col1, col2, col3]);
+    // TODO refactor
+    if (negatables.includes(field)) {
+      linesCols.push([
+        bold(" "),
+        bold(` --${toKebabCase("no_" + field)}`),
+        negatableMetadata?.[field] ?? "",
+        "",
+      ]);
+    } else if (obj[`_${field}_negatable`]) {
+      linesCols.push([
+        bold(" "),
+        bold(` --${toKebabCase("no_" + field)}`),
+        typeof obj[`_${field}_negatable`] === "string"
+          ? obj[`_${field}_negatable`]
+          : "",
+        "",
+      ]);
+    }
   }
   helpLines.push(...align(linesCols));
 }
@@ -267,7 +285,6 @@ export function parseArgs(
   const stringProp: string[] = [];
   const arrayProp: string[] = [];
   const booleanProp: string[] = [];
-  const negatable: string[] = []; // TODO @negatable
   const alias: Record<string, string[]> = { help: ["h"] };
   for (const name of getFieldNames(obj)) {
     switch (typeof obj[name]) {
@@ -299,9 +316,10 @@ export function parseArgs(
       alias[prop].push(...aliasName);
     }
   }
+  const negatableMetadata = getMetadata(obj, "clite_negatables") ?? {};
 
   const stdRes = stdParseArgs(args, {
-    negatable,
+    negatable: Object.keys(negatableMetadata),
     string: stringProp,
     boolean: booleanProp,
     collect: arrayProp,
@@ -500,6 +518,18 @@ export function defaultHelp(defaultHelp: string): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
     addMetadata(target, prop, "clite_defaults", defaultHelp);
+  };
+}
+
+/**
+ * decorator on properties : `@negatable` on boolean, negated by prefixing it with --no-
+ * @param help - to add to the help (optional)
+ */
+// deno-lint-ignore no-explicit-any
+export function negatable(help?: string): any {
+  // deno-lint-ignore no-explicit-any
+  return function (target: any, prop?: any) {
+    addMetadata(target, prop, "clite_negatables", help);
   };
 }
 
