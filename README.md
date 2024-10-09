@@ -162,6 +162,11 @@ class Tool {
 cliteRun(new Tool());
 ```
 
+## Argument parsing
+
+Clite use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
+[minimist](https://github.com/minimistjs/minimist).
+
 ## Default command
 
 - If there is only one method/command => this method is the default

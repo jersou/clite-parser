@@ -2,6 +2,10 @@ import { bgRed, bold, gray, underline } from "jsr:@std/fmt@1.0.2/colors";
 import { toCamelCase, toKebabCase, toSnakeCase } from "jsr:@std/text@1.0.6";
 import { parseArgs as stdParseArgs } from "jsr:@std/cli@1.0.6/parse-args";
 
+// TODO split this file
+// TODO @negatable
+// TODO option "--config" to import parameter values
+
 /**
  * Obj type
  */
@@ -93,13 +97,17 @@ function boldUnder(str: string) {
  * @param input array of string pairs
  * @returns array of string of aligned pairs
  */
-export function align(input: [string, string][]): string[] {
-  const max: number = input.reduce(
-    (prev, curr) => Math.max(prev, curr[0].trimEnd().length),
+export function align(input: [string, string, string, string][]): string[] {
+  const maxCol0 = input.reduce((prev, cur) => Math.max(prev, cur[0].length), 0);
+  const maxCol1 = input.reduce((prev, cur) => Math.max(prev, cur[1].length), 0);
+  const maxCol23 = input.reduce(
+    (prev, cur) => Math.max(prev, cur[2].length + cur[3].length),
     0,
-  );
-  return input.map(([col1, col2]) =>
-    `${col1.padEnd(max)}  ${col2 ?? ""}`.trimEnd()
+  ) + 1;
+  return input.map(([col0, col1, col2, col3]) =>
+    `${col0.padStart(maxCol0)}${col1.padEnd(maxCol1)} ${
+      col2.padEnd(maxCol23 - col3.length) ?? ""
+    }${col3 ?? ""}`.trimEnd()
   );
 }
 
@@ -110,61 +118,84 @@ function genCommandHelp(obj: Obj, helpLines: string[]) {
   const helpMetadata = getMetadata(obj, "clite_help");
   if (methods.length > 0) {
     helpLines.push(boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`));
-    const linesCols: [string, string][] = [];
+    const linesCols: [string, string, string, string][] = [];
     for (const method of methods) {
       let col1 = bold(`  ${method}`);
-      let col2 = "";
       const args = getMethodArgNames(obj, method);
       if (args.length > 0) {
         col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
       }
-      const desc = helpMetadata?.[method] ??
+      let col2 = helpMetadata?.[method] ??
         obj[`_${method}_help`] ??
         obj[`_${method}_desc`] ??
         "";
-      if (desc) {
-        col2 += gray(desc) + " ";
-      }
+
       if (method === defaultCommand) {
-        col2 += gray("(default)");
+        col2 += col2.length ? " " : "";
+        col2 += bold("[default]");
       }
-      linesCols.push([col1, col2]);
+
+      const col3 = "";
+      linesCols.push(["", col1, col2, col3]);
     }
     helpLines.push(...align(linesCols));
   }
 }
 
+// deno-lint-ignore no-explicit-any
+type MetadataMap = Record<string, any>;
+
 function genOptionsHelp(obj: Obj, helpLines: string[]) {
   const helpMetadata = getMetadata(obj, "clite_help");
-  // deno-lint-ignore no-explicit-any
-  const aliasMetadata = getMetadata(obj, "clite_alias") as Record<string, any>;
+  const aliasMetadata = getMetadata(obj, "clite_alias") as MetadataMap;
+  const typesMetadata = getMetadata(obj, "clite_types") as MetadataMap;
+  const defaultMetadata = getMetadata(obj, "clite_defaults") as MetadataMap;
   const allFields = getFieldNames(obj);
   const fields = allFields.filter((method) => !method.startsWith("_"));
   helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
-  const linesCols: [string, string][] = [];
+  const linesCols: [string, string, string, string][] = [];
+  linesCols.push([
+    bold(` -h,`),
+    bold(` --help`),
+    "Show this help",
+    gray("[default: false]"),
+  ]);
   for (const field of fields) {
-    // TODO  add alias
-    const alias = aliasMetadata?.[field] || [];
+    const alias: string[] = aliasMetadata?.[field] || [];
     if (obj[`_${name}_alias`]) {
       alias.push(...obj[`_${name}_alias`]);
     }
 
-    const col1 = bold(`  --${toKebabCase(field)}`);
+    const aliasHelp = (Array.isArray(alias) ? alias : [alias])
+      .map((a) => (a.length === 1 ? `-${a},` : `--${toKebabCase(a)},`))
+      .join(" ");
+
+    const col0 = bold(` ${aliasHelp}`);
+
+    const col1 = bold(` --${toKebabCase(field)}`);
     let col2 = "";
+    let col3 = "";
     const desc = helpMetadata?.[field] ??
       obj[`_${field}_help`] ??
       obj[`_${field}_desc`] ??
       "";
     if (desc) {
-      col2 += gray(desc) + " ";
+      col2 += desc;
     }
-    const defaultValue = obj[field];
+    const defaultValue = defaultMetadata?.[field] ?? obj[field];
     if (defaultValue != undefined) {
-      col2 += gray(`(default "${defaultValue}")`);
+      const defaultHelp = typeof defaultValue === "string"
+        ? `"${defaultValue}"`
+        : defaultValue;
+      col3 = gray(`[default: ${defaultHelp}]`);
+    } else {
+      const type = typesMetadata?.[field] ?? obj[`_${field}_type`];
+      if (type) {
+        col3 = gray(`[${type}]`);
+      }
     }
-    linesCols.push([col1, col2]);
+    linesCols.push([col0, col1, col2, col3]);
   }
-  linesCols.push([bold(`  --help`), gray("Show this help")]);
   helpLines.push(...align(linesCols));
 }
 
@@ -218,6 +249,7 @@ export type ParseResult = {
 /**
  * parse config?.args, or Deno arguments (Deno.args) or node arguments (process.argv)
  *
+ * @param obj to analyse
  * @param config - to use to parse
  * @param defaultMethod - to run if no arg
  * @returns the parse result
@@ -236,7 +268,7 @@ export function parseArgs(
   const arrayProp: string[] = [];
   const booleanProp: string[] = [];
   const negatable: string[] = []; // TODO @negatable
-  const alias: Record<string, string[]> = {};
+  const alias: Record<string, string[]> = { help: ["h"] };
   for (const name of getFieldNames(obj)) {
     switch (typeof obj[name]) {
       case "boolean":
@@ -264,7 +296,7 @@ export function parseArgs(
       if (!alias[prop]) {
         alias[prop] = [];
       }
-      alias[prop].push(aliasName);
+      alias[prop].push(...aliasName);
     }
   }
 
@@ -408,7 +440,14 @@ function addMetadata(target: any, prop: any, key: string, val: any) {
   if (!metadata[key]) {
     metadata[key] = {};
   }
-  metadata[key][propName] = val;
+  if (Object.hasOwn(metadata[key], propName)) {
+    if (!Array.isArray(metadata[key][propName])) {
+      metadata[key][propName] = [metadata[key][propName]];
+    }
+    metadata[key][propName].push(val);
+  } else {
+    metadata[key][propName] = val;
+  }
 }
 
 // deno-lint-ignore no-explicit-any
@@ -437,6 +476,30 @@ export function alias(alias: string): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
     addMetadata(target, prop, "clite_alias", alias);
+  };
+}
+
+/**
+ * decorator on properties : `@type("string")`
+ * @param typeHelp - to add to the help
+ */
+// deno-lint-ignore no-explicit-any
+export function type(typeHelp: string): any {
+  // deno-lint-ignore no-explicit-any
+  return function (target: any, prop?: any) {
+    addMetadata(target, prop, "clite_types", typeHelp);
+  };
+}
+
+/**
+ * decorator on properties : `@default("default in help")`
+ * @param defaultHelp - to add to the help
+ */
+// deno-lint-ignore no-explicit-any
+export function defaultHelp(defaultHelp: string): any {
+  // deno-lint-ignore no-explicit-any
+  return function (target: any, prop?: any) {
+    addMetadata(target, prop, "clite_defaults", defaultHelp);
   };
 }
 

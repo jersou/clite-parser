@@ -103,16 +103,16 @@ Usage: <Tool file> [Options] [command [command args]]
 Commands:
   up
   down <force> <timeout>
-  clean                   clean all data
-  main                    (default)
+  clean                  clean all data
+  main                   [default]
 
 Options:
-  --opt-1           (default "123")
-  --opt-2           (default "true")
-  --opt-3           option 3 desc (default "azer")
-  --opt-snake-case
-  --opt-camel-case  optCamelCase desc
-  --help            Show this help`;
+ -h, --help           Show this help [default: false]
+     --opt-1                           [default: 123]
+     --opt-2                          [default: true]
+     --opt-3          option 3 desc [default: "azer"]
+     --opt-snake-case
+     --opt-camel-case optCamelCase desc`;
   assertEquals(stripAnsiCode(genHelp(tool)), expected);
 });
 
@@ -123,12 +123,12 @@ Deno.test("genHelp  noCommand", () => {
 Usage: <Tool file> [Options] [args]
 
 Options:
-  --opt-1           (default "123")
-  --opt-2           (default "true")
-  --opt-3           option 3 desc (default "azer")
-  --opt-snake-case
-  --opt-camel-case  optCamelCase desc
-  --help            Show this help`;
+ -h, --help           Show this help [default: false]
+     --opt-1                           [default: 123]
+     --opt-2                          [default: true]
+     --opt-3          option 3 desc [default: "azer"]
+     --opt-snake-case
+     --opt-camel-case optCamelCase desc`;
   assertEquals(stripAnsiCode(genHelp(tool, { noCommand: true })), expected);
 });
 
@@ -141,16 +141,16 @@ Usage: the_tool_file [Options] [command [command args]]
 Commands:
   up
   down <force> <timeout>
-  clean                   clean all data
-  main                    (default)
+  clean                  clean all data
+  main                   [default]
 
 Options:
-  --opt-1           (default "123")
-  --opt-2           (default "true")
-  --opt-3           option 3 desc (default "azer")
-  --opt-snake-case
-  --opt-camel-case  optCamelCase desc
-  --help            Show this help`;
+ -h, --help           Show this help [default: false]
+     --opt-1                           [default: 123]
+     --opt-2                          [default: true]
+     --opt-3          option 3 desc [default: "azer"]
+     --opt-snake-case
+     --opt-camel-case optCamelCase desc`;
   assertEquals(
     stripAnsiCode(genHelp(tool, { mainFile: "the_tool_file" })),
     expected,
@@ -283,11 +283,11 @@ Deno.test("cliteRun help", () => {
 });
 
 Deno.test("align", () => {
-  const input: [string, string][] = [
-    ["az", "t"],
-    ["azert", "t"],
+  const input: [string, string, string, string][] = [
+    ["az ", "t", "sssss ", "hhh"],
+    ["azert ", "t", "ss ", "h"],
   ];
   const result = align(input);
-  const expected = ["az     t", "azert  t"];
+  const expected = ["   az t sssss  hhh", "azert t ss       h"];
   assertEquals(result, expected);
 });
