@@ -1,7 +1,7 @@
 import { getMetadata } from "./decorators.ts";
 import type { CliteRunConfig } from "../clite_parser.ts";
-import { toCamelCase, toSnakeCase } from "jsr:@std/text@1.0.6";
-import { parseArgs as stdParseArgs } from "jsr:@std/cli@1.0.6/parse-args";
+import { toCamelCase, toSnakeCase } from "@std/text";
+import { parseArgs as stdParseArgs } from "@std/cli";
 import { getFieldNames } from "./reflect.ts";
 
 /**

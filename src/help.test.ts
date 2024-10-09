@@ -1,5 +1,5 @@
-import { assertEquals } from "jsr:@std/assert@1.0.5";
-import { stripAnsiCode } from "jsr:@std/fmt@1.0.2/colors";
+import { assertEquals } from "@std/assert";
+import { stripAnsiCode } from "@std/fmt/colors";
 import { align, genHelp } from "./help.ts";
 import { Tool } from "./test_data.test.ts";
 

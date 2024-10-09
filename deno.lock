@@ -3,16 +3,27 @@
   "packages": {
     "specifiers": {
       "jsr:@std/assert@1.0.5": "jsr:@std/assert@1.0.5",
+      "jsr:@std/assert@^1.0.6": "jsr:@std/assert@1.0.6",
       "jsr:@std/cli@1.0.6": "jsr:@std/cli@1.0.6",
+      "jsr:@std/cli@^1.0.6": "jsr:@std/cli@1.0.6",
       "jsr:@std/fmt@1.0.2": "jsr:@std/fmt@1.0.2",
+      "jsr:@std/fmt@^1.0.2": "jsr:@std/fmt@1.0.2",
       "jsr:@std/internal@^1.0.3": "jsr:@std/internal@1.0.4",
-      "jsr:@std/text@1.0.6": "jsr:@std/text@1.0.6"
+      "jsr:@std/internal@^1.0.4": "jsr:@std/internal@1.0.4",
+      "jsr:@std/text@1.0.6": "jsr:@std/text@1.0.6",
+      "jsr:@std/text@^1.0.7": "jsr:@std/text@1.0.7"
     },
     "jsr": {
       "@std/assert@1.0.5": {
         "integrity": "e37da8e4033490ce613eec4ac1d78dba1faf5b02a3f6c573a28f15365b9b440f",
         "dependencies": [
           "jsr:@std/internal@^1.0.3"
+        ]
+      },
+      "@std/assert@1.0.6": {
+        "integrity": "1904c05806a25d94fe791d6d883b685c9e2dcd60e4f9fc30f4fc5cf010c72207",
+        "dependencies": [
+          "jsr:@std/internal@^1.0.4"
         ]
       },
       "@std/cli@1.0.6": {
@@ -26,8 +37,19 @@
       },
       "@std/text@1.0.6": {
         "integrity": "7051a5b72916900df19a7bbbbbf6412a475d0e3306a28119e9a63199e2608965"
+      },
+      "@std/text@1.0.7": {
+        "integrity": "344a820af99fde81ae1d4f9ce586da3f47a58cda25ac4c4dd688166cf5ed97f1"
       }
     }
   },
-  "remote": {}
+  "remote": {},
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@^1.0.6",
+      "jsr:@std/cli@^1.0.6",
+      "jsr:@std/fmt@^1.0.2",
+      "jsr:@std/text@^1.0.7"
+    ]
+  }
 }

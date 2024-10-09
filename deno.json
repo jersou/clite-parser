@@ -15,5 +15,11 @@
     "test-watch": "deno test -A --watch --ignore=tmp,.cov_profile",
     "run-example": "deno run examples/example-lite.ts --retry=7 down true 3",
     "update-changelog": "conventional-changelog -p conventionalcommits --same-file -i CHANGELOG.md -k deno.json && deno task fmt"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.6",
+    "@std/cli": "jsr:@std/cli@^1.0.6",
+    "@std/fmt": "jsr:@std/fmt@^1.0.2",
+    "@std/text": "jsr:@std/text@^1.0.7"
   }
 }

@@ -1,9 +1,9 @@
 import { getMetadata } from "./decorators.ts";
 import type { CliteRunConfig } from "../clite_parser.ts";
-import { toKebabCase } from "jsr:@std/text@1.0.6";
+import { toKebabCase } from "@std/text";
 import type { Obj } from "./parse_args.ts";
 import { getFieldNames, getMethodArgNames, getMethodNames } from "./reflect.ts";
-import { bold, gray, underline } from "jsr:@std/fmt@1.0.2/colors";
+import { bold, gray, underline } from "@std/fmt/colors";
 
 export function boldUnder(str: string) {
   return bold(underline(str));

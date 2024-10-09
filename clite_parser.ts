@@ -1,4 +1,4 @@
-import { bgRed, bold } from "jsr:@std/fmt@1.0.2/colors";
+import { bgRed, bold } from "@std/fmt/colors";
 import { genHelp, getDefaultMethod } from "./src/help.ts";
 import { fillFields, type Obj, parseArgs } from "./src/parse_args.ts";
 import { getFieldNames, getMethodNames } from "./src/reflect.ts";

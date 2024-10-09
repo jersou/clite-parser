@@ -1,4 +1,4 @@
-import { assertEquals } from "jsr:@std/assert@1.0.5";
+import { assertEquals } from "@std/assert";
 import {
   getFieldNames,
   getFunctionArgNames,
