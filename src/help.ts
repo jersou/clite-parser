@@ -68,7 +68,11 @@ function genCommandHelp(obj: Obj, helpLines: string[]) {
   }
 }
 
-function genOptionsHelp(obj: Obj, helpLines: string[]) {
+function genOptionsHelp(
+  obj: Obj,
+  helpLines: string[],
+  config?: CliteRunConfig,
+) {
   const helpMetadata = getMetadata(obj, "clite_help");
   const aliasMetadata = getMetadata(obj, "clite_alias") as Obj;
   const typesMetadata = getMetadata(obj, "clite_types") as Obj;
@@ -85,10 +89,21 @@ function genOptionsHelp(obj: Obj, helpLines: string[]) {
     "Show this help",
     gray("[default: false]"),
   ]);
+  if (config?.configCli) {
+    linesCols.push([
+      bold(""),
+      bold(` --config`),
+      typeof config?.configCli === "string"
+        ? config?.configCli
+        : "Use this file to read option before processing the args",
+      gray("[string]"),
+    ]);
+  }
+
   for (const field of fields) {
     const alias: string[] = aliasMetadata?.[field] || [];
-    if (obj[`_${name}_alias`]) {
-      alias.push(...obj[`_${name}_alias`]);
+    if (obj[`_${field}_alias`]) {
+      alias.push(...obj[`_${field}_alias`]);
     }
 
     const aliasHelp = (Array.isArray(alias) ? alias : [alias])
@@ -163,11 +178,13 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
     config?.meta?.url?.replace(/.*\//, "./") ??
     `<${name} file>`;
   if (config?.noCommand) {
-    helpLines.push(`${usage} ${mainFile} [Options] [args]`);
+    helpLines.push(`${usage} ${mainFile} [Options] [--] [args]`);
   } else {
-    helpLines.push(`${usage} ${mainFile} [Options] [command [command args]]`);
+    helpLines.push(
+      `${usage} ${mainFile} [Options] [--] [command [command args]]`,
+    );
     genCommandHelp(obj, helpLines);
   }
-  genOptionsHelp(obj, helpLines);
+  genOptionsHelp(obj, helpLines, config);
   return helpLines.join("\n");
 }

@@ -14,7 +14,7 @@ function processCommandResult(result: unknown, config?: CliteRunConfig) {
 export function runCommand(
   obj: Obj,
   command: string,
-  cmdArgs: (string | number)[],
+  cmdArgs: (string | number | boolean)[],
   config?: CliteRunConfig,
 ) {
   const result = obj[command](...cmdArgs);

@@ -55,7 +55,7 @@ if (import.meta.main) { // if the file is imported, do not execute this block
 // > options : Tool { retry: "4", webUrl: "tttt", no_color: true }
 
 // $ ./example.ts --help
-// > Usage: Tool [Options] [command [command args]]
+// > Usage: Tool [Options] [--] [command [command args]]
 // > Commands:
 // >   main (default)
 // >   up

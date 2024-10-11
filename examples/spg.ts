@@ -139,10 +139,6 @@ class SpgCli {
   @help("port of GUI server")
   port = 5555;
 
-  @type("string")
-  @help("json config file")
-  configFile?: string;
-
   @help("disable the TTS cache usage")
   skipReadTtsCache = false;
 
@@ -158,8 +154,8 @@ class SpgCli {
   customScript?: string;
 
   main(storyPath: string) {
-    console.log(this);
+    console.log(this, storyPath);
   }
 }
 
-cliteRun(new SpgCli(), { noCommand: true });
+cliteRun(new SpgCli(), { noCommand: true, configCli: "The json config file" });

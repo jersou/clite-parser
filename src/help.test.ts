@@ -7,7 +7,7 @@ Deno.test("genHelp", () => {
   const tool = new Tool();
   const expected = `test data
 
-Usage: <Tool file> [Options] [command [command args]]
+Usage: <Tool file> [Options] [--] [command [command args]]
 
 Commands:
   up
@@ -29,7 +29,7 @@ Deno.test("genHelp  noCommand", () => {
   const tool = new Tool();
   const expected = `test data
 
-Usage: <Tool file> [Options] [args]
+Usage: <Tool file> [Options] [--] [args]
 
 Options:
  -h, --help           Show this help [default: false]
@@ -45,7 +45,7 @@ Deno.test("genHelp  mainFile", () => {
   const tool = new Tool();
   const expected = `test data
 
-Usage: the_tool_file [Options] [command [command args]]
+Usage: the_tool_file [Options] [--] [command [command args]]
 
 Commands:
   up

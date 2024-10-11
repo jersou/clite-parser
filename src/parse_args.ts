@@ -3,6 +3,7 @@ import type { CliteRunConfig } from "../clite_parser.ts";
 import { toCamelCase, toSnakeCase } from "@std/text";
 import { parseArgs as stdParseArgs } from "@std/cli";
 import { getFieldNames } from "./reflect.ts";
+import { toKebabCase } from "@std/text";
 
 /**
  * Result of parseArgs()
@@ -49,6 +50,12 @@ export function parseArgs(
   const booleanProp: string[] = [];
   const alias: Record<string, string[]> = { help: ["h"] };
   for (const name of getFieldNames(obj)) {
+    alias[name] = [];
+    const kebabCase = toKebabCase(name);
+    if (name !== kebabCase) {
+      alias[name].push(kebabCase);
+    }
+
     switch (typeof obj[name]) {
       case "boolean":
         booleanProp.push(name);
@@ -62,10 +69,7 @@ export function parseArgs(
         }
     }
     if (obj[`_${name}_alias`]) {
-      if (!alias[name]) {
-        alias[name] = [];
-      }
-      (alias[name] as string[]).push(obj[`_${name}_alias`]);
+      (alias[name] as string[]).push(...obj[`_${name}_alias`]);
     }
   }
   // deno-lint-ignore no-explicit-any
@@ -78,13 +82,14 @@ export function parseArgs(
       alias[prop].push(...aliasName);
     }
   }
+
   const negatableMetadata = getMetadata(obj, "clite_negatables") ?? {};
 
   const stdRes = stdParseArgs(args, {
-    negatable: Object.keys(negatableMetadata),
-    string: stringProp,
-    boolean: booleanProp,
-    collect: arrayProp,
+    negatable: Object.keys(negatableMetadata).map(toKebabCase),
+    string: stringProp.map(toKebabCase),
+    boolean: booleanProp.map(toKebabCase),
+    collect: arrayProp.map(toKebabCase),
     alias,
   });
   for (const [key, value] of Object.entries(stdRes)) {

@@ -15,15 +15,15 @@ cliteRun(new Tool());
 
 /*
     $ ./with-negatable-decorator.ts --help
-    Usage: <Tool file> [Options] [command [command args]]
+    Usage: <Tool file> [Options] [--] [command [command args]]
 
     Command:
       main [default]
 
     Options:
-      -h, --help   Show this help [default: false]
-          --tty    enable TTY
-          --no-tty disable TTY
+     -h, --help   Show this help [default: false]
+         --tty    enable TTY
+         --no-tty disable TTY
 
     $ ./with-negatable-decorator.ts --tty
     main command Tool { tty: true }

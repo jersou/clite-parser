@@ -7,6 +7,9 @@
 - feat: add `@defaultHelp` decorator & `_<prop>_default`
 - feat: add `@negatable` decorator & `_<prop>_negatable`
 - feat: update help format
+- feat: add --config & configCli to load CLI params from file
+- feat: convert command args (booleans & numbers)
+- several bug fix & refactor
 
 ## [0.5.0](https://github.com/jersou/clite-parser/compare/0.4.0...0.5.0) (2024-09-24)
 

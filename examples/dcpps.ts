@@ -1,20 +1,19 @@
 #!/usr/bin/env -S deno run -A
-
-// deno install -g -f --name dcpps -A https://jsr.io/@jersou/clite/0.3.1/examples/dcpps.ts
-
+// deno install -g -f --name dcpps -A https://jsr.io/@jersou/clite/0.6.0/examples/dcpps.ts
+//
 // Colorize the "docker compose ps" command and watch changes
 //
-// Usage: <DockerComposePs file> [Options] [command [command args]]
+// Usage: <DockerComposePs file> [Options] [--] [command [command args]]
 //
 // Commands:
-//   main   Colorize the ps one time (default)
-//   watch  Repeat the colorization of the "docker compose ps" command
+//   main  Colorize the ps one time [default]
+//   watch Repeat the colorization of the "docker compose ps" command
 //
 // Options:
-//   --interval=<INTERVAL>  repeat watch every <INTERVAL> sec (default "1")
-//   --help                 Show this help
+//   -h, --help     Show this help                [default: false]
+//       --interval repeat watch every <INTERVAL> sec [default: 1]
 
-import { cliteRun } from "jsr:@jersou/clite@0.5.0";
+import { cliteRun, help } from "jsr:@jersou/clite@0.5.0";
 import $ from "jsr:@david/dax@0.42.0";
 import { assert } from "jsr:@std/assert@1.0.5";
 import {
@@ -32,25 +31,25 @@ type DockerComposePsLine = {
   "Health": string;
 };
 
+@help(`Colorize the "docker compose ps" command and watch changes`)
 export class DockerComposePs {
+  @help("repeat watch every <INTERVAL> sec")
   interval = 1;
-  _interval_help = "repeat watch every <INTERVAL> sec";
-  _help = `Colorize the "docker compose ps" command and watch changes`;
-  _main_help = "Colorize the ps one time";
-  _watch_help = 'Repeat the colorization of the "docker compose ps" command';
 
+  @help("Colorize the ps one time")
   async main() {
     this._check();
-    console.log(await this._getDockerComposePsLines(this._getServices()));
+    console.log(await this.#getDockerComposePsLines(this._getServices()));
   }
 
+  @help('Repeat the colorization of the "docker compose ps" command')
   async watch() {
     this._check();
     const services = this._getServices();
     console.clear();
     let prevPs = "";
     while (true) {
-      const newPs = await this._getDockerComposePsLines(services);
+      const newPs = await this.#getDockerComposePsLines(services);
       if (newPs !== prevPs) {
         console.clear();
         console.log(newPs);
@@ -60,7 +59,7 @@ export class DockerComposePs {
     }
   }
 
-  _getYamlPath() {
+  #getYamlPath() {
     if ($.path("./docker-compose.yml").existsSync()) {
       return "./docker-compose.yml";
     } else if ($.path("./docker-compose.yaml").existsSync()) {
@@ -71,14 +70,14 @@ export class DockerComposePs {
 
   _check() {
     assert(
-      this._getYamlPath(),
+      this.#getYamlPath(),
       `No file docker-compose.yml or docker-compose.yaml in "${Deno.cwd()}" !`,
     );
   }
 
   _getServices() {
     // deno-lint-ignore no-explicit-any
-    const yaml = parseYaml($.path(this._getYamlPath()!).readTextSync()) as any;
+    const yaml = parseYaml($.path(this.#getYamlPath()!).readTextSync()) as any;
     return Object.entries(yaml.services)
       // deno-lint-ignore no-explicit-any
       .filter(([_, service]: [string, any]) =>
@@ -87,14 +86,14 @@ export class DockerComposePs {
       .map(([key]) => key).sort();
   }
 
-  async _getDockerComposePsData() {
+  async #getDockerComposePsData() {
     return (await $`docker compose ps --format json`
       .lines())
       .filter((l: string) => l)
       .map((l: string) => JSON.parse(l)) as unknown as DockerComposePsLine[];
   }
 
-  _getColor(state: string, Health: string) {
+  #getColor(state: string, Health: string) {
     switch (state) {
       case "not created":
       case "dead":
@@ -119,7 +118,7 @@ export class DockerComposePs {
     }
   }
 
-  _getPrefix(state: string, Health: string): string {
+  #getPrefix(state: string, Health: string): string {
     switch (state) {
       case "not created":
       case "dead":
@@ -146,9 +145,9 @@ export class DockerComposePs {
     }
   }
 
-  _getLine({ State, Service, Health }: DockerComposePsLine) {
-    const color = this._getColor(State, Health);
-    const prefix = this._getPrefix(State, Health);
+  #getLine({ State, Service, Health }: DockerComposePsLine) {
+    const color = this.#getColor(State, Health);
+    const prefix = this.#getPrefix(State, Health);
     return color(
       [
         "",
@@ -161,8 +160,8 @@ export class DockerComposePs {
     );
   }
 
-  async _getDockerComposePsLines(services: string[]) {
-    const psData = await this._getDockerComposePsData();
+  async #getDockerComposePsLines(services: string[]) {
+    const psData = await this.#getDockerComposePsData();
     return services
       .map((service) =>
         psData.find((line) => line.Service === service) ?? {
@@ -171,7 +170,7 @@ export class DockerComposePs {
           State: "not created",
         } as DockerComposePsLine
       )
-      .map((l) => this._getLine(l)).join("\n");
+      .map((l) => this.#getLine(l)).join("\n");
   }
 }
 

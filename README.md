@@ -16,16 +16,18 @@ import { cliteRun } from "jsr:@jersou/clite@0.5.0";
 
 class Tool {
   retry = 2;
-  webUrl = "none"; // fields are converted to kebab case as global options
-  no_color; // → --no-color
+  dryRun = false; // fields are converted to kebab case as global options
+  webUrl = "none"; // → --web-url
 
   main() {
     console.log("main command", this);
   }
+
   up() {
     console.log("up command", this);
   }
-  down(force, timeout) {
+
+  down(force: boolean, timeout: number) {
     console.log("down command", { force, timeout }, this);
   }
 }
@@ -35,51 +37,190 @@ cliteRun(new Tool());
 
 ## The help is generated automatically:
 
-![help image](./help-lite-lite.png)
+![help image](./simple-help.png)
 
 <!-- Plain text (without color and styles in markdown):
-
-$ # with Deno : "deno run example-lite-lite.ts --help"
-$ #          or if the is shebang is present:
-$ ./example-lite-lite.ts --help
-Usage: <Tool file> [Options] [command [command args]]
+$ ./simple.ts --help
+Usage: <Tool file> [Options] [--] [command [command args]]
 
 Commands:
-  main                    (default)
+  main                   [default]
   up
   down <force> <timeout>
 
 Options:
-  --retry=<RETRY>        (default "2")
-  --web-url=<WEB_URL>    (default "none")
-  --no-color=<NO_COLOR>
-  --help                 Show this help
-
+ -h, --help    Show this help [default: false]
+     --retry                      [default: 2]
+     --dry-run                [default: false]
+     --web-url               [default: "none"]
 -->
 
 ## Run the commands with options and arguments
 
 ```shell
-#                        ↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓↓↓  ↓ command ↓  ↓ cmd args ↓
-$ ./example-lite-lite.ts --retry=4 --web-url=tttt --no-color     down        true  14
-down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
+#             ↓↓↓↓↓↓↓↓↓↓↓↓↓ options ↓↓↓↓↓↓↓↓↓↓↓↓  ↓ command ↓  ↓ cmd args ↓
+$ ./simple.ts --dry-run --web-url=tttt --retry 4     down        true  14
+down command { force: true, timeout: 14 } Tool { retry: 4, dryRun: true, webUrl: "tttt" }
 
-$ ./example-lite-lite.ts down true 14
-down command { force: "true", timeout: "14" } Tool { retry: 2, webUrl: "none", no_color: undefined }
+$ ./simple.ts down true 14                     #  ↓↓↓  default options from class init  ↓↓↓
+down command { force: true, timeout: 14 } Tool { retry: 2, webUrl: "none", no_color: undefined }
 
-$ ./example-lite-lite.ts  --retry=4 --web-url=tttt --no-color
-main command Tool { retry: "4", webUrl: "tttt", no_color: true }
+$ ./simple.ts --dry-run --webUrl=tttt # ← same case of the field name works too : --webUrl or --web-url
+main command Tool { retry: 2, dryRun: true, webUrl: "tttt" } # ← main is the default command
 
-$ deno https://raw.githubusercontent.com/jersou/clite-parser/refs/heads/main/examples/example-lite-lite.ts  --retry=4 --web-url=tttt --no-color   down     true  14
-down command { force: "true", timeout: "14" } Tool { retry: "4", webUrl: "tttt", no_color: true }
+$ deno https://raw.githubusercontent.com/jersou/clite-parser/refs/heads/main/examples/simple.ts --dry-run --web-url tttt --retry 4 down true  14
+down command { force: true, timeout: 14 } Tool { retry: 4, dryRun: true, webUrl: "tttt" }
 ```
 
-## Help description
+## Examples
 
-**The decorator @help can also be used, see the next section.**
+Several examples can be found in [examples/](./examples/) folder.
 
-Optional fields `_<filed or method name>_help` or `_<filed or method name>_desc`
-are displayed as description in the help (_desc is deprecated) :
+### Full example with decorators (Typescript)
+
+Works with vanilla typescript or with experimentalDecorators = true
+
+```typescript
+import { alias, cliteRun, help } from "jsr:@jersou/clite@0.5.0";
+
+@help("This tool is a little example of CliteParser") // optional description
+class Tool {
+  @alias("r") // optional alias -r for --retry
+  retry = 2;
+  @help("no changes mode") // optional description for "--dry-run" field
+  dryRun = false; // fields are converted to kebab case as global options
+  webUrl = "none"; // → --web-url
+
+  main() {
+    console.log("main command", this);
+  }
+
+  @help("create and start") // optional description for "up" command
+  up() {
+    console.log("up command", this);
+  }
+
+  down(force: boolean, timeout: number) {
+    console.log("down command", { force, timeout }, this);
+  }
+}
+
+cliteRun(new Tool());
+```
+
+The help is generated automatically:
+
+![help image](./with-decorators-help.png)
+
+<!-- Plain text (without color and styles in markdown):
+$ ./with-decorators.ts --help
+This tool is a little example of CliteParser
+
+Usage: <Tool file> [Options] [--] [command [command args]]
+
+Commands:
+  main                   [default]
+  up                     create and start
+  down <force> <timeout>
+
+Options:
+ -h, --help    Show this help  [default: false]
+ -r, --retry                       [default: 2]
+     --dry-run no changes mode [default: false]
+     --web-url                [default: "none"]
+-->
+
+### Full example without decorator (Javascript)
+
+```javascript
+import { cliteRun } from "jsr:@jersou/clite@0.5.0";
+
+class Tool {
+  _help = "This tool is a little example of CliteParser"; // optional description
+
+  _retry_alias = "r"; // optional alias -r for --retry
+  retry = 2;
+  _dryRun_help = "no changes mode"; // optional description for "--dry-run" field
+  dryRun = false; // fields are converted to kebab case as global options
+  webUrl = "none"; // → --web-url
+
+  main() {
+    console.log("main command", this);
+  }
+
+  _up_help = "create and start"; // optional description for "up" command
+  up() {
+    console.log("up command", this);
+  }
+
+  down(force, timeout) {
+    console.log("down command", { force, timeout }, this);
+  }
+}
+
+cliteRun(new Tool());
+```
+
+The help is generated automatically (same as the previous):
+
+![help image](./without-decorator-help.png)
+
+<!--  Plain text (without color and styles in markdown):
+./without-decorator.mjs --help
+This tool is a little example of CliteParser
+
+Usage: <Tool file> [Options] [--] [command [command args]]
+
+Commands:
+  main                   [default]
+  up                     create and start
+  down <force> <timeout>
+
+Options:
+ -h, --help    Show this help  [default: false]
+ -r, --retry                       [default: 2]
+     --dry-run no changes mode [default: false]
+     --web-url                [default: "none"]
+-->
+
+## Decortator `@*` or inline field `_<field name>_*`
+
+Fields can be extended with description, type or aliases using decorators or
+`_<field name>_*` field.
+
+### Help description with the `@help` decorator or inline help
+
+```typescript
+import { cliteRun, help } from "jsr:@jersou/clite@0.5.0";
+
+@help("This tool is a little example of CliteParser")
+class Tool {
+  retry = 2;
+  webUrl = "none"; // fields are converted to kebab case as global options
+
+  @help("skip colorize") // optional description for "no_color" field
+  no_color?: string | boolean; // → --no-color
+
+  main() {
+    console.log("main command", this);
+  }
+
+  @help("create and start") // optional description for "up" command
+  up() {
+    console.log("up command", this);
+  }
+
+  down(force: boolean, timeout: number) {
+    console.log("down command", { force, timeout }, this);
+  }
+}
+
+cliteRun(new Tool());
+```
+
+Without decorator : optional fields `_<filed or method name>_help` or
+`_<filed or method name>_desc` are displayed as description in the help (_desc
+is deprecated) :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
@@ -111,63 +252,119 @@ if (import.meta.main) { // if the file is imported, do not execute this block
 }
 ```
 
-![help image](./help-lite.png)
+### Alias
 
-<!-- Plain text (without color and styles in markdown):
-
-This tool is a little example of CliteParser
-
-Usage: <Tool file> [Options] [command [command args]]
-
-Commands:
-  main                    (default)
-  up                      create and start
-  down <force> <timeout>
-
-Options:
-  --retry=<RETRY>        (default "2")
-  --web-url=<WEB_URL>    (default "none")
-  --no-color=<NO_COLOR>  skip colorize
-  --help                 Show this help
-
--->
-
-## Help description with the `@help` decorator
+Alias of option can be created, with the `@alias` decorator or with
+`_<field name>_alias` :
 
 ```typescript
-import { cliteRun, help } from "jsr:@jersou/clite@0.5.0";
+#!/usr/bin/env -S deno run -A
+import { cliteRun } from "../clite_parser.ts";
+import { alias, help, type } from "../src/decorators.ts";
 
-@help("This tool is a little example of CliteParser")
 class Tool {
+  @alias("a")
+  all?: boolean;
+  @alias("r")
   retry = 2;
-  webUrl = "none"; // fields are converted to kebab case as global options
+  @alias("w")
+  webUrl = "none";
 
-  @help("skip colorize") // optional description for "no_color" field
-  no_color?: string | boolean; // → --no-color
+  @alias("nb")
+  @alias("n")
+  @help("n & b")
+  @type("boolean")
+  no_color?: string | boolean;
 
   main() {
     console.log("main command", this);
   }
+}
+```
 
-  @help("create and start") // optional description for "up" command
-  up() {
-    console.log("up command", this);
-  }
+Produce the help :
 
-  down(force: boolean, timeout: number) {
-    console.log("down command", { force, timeout }, this);
+```
+...
+Options:
+       -h, --help     Show this help [default: false]
+       -a, --all
+       -r, --retry                       [default: 2]
+       -w, --web-url                [default: "none"]
+ -n, --nb, --no-color n & b                 [boolean]
+```
+
+Short parameters can be aggregated, `-an` here :
+
+```
+$ ./alias-with-decorator.ts -an -r 8
+main command Tool { all: true, retry: 8, webUrl: "none", no_color: true }
+```
+
+`-an` = `-a -n`
+
+Example without the @alias decorator :
+
+```typescript
+class Tool {
+  _all_alias = "a";
+  all?: boolean;
+  _retry_alias = "r";
+  retry = 2;
+  _webUrl_alias = "w";
+  webUrl = "none";
+
+  _no_color_alias = ["nb", "n"];
+  _no_color_help = "n & b";
+  _no_color_type = "boolean";
+  no_color?: string | boolean;
+
+  main() {
+    console.log("main command", this);
   }
 }
-
-cliteRun(new Tool());
 ```
+
+### @types
+
+### @defaultHelp
+
+### @negatable
 
 ## Argument parsing
 
 Clite use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
 [minimist](https://github.com/minimistjs/minimist).
 
-## Default command
+### Kebab case or the same name
+
+Example : `webUrl` field can be set by `--webUrl` or `--web-url`:
+
+```
+$ ./simple.ts --web-url test 
+main command Tool { retry: 2, dryRun: false, webUrl: "test" }
+
+$ ./simple.ts --webUrl test
+main command Tool { retry: 2, dryRun: false, webUrl: "test" }
+```
+
+### Passing objects :
+
+```
+--ac.bb aaa --ac.dd.ee v --ac.dd.ff w
+→ { ac: { bb: "aaa", dd: { ee: "v", ff: "w" } } }
+```
+
+### Warning: boolean parameter without value preceding the command
+
+If a boolean param without value is used before the command, you must:
+
+- separate the boolean and the command by a double hyphen `--`
+- or use a value : `--dry-run=true` or `--dry-run true`
+
+Otherwise, the command will be interpreted as the value of boolean parameter.
+
+### Default command
 
 - If there is only one method/command => this method is the default
 - If the main method exist => main is the default
@@ -178,7 +375,20 @@ $ ./example-lite.ts
 main command Tool { retry: 2, webUrl: "none", no_color: undefined }
 ```
 
-## Ignore _* methods and fields (in the help)
+## Boolean options
+
+```shell
+$ ./example-lite.ts
+main command Tool { retry: 2, webUrl: "none", no_color: undefined }
+$ ./example-lite.ts --no-color
+main command Tool { retry: 2, webUrl: "none", no_color: true }
+$ ./example-lite.ts --no-color=false
+main command Tool { retry: 2, webUrl: "none", no_color: "false" }
+$ ./example-lite.ts --no-color=true
+main command Tool { retry: 2, webUrl: "none", no_color: "true" }
+```
+
+## Ignore _* and #* methods and fields (in the help)
 
 Fields and methods that start with "_" are ignored.
 
@@ -228,7 +438,7 @@ $ ./plain_object_lite.ts --retry=77 up foo 123
 up command { svc: "foo", timeout: "123", retry: "77" }
 
 $ /plain_object_lite.ts --help
-Usage: <Object file> [Options] [command [command args]]
+Usage: <Object file> [Options] [--] [command [command args]]
 
 Commands:
   main                (default)
@@ -240,23 +450,13 @@ Options:
   --help           Show this help
 ```
 
-## Boolean options
+## Print the help on error
 
-```shell
-$ ./example-lite.ts
-main command Tool { retry: 2, webUrl: "none", no_color: undefined }
-$ ./example-lite.ts --no-color
-main command Tool { retry: 2, webUrl: "none", no_color: true }
-$ ./example-lite.ts --no-color=false
-main command Tool { retry: 2, webUrl: "none", no_color: "false" }
-$ ./example-lite.ts --no-color=true
-main command Tool { retry: 2, webUrl: "none", no_color: "true" }
-```
+If printHelpOnError is enable, the help is print if any error is thrown while
+the command execution. Else, the help is print only for errors that have
+`{ cause: { clite: true } }`.
 
-## Warning
-
-All options and command arguments are strings ! There is no boolean/number/...
-conversion !
+It's useful if a required option is missing, for example.
 
 ## CliteRunConfig
 
@@ -270,6 +470,8 @@ type CliteRunConfig = {
   printHelpOnError?: boolean; // print the help if an error is thrown and then re-throw the error
   mainFile?: string; // allows to change the name of the file in the help, instead of the default <{Class name} file>
   meta?: ImportMeta; // import.meta to use : don't run if the file is imported, and use import.meta.url in the help
+  configCli?: boolean; // enable "--config <path>" to load json config before processing the args, Show in the help if it's a string
+  dontConvertCmdArgs?: boolean; // don't convert "true"/"false" to true/false in command arguments, and not to number after --
 };
 ```
 
@@ -291,7 +493,7 @@ give :
 ```
 This tool is a "no-command" example of CliteParser usage
 
-Usage: <Tool file> [Options] [args]
+Usage: <Tool file> [Options] [--] [args]
 
 Options:
   --retry=<RETRY>        (default "2")
@@ -336,6 +538,37 @@ export class Tool {
 cliteRun(new Tool());
 ```
 
+### configCli : load config with `--config <path`
+
+**TODO for Node**
+
+If `configCli === true` in CliteRunConfig
+
+```
+$ cat ./load-config.ts
+...
+cliteRun(new Tool(), { configCli: true });
+
+$ ./load-config.ts --help
+...
+     --config  Use this file to read option before processing the args [string]
+...
+
+$ ./load-config.ts  down
+down command { force: undefined, timeout: undefined } Tool { retry: 2, dryRun: false, webUrl: "none" }
+
+$ cat load-config.json
+{ "retry": 44, "dryRun": true, "webUrl": "yyy" }
+
+$ ./load-config.ts --retry 88 --config ./load-config.json down
+down command { force: undefined, timeout: undefined } Tool {
+  retry: 88,
+  dryRun: false,
+  webUrl: "yyy",
+  config: "./load-config.json"
+}
+```
+
 ### mainFile
 
 Allows to change the name of the file in the help, instead of the default for
@@ -348,7 +581,7 @@ cliteRun(new Tool(), { mainFile: "my-tool" });
 ...will change the usage line in the help :
 
 ```
-Usage: my-tool [Options] [command [command args]]
+Usage: my-tool [Options] [--] [command [command args]]
 ```
 
 ### meta
@@ -371,6 +604,13 @@ The basename of import.meta.url will be used in the generated help, as
 "mainFile".
 
 This feature does not work with NodeJS (no import.meta.main).
+
+### dontConvertCmdArgs
+
+If `--` is used and dontConvertCmdArgs=true, all command arguments will be
+strings.
+
+<!-- TODO -->
 
 ## Node support : `npx jsr add @jersou/clite`
 
