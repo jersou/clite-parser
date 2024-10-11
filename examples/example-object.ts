@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.5.0";
+import { cliteRun } from "jsr:@jersou/clite@0.6.0";
 
 class Tool {
   obj?: { foo: { bar1?: number; bar2?: number }; toto?: number };

@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-// deno install -g -f --name dcpps -A https://jsr.io/@jersou/clite/0.6.0/examples/dcpps.ts
+// deno install -g -f --name dcpps -A https://jsr.io/@jersou/clite/.6.0/examples/dcpps.ts
 //
 // Colorize the "docker compose ps" command and watch changes
 //
@@ -13,7 +13,7 @@
 //   -h, --help     Show this help                [default: false]
 //       --interval repeat watch every <INTERVAL> sec [default: 1]
 
-import { cliteRun, help } from "jsr:@jersou/clite@0.5.0";
+import { cliteRun, help } from "jsr:@jersou/clite@0.6.0";
 import $ from "jsr:@david/dax@0.42.0";
 import { assert } from "jsr:@std/assert@1.0.5";
 import {

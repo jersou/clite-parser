@@ -1,4 +1,4 @@
-## [0.6.0](https://github.com/jersou/clite-parser/compare/0.5.0...0.6.0) (2024-10-??)
+## [0.6.0](https://github.com/jersou/clite-parser/compare/0.5.0...0.6.0) (2024-10-11)
 
 - feat: use [@std/cli](https://jsr.io/@std/cli/doc/parse-args) ! based on
   [minimist](https://github.com/minimistjs/minimist).
