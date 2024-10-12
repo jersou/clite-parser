@@ -4,9 +4,8 @@
 [![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**CliteParser generate CLI from a class** (or plain object), each method
-generate a "command", each field generate an "option". **example-lite.ts
-example** :
+**CliteParser generates CLI from classes** (or objects) : each method generates
+a "command", each field generates an "option". **example-lite.ts example** :
 
 ```typescript
 #!/usr/bin/env -S deno run
@@ -335,9 +334,15 @@ class Tool {
 
 ### @types
 
+<!-- TODO -->
+
 ### @defaultHelp
 
+<!-- TODO -->
+
 ### @negatable
+
+<!-- TODO -->
 
 ## Argument parsing
 
