@@ -32,7 +32,7 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliteRun(Tool); // or cliteRun(new Tool());
 ```
 
 ## The help is generated automatically:
@@ -74,7 +74,7 @@ down command { force: true, timeout: 14 } Tool { retry: 4, dryRun: true, webUrl:
 
 ## Examples
 
-Several examples can be found in [examples/](./examples/) folder.
+Several examples can be found in the [examples/](./examples) folder.
 
 ### Full example with decorators (Typescript)
 
@@ -105,7 +105,7 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliteRun(Tool); // or cliteRun(new Tool());
 ```
 
 The help is generated automatically:
@@ -158,7 +158,7 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliteRun(Tool); // or cliteRun(new Tool());
 ```
 
 The help is generated automatically (same as the previous):
@@ -183,7 +183,15 @@ Options:
      --web-url                [default: "none"]
 -->
 
-## Decortator `@*` or inline field `_<field name>_*`
+## `cliteRun()` usage
+
+`cliteRun()` function takes an object or a class as input, and an optional
+config, see [CliteRunConfig](#CliteRunConfig) chapter bellow.
+
+Exemple : `cliteRun(Tool)` or `cliteRun(new Tool())` or
+`cliteRun(Tool, { noCommand: true })`
+
+## Decorator `@*` or inline field `_<field name>_*`
 
 Fields can be extended with description, type or aliases using decorators or
 `_<field name>_*` field.
@@ -215,7 +223,7 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliteRun(Tool);
 ```
 
 Without decorator : optional fields `_<filed or method name>_help` or
@@ -248,7 +256,7 @@ class Tool {
 }
 
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliteRun(new Tool());
+  cliteRun(Tool);
 }
 ```
 
@@ -394,7 +402,7 @@ Fields and methods that start with "_" are ignored.
 
 ```typescript
 _privateData = 12;
-_privmethod() {
+_privateMethod() {
   console.log("this method is not visible in the help (starts with '_')");
 }
 ```
@@ -406,7 +414,7 @@ Note2: js private fields `#*` are also ignored :
 
 ```typescript
 #privateData = 12;
-#privmethod() {
+#privateMethod() {
   console.log("this method is not visible in the help (starts with '#')");
 }
 ```
@@ -460,7 +468,7 @@ It's useful if a required option is missing, for example.
 
 ## CliteRunConfig
 
-`cliteRun(new Tool(), < optional CliteRunConfig > )`
+`cliteRun(Tool, < optional CliteRunConfig > )`
 
 ```typescript
 type CliteRunConfig = {
@@ -481,14 +489,14 @@ If the method run by `cliteRun` return a value != undefined, it will be print in
 stdout.
 
 This behavior can be disabled with the config :
-`cliteRun(new Tool(), { dontPrintResult: true })`
+`cliteRun(Tool, { dontPrintResult: true })`
 
 ### noCommand
 
 <!-- TODO -->
 
-`cliteRun(new Tool(), { noCommand: true });` → `./example-no-command.ts ---help`
-give :
+`cliteRun(Tool, { noCommand: true });` → `./example-no-command.ts ---help` give
+:
 
 ```
 This tool is a "no-command" example of CliteParser usage
@@ -517,7 +525,7 @@ export class Tool {
     console.log("OK !");
   }
 }
-cliteRun(new Tool(), { printHelpOnError: true });
+cliteRun(Tool, { printHelpOnError: true });
 ```
 
 To print help on specific error without `printHelpOnError=true`, use
@@ -535,7 +543,7 @@ export class Tool {
     console.log("OK !");
   }
 }
-cliteRun(new Tool());
+cliteRun(Tool);
 ```
 
 ### configCli : load config with `--config <path`
@@ -547,7 +555,7 @@ If `configCli === true` in CliteRunConfig
 ```
 $ cat ./load-config.ts
 ...
-cliteRun(new Tool(), { configCli: true });
+cliteRun(Tool, { configCli: true });
 
 $ ./load-config.ts --help
 ...
@@ -575,7 +583,7 @@ Allows to change the name of the file in the help, instead of the default for
 example `<Tool file>`.
 
 ```typescript
-cliteRun(new Tool(), { mainFile: "my-tool" });
+cliteRun(Tool, { mainFile: "my-tool" });
 ```
 
 ...will change the usage line in the help :
@@ -590,20 +598,20 @@ Use meta to avoid the import.meta.main check :
 
 ```typescript
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliteRun(new Tool());
+  cliteRun(Tool);
 }
 ```
 
 is equivalent to :
 
 ```typescript
-cliteRun(new Tool(), { meta: import.meta });
+cliteRun(Tool, { meta: import.meta });
 ```
 
 The basename of import.meta.url will be used in the generated help, as
 "mainFile".
 
-This feature does not work with NodeJS (no import.meta.main).
+This feature does not work with Node (no import.meta.main).
 
 ### dontConvertCmdArgs
 
@@ -620,7 +628,7 @@ Run `npx jsr add @jersou/clite` and then, import with
 ```javascript
 import { cliteRun } from "@jersou/clite"; // after "npx jsr add @jersou/clite"
 class Tool { ... }
-cliteRun(new Tool());
+cliteRun(Tool);
 ```
 
 See node usage examples :

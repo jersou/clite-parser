@@ -13,5 +13,5 @@ export class Tool {
 }
 
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliteRun(new Tool(), { noCommand: true });
+  cliteRun(Tool, { noCommand: true });
 }

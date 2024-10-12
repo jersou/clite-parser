@@ -24,7 +24,7 @@ class Tool {
 }
 
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliteRun(new Tool());
+  cliteRun(Tool); // or cliteRun(new Tool());
 }
 
 /*

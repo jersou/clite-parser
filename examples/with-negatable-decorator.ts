@@ -11,7 +11,7 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliteRun(Tool);
 
 /*
     $ ./with-negatable-decorator.ts --help

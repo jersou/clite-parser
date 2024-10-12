@@ -47,10 +47,15 @@ export type CliteRunConfig = {
 
 /**
  * Run the command of obj depending on the Deno/Node script arguments
- * @param obj instance of the object to parse by clite-parser
+ * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
  * @param config - of clite-parser
  */
-export function cliteRun(obj: Obj, config?: CliteRunConfig): unknown {
+export function cliteRun<O extends Obj>(
+  objOrClass: O | { new (): O },
+  config?: CliteRunConfig,
+): unknown {
+  const obj =
+    (typeof objOrClass === "function" ? new objOrClass() : objOrClass) as Obj;
   if (!config?.meta || config?.meta.main) {
     const help = genHelp(obj, config);
     try {

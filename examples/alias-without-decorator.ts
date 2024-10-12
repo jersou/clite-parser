@@ -19,7 +19,7 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliteRun(Tool);
 
 /*
 $ ./alias-without-decorator.ts --help

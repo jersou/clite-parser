@@ -10,7 +10,7 @@ export class Tool {
     console.log("OK !");
   }
 }
-cliteRun(new Tool());
+cliteRun(Tool);
 
 /*
     $ ./example-throw.ts --help

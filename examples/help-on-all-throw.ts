@@ -9,7 +9,7 @@ export class Tool {
     console.log("OK !");
   }
 }
-cliteRun(new Tool(), { printHelpOnError: true });
+cliteRun(Tool, { printHelpOnError: true });
 
 /*
     $ ./example-throw-all.ts --help

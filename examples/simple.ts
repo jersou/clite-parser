@@ -21,7 +21,7 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliteRun(Tool);
 
 /*
     $ ./example-lite-lite.ts --help

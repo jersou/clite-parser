@@ -19,7 +19,7 @@ class Tool {
   }
 }
 
-cliteRun(new Tool(), { configCli: true });
+cliteRun(Tool, { configCli: true });
 
 /*
     $ ./load-config.ts --help

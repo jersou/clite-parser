@@ -21,7 +21,7 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliteRun(Tool);
 
 /*
 $ ./alias-with-decorator.ts -h
