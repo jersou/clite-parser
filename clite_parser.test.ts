@@ -1,5 +1,5 @@
 import { assertEquals } from "jsr:@std/assert@1.0.5";
-import {cliteRun, DontRunResult} from "./clite_parser.ts";
+import { cliteRun, type DontRunResult } from "./clite_parser.ts";
 import { genHelp } from "./src/help.ts";
 import { Tool } from "./src/test_data.test.ts";
 
@@ -32,9 +32,11 @@ Deno.test("cliteRun help", () => {
   assertEquals(result, expected);
 });
 
-
 Deno.test("cliteRun dontRun", () => {
-  const result = cliteRun(Tool, { args:["--opt1=78","down","true"],dontRun:true }) as DontRunResult;
+  const result = cliteRun(Tool, {
+    args: ["--opt1=78", "down", "true"],
+    dontRun: true,
+  }) as DontRunResult;
   assertEquals(result.command, "down");
-  assertEquals(result.commandArgs,[ true ]);
+  assertEquals(result.commandArgs, [true]);
 });

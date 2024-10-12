@@ -344,6 +344,10 @@ class Tool {
 
 <!-- TODO -->
 
+### @@usage
+
+<!-- TODO -->
+
 ## Argument parsing
 
 Clite use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
@@ -650,8 +654,6 @@ See node usage examples :
 
 ## TODO
 
-- option to overwrite "usage" in the help : `@usage` ?
-- call _on_help() before print the help (don't print if the return is true)
 - `@hidden` decorator and `_*_hidden` to hide field or method from the help. Or
   add hidden arg to `@help`
 - `@subcommand` decorator and `_*_subcommand` (or auto-detect subcommand if

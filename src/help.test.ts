@@ -1,7 +1,9 @@
-import { assertEquals } from "@std/assert";
+import { assert, assertEquals } from "@std/assert";
 import { stripAnsiCode } from "@std/fmt/colors";
 import { align, genHelp } from "./help.ts";
 import { Tool } from "./test_data.test.ts";
+import { usage } from "./decorators.ts";
+import { cliteRun, type DontRunResult } from "../clite_parser.ts";
 
 Deno.test("genHelp", () => {
   const tool = new Tool();
@@ -74,4 +76,34 @@ Deno.test("align", () => {
   const result = align(input);
   const expected = ["   az t sssss  hhh", "azert t ss       h"];
   assertEquals(result, expected);
+});
+
+@usage("new usage")
+class ToolUsage {
+}
+
+Deno.test({
+  name: "@usage",
+  fn() {
+    const result = cliteRun(ToolUsage, {
+      args: ["--help"],
+      dontRun: true,
+    }) as DontRunResult;
+    assert(result.help.includes(" new usage\n"));
+  },
+});
+
+class Tool_Usage {
+  _usage = "new usage";
+}
+
+Deno.test({
+  name: "_usage",
+  fn() {
+    const result = cliteRun(Tool_Usage, {
+      args: ["--help"],
+      dontRun: true,
+    }) as DontRunResult;
+    assert(result.help.includes(" new usage\n"));
+  },
 });

@@ -75,6 +75,10 @@ export type DontRunResult = {
    * The input CliteRunConfig
    */
   config: CliteRunConfig | undefined;
+  /*
+   * The generated help
+   */
+  help: string;
 };
 
 /**
@@ -96,8 +100,12 @@ export function cliteRun<O extends Obj>(
       const defaultMethod = getDefaultMethod(methods);
       const parseResult = parseArgs(obj, config, defaultMethod);
       if (getFieldNames(parseResult.options).includes("help")) {
-        console.error(help);
-        return help;
+        if (config?.dontRun) {
+          return ({ obj, command: "--help", commandArgs: [], config, help });
+        } else {
+          console.error(help);
+          return help;
+        }
       } else {
         if (
           config?.configCli &&
@@ -137,7 +145,7 @@ export function cliteRun<O extends Obj>(
           ? parseResult.commandArgs
           : parseResult.commandArgs.map(convertCommandArg);
         return config?.dontRun
-          ? { obj, command, commandArgs, config }
+          ? { obj, command, commandArgs, config, help }
           : runCommand(obj, command, commandArgs, config);
       }
       // deno-lint-ignore no-explicit-any

@@ -92,3 +92,15 @@ export function defaultHelp(defaultHelp: string): any {
     addMetadata(target, prop, "clite_defaults", defaultHelp);
   };
 }
+
+/**
+ * decorator on class : `@usage("usage of the tool in the help")`
+ * @param usage - to overwrite in the help
+ */
+// deno-lint-ignore no-explicit-any
+export function usage(usage: string): any {
+  // deno-lint-ignore no-explicit-any
+  return function (target: any, prop?: any) {
+    addMetadata(target, prop, "clite_usage", usage);
+  };
+}

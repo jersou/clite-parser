@@ -165,6 +165,12 @@ function genOptionsHelp(
  */
 export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   const helpLines: string[] = [];
+  const usageMetadata = getMetadata(obj, "clite_usage") as Obj;
+  const newUsage = usageMetadata
+    ? Object.values(usageMetadata)[0]
+    : obj._usage
+    ? obj._usage
+    : undefined;
   const helpMetadata = getMetadata(obj, "clite_help");
   const objHelp = helpMetadata?.[Object.getPrototypeOf(obj).constructor.name] ??
     obj._help ??
@@ -172,17 +178,21 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   if (objHelp) {
     helpLines.push(objHelp + "\n");
   }
-  const usage = boldUnder("Usage:");
   const name = Object.getPrototypeOf(obj).constructor.name;
   const mainFile = config?.mainFile ??
     config?.meta?.url?.replace(/.*\//, "./") ??
     `<${name} file>`;
-  if (config?.noCommand) {
-    helpLines.push(`${usage} ${mainFile} [Options] [--] [args]`);
+
+  let usage = `${boldUnder("Usage:")} `;
+  if (newUsage) {
+    usage = `${usage}${newUsage}`;
+  } else if (config?.noCommand) {
+    usage = `${usage}${mainFile} [Options] [--] [args]`;
   } else {
-    helpLines.push(
-      `${usage} ${mainFile} [Options] [--] [command [command args]]`,
-    );
+    usage = `${usage}${mainFile} [Options] [--] [command [command args]]`;
+  }
+  helpLines.push(usage);
+  if (!config?.noCommand) {
     genCommandHelp(obj, helpLines);
   }
   genOptionsHelp(obj, helpLines, config);

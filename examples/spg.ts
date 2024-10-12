@@ -1,9 +1,15 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../clite_parser.ts";
+import { cliteRun, usage } from "../clite_parser.ts";
 import { alias, defaultHelp, help, type } from "../src/decorators.ts";
 
 // CLI of https://github.com/jersou/studio-pack-generator
 
+@help(
+  "studio-pack-generator convert a folder or a RSS URL to Studio pack zip for Lunii device",
+)
+@usage(
+  "studio-pack-generator [options] <story path | RSS URL>   convert a folder or RSS url to Studio pack",
+)
 class SpgCli {
   @alias("d")
   @help("add 1 second at the beginning and the end of audio files")
