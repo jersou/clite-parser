@@ -641,3 +641,42 @@ See node usage examples :
 
 - https://jsr.io/@jersou/clite
 - https://github.com/jersou/clite-parser
+
+## TODO
+
+- `@subcommand` decorator and `_*_subcommand` (or auto-detect subcommand if field is a class ?) :
+
+```typescript
+class Tool {
+  dryRun = false;
+
+  @subcommand
+  up = class Up {
+    _parent: Tool;
+    watch = false;
+    main(count: number) {
+      console.log("Up", this);
+    }
+  };
+
+  @subcommand
+  down = class Down {
+    _parent: Tool;
+    volumes = false;
+    main(force: boolean, timeout: number) {
+      console.log("Down", this);
+    }
+  };
+}
+// → <Tool> [--dry-run] [ [up [--watch] <count>] | [down [--volumes] <force> <timeout>] ]
+```
+
+- doc:
+  - clean the doc and examples
+  - compare to other tools (needs to be rephrased):
+    `other take the cli config (tool format) as input and produce an output data without type/model`
+    vs `clite take the expected output model and generate the cli config` (~ deserialize the class to cli/help)
+  - "many ways to pass parameters" in doc : `-l=8`,`-l 8`,  `-l8`, `--out-limit 8`, `--out-limit=8`, `--outLimit 8`, `--outLimit=8`
+- add missing tests
+- refactor the code
+- NodeJS implementation of --config/configCli
