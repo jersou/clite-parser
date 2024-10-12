@@ -1,3 +1,15 @@
+## [0.6.2](https://github.com/jersou/clite-parser/compare/0.6.1...0.6.2) (2024-10-12)
+
+### Features
+
+- add [@hidden](https://github.com/hidden) decorator and `_*_hidden` to hide
+  field or method from the help
+  ([f78215e](https://github.com/jersou/clite-parser/commit/f78215e91bf9a8b919fa5a8845238657709b8077))
+- add [@usage](https://github.com/usage), add help to DontRunResult
+  ([451cf3f](https://github.com/jersou/clite-parser/commit/451cf3fe7c72d814b7a33fe9df917a7a31389917))
+- add CliteRunConfig.dontRun & DontRunResult
+  ([7ed0aee](https://github.com/jersou/clite-parser/commit/7ed0aee9397bc64acd7d1f9396a57c0ca1c219a9))
+
 ## [0.6.1](https://github.com/jersou/clite-parser/compare/0.6.0...0.6.1) (2024-10-12)
 
 ### Features

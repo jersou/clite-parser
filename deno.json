@@ -1,6 +1,6 @@
 {
   "name": "@jersou/clite",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "exports": "./clite_parser.ts",
   "license": "MIT",
   "tasks": {
