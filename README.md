@@ -485,6 +485,7 @@ type CliteRunConfig = {
   meta?: ImportMeta; // import.meta to use : don't run if the file is imported, and use import.meta.url in the help
   configCli?: boolean; // enable "--config <path>" to load json config before processing the args, Show in the help if it's a string
   dontConvertCmdArgs?: boolean; // don't convert "true"/"false" to true/false in command arguments, and not to number after --
+  dontRun?: boolean; // don't run the command, return the parsing result
 };
 ```
 
@@ -649,7 +650,10 @@ See node usage examples :
 
 ## TODO
 
-- `@hidden` decorator and `_*_hidden` to hide field or method from the help. Or add hidden arg to `@help`
+- option to overwrite "usage" in the help : `@usage` ?
+- call _on_help() before print the help (don't print if the return is true)
+- `@hidden` decorator and `_*_hidden` to hide field or method from the help. Or
+  add hidden arg to `@help`
 - `@subcommand` decorator and `_*_subcommand` (or auto-detect subcommand if
   field is a class ?) :
 
@@ -691,5 +695,3 @@ class Tool {
 - NodeJS implementation of --config/configCli
 - help on cmd args ?
 - check missing feat ?
-- solution to return Tool with fiel & cmd set without exec
-

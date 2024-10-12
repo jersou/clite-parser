@@ -1,6 +1,11 @@
 import { bgRed, bold } from "@std/fmt/colors";
 import { genHelp, getDefaultMethod } from "./src/help.ts";
-import { fillFields, type Obj, parseArgs } from "./src/parse_args.ts";
+import {
+  convertCommandArg,
+  fillFields,
+  type Obj,
+  parseArgs,
+} from "./src/parse_args.ts";
 import { getFieldNames, getMethodNames } from "./src/reflect.ts";
 import { runCommand } from "./src/command.ts";
 
@@ -43,6 +48,33 @@ export type CliteRunConfig = {
    * don't convert "true"/"false" to true/false in command arguments, and not to number after --
    */
   dontConvertCmdArgs?: boolean;
+
+  /*
+   * don't run the command, return the parsing result
+   */
+  dontRun?: boolean;
+};
+
+/**
+ * Result of cliteRun() with `dontRun:true`
+ */
+export type DontRunResult = {
+  /*
+   * The input object overwritten with the data from the parsing result
+   */
+  obj: Obj;
+  /*
+   * The command to run from the parsing result
+   */
+  command: string;
+  /*
+   * The command arguments from the parsing result
+   */
+  commandArgs: (string | number | boolean)[];
+  /*
+   * The input CliteRunConfig
+   */
+  config: CliteRunConfig | undefined;
 };
 
 /**
@@ -54,8 +86,9 @@ export function cliteRun<O extends Obj>(
   objOrClass: O | { new (): O },
   config?: CliteRunConfig,
 ): unknown {
-  const obj =
-    (typeof objOrClass === "function" ? new objOrClass() : objOrClass) as Obj;
+  const obj = (
+    typeof objOrClass === "function" ? new objOrClass() : objOrClass
+  ) as Obj;
   if (!config?.meta || config?.meta.main) {
     const help = genHelp(obj, config);
     try {
@@ -103,7 +136,9 @@ export function cliteRun<O extends Obj>(
         const commandArgs = config?.dontConvertCmdArgs
           ? parseResult.commandArgs
           : parseResult.commandArgs.map(convertCommandArg);
-        return runCommand(obj, command, commandArgs, config);
+        return config?.dontRun
+          ? { obj, command, commandArgs, config }
+          : runCommand(obj, command, commandArgs, config);
       }
       // deno-lint-ignore no-explicit-any
     } catch (e: any) {
