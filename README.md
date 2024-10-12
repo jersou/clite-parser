@@ -649,6 +649,7 @@ See node usage examples :
 
 ## TODO
 
+- `@hidden` decorator and `_*_hidden` to hide field or method from the help. Or add hidden arg to `@help`
 - `@subcommand` decorator and `_*_subcommand` (or auto-detect subcommand if
   field is a class ?) :
 
@@ -688,3 +689,7 @@ class Tool {
 - add missing tests
 - refactor the code
 - NodeJS implementation of --config/configCli
+- help on cmd args ?
+- check missing feat ?
+- solution to return Tool with fiel & cmd set without exec
+
