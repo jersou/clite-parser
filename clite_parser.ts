@@ -117,18 +117,3 @@ export function cliteRun<O extends Obj>(
     }
   }
 }
-
-function convertCommandArg(v: string | number) {
-  if (typeof v === "string") {
-    if (v === "true") {
-      return true;
-    } else if (v === "false") {
-      return false;
-    } else {
-      if (!isNaN(v as unknown as number) && !isNaN(parseFloat(v))) {
-        return parseFloat(v);
-      }
-    }
-  }
-  return v;
-}

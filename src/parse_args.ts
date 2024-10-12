@@ -1,9 +1,8 @@
 import { getMetadata } from "./decorators.ts";
 import type { CliteRunConfig } from "../clite_parser.ts";
-import { toCamelCase, toSnakeCase } from "@std/text";
+import { toCamelCase, toKebabCase, toSnakeCase } from "@std/text";
 import { parseArgs as stdParseArgs } from "@std/cli";
 import { getFieldNames } from "./reflect.ts";
-import { toKebabCase } from "@std/text";
 
 /**
  * Result of parseArgs()
@@ -152,4 +151,19 @@ function getArgs(config?: CliteRunConfig) {
   } else {
     return [];
   }
+}
+
+export function convertCommandArg(v: string | number) {
+  if (typeof v === "string") {
+    if (v === "true") {
+      return true;
+    } else if (v === "false") {
+      return false;
+    } else {
+      if (!isNaN(v as unknown as number) && !isNaN(parseFloat(v))) {
+        return parseFloat(v);
+      }
+    }
+  }
+  return v;
 }
