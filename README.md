@@ -14,19 +14,19 @@ import { cliteRun } from "jsr:@jersou/clite@0.6.1";
 // or for Node usage, after "npx jsr add @jersou/clite" (same import from "@jersou/clite")
 
 class Tool {
-  retry = 2;
+  retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
   dryRun = false; // fields are converted to kebab case as global options
   webUrl = "none"; // → --web-url
 
-  main() {
+  main() { // call if : $ ./example-lite-lite.ts // or if $ ./example-lite-lite.ts main
     console.log("main command", this);
   }
 
-  up() {
+  up() { // call if : $ ./example-lite-lite.ts up
     console.log("up command", this);
   }
 
-  down(force: boolean, timeout: number) {
+  down(force: boolean, timeout: number) { // call if : $ ./example-lite-lite.ts down true 14
     console.log("down command", { force, timeout }, this);
   }
 }
