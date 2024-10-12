@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.6.1";
+import { cliteRun } from "../clite_parser.ts";
 
 cliteRun({
   retry: 2,

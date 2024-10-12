@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno -A
-import { cliteRun } from "jsr:@jersou/clite@0.6.1";
+import { cliteRun } from "../clite_parser.ts";
 
 class Tool {
   _help = "This tool is a little example of CliteParser"; // optional description
