@@ -344,7 +344,11 @@ class Tool {
 
 <!-- TODO -->
 
-### @@usage
+### @usage
+
+<!-- TODO -->
+
+### @hidden
 
 <!-- TODO -->
 
@@ -654,8 +658,6 @@ See node usage examples :
 
 ## TODO
 
-- `@hidden` decorator and `_*_hidden` to hide field or method from the help. Or
-  add hidden arg to `@help`
 - `@subcommand` decorator and `_*_subcommand` (or auto-detect subcommand if
   field is a class ?) :
 

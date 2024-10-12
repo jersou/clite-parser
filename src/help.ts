@@ -79,8 +79,12 @@ function genOptionsHelp(
   const defaultMetadata = getMetadata(obj, "clite_defaults") as Obj;
   const negatableMetadata = getMetadata(obj, "clite_negatables") as Obj;
   const negatables = Object.keys(negatableMetadata ?? {});
+  const hiddenMetadata = getMetadata(obj, "clite_hidden") as Obj;
+  const hidden = hiddenMetadata ? Object.keys(hiddenMetadata) : [];
   const allFields = getFieldNames(obj);
-  const fields = allFields.filter((method) => !method.startsWith("_"));
+  const fields = allFields.filter((f) =>
+    !f.startsWith("_") && !hidden.includes(f) && !obj[`_${f}_hidden`]
+  );
   helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
   const linesCols: [string, string, string, string][] = [];
   linesCols.push([

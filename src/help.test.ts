@@ -2,7 +2,7 @@ import { assert, assertEquals } from "@std/assert";
 import { stripAnsiCode } from "@std/fmt/colors";
 import { align, genHelp } from "./help.ts";
 import { Tool } from "./test_data.test.ts";
-import { usage } from "./decorators.ts";
+import { hidden, usage } from "./decorators.ts";
 import { cliteRun, type DontRunResult } from "../clite_parser.ts";
 
 Deno.test("genHelp", () => {
@@ -105,5 +105,36 @@ Deno.test({
       dontRun: true,
     }) as DontRunResult;
     assert(result.help.includes(" new usage\n"));
+  },
+});
+
+class ToolHiddenField {
+  @hidden()
+  foo = 12;
+}
+
+Deno.test({
+  name: "@hidden",
+  fn() {
+    const result = cliteRun(ToolHiddenField, {
+      args: ["--help"],
+      dontRun: true,
+    }) as DontRunResult;
+    assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
+  },
+});
+
+class Tool_HiddenField {
+  _foo_hidden = true;
+  foo = 12;
+}
+Deno.test({
+  name: "_hidden",
+  fn() {
+    const result = cliteRun(Tool_HiddenField, {
+      args: ["--help"],
+      dontRun: true,
+    }) as DontRunResult;
+    assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
   },
 });

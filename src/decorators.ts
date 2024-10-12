@@ -104,3 +104,14 @@ export function usage(usage: string): any {
     addMetadata(target, prop, "clite_usage", usage);
   };
 }
+
+/**
+ * decorator on methods/properties : `@hidden()`
+ */
+// deno-lint-ignore no-explicit-any
+export function hidden(): any {
+  // deno-lint-ignore no-explicit-any
+  return function (target: any, prop?: any) {
+    addMetadata(target, prop, "clite_hidden", true);
+  };
+}
