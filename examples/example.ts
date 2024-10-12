@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.6.0";
+import { cliteRun } from "jsr:@jersou/clite@0.6.1";
 // or after "deno add @jersou/clite" : import { cliteRun } from "@jersou/clite";
 // or for Node usage, after "npx jsr add @jersou/clite" (same import from "@jersou/clite")
 

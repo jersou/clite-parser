@@ -13,7 +13,7 @@
 //   -h, --help     Show this help                [default: false]
 //       --interval repeat watch every <INTERVAL> sec [default: 1]
 
-import { cliteRun, help } from "jsr:@jersou/clite@0.6.0";
+import { cliteRun, help } from "jsr:@jersou/clite@0.6.1";
 import $ from "jsr:@david/dax@0.42.0";
 import { assert } from "jsr:@std/assert@1.0.5";
 import {
@@ -176,5 +176,5 @@ export class DockerComposePs {
 
 // if the file is imported, do not execute this block
 if (import.meta.main) {
-  cliteRun(new DockerComposePs());
+  cliteRun(DockerComposePs);
 }

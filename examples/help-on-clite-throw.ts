@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.6.0";
+import { cliteRun } from "jsr:@jersou/clite@0.6.1";
 export class Tool {
   noThrow = false;
 

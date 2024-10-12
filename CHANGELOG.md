@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/jersou/clite-parser/compare/0.6.0...0.6.1) (2024-10-12)
+
+### Features
+
+- allows to take a class as input: `cliteRun(new Tool())` or `cliteRun(Tool)`
+  ([7cd08fa](https://github.com/jersou/clite-parser/commit/7cd08fa7b6e0f0024e93009ed8f2b1265550e149))
+
 ## [0.6.0](https://github.com/jersou/clite-parser/compare/0.5.0...0.6.0) (2024-10-11)
 
 - feat: use [@std/cli](https://jsr.io/@std/cli/doc/parse-args) ! based on
