@@ -1,3 +1,16 @@
+## [0.6.4](https://github.com/jersou/clite-parser/compare/0.6.3...0.6.4) (2024-10-13)
+
+### Features
+
+- add `@subcommand` & `@noCommand`
+  ([8618478](https://github.com/jersou/clite-parser/commit/86184780bbcf891520264457e4a2408791ce4634))
+- add cliteParse/CliteResult, remove CliteRunConfig.dontRun
+  ([6b3fcd1](https://github.com/jersou/clite-parser/commit/6b3fcd1e982273cb54418ee7f89f273ad000df80))
+- add generic Obj to CliteResult
+  ([c477526](https://github.com/jersou/clite-parser/commit/c477526c366db811abe8970665577ad6854beb46))
+- throw if an option doesn't exists
+  ([44d0760](https://github.com/jersou/clite-parser/commit/44d0760b7e51683934281021e68e7870bd6000b9))
+
 ## [0.6.3](https://github.com/jersou/clite-parser/compare/0.6.2...0.6.3) (2024-10-13)
 
 ### Bug Fixes
@@ -9,10 +22,9 @@
 
 ### Features
 
-- add [@hidden](https://github.com/hidden) decorator and `_*_hidden` to hide
-  field or method from the help
+- add `@hidden` decorator and `_*_hidden` to hide field or method from the help
   ([f78215e](https://github.com/jersou/clite-parser/commit/f78215e91bf9a8b919fa5a8845238657709b8077))
-- add [@usage](https://github.com/usage), add help to DontRunResult
+- add`@usage`, add help to DontRunResult
   ([451cf3f](https://github.com/jersou/clite-parser/commit/451cf3fe7c72d814b7a33fe9df917a7a31389917))
 - add CliteRunConfig.dontRun & DontRunResult
   ([7ed0aee](https://github.com/jersou/clite-parser/commit/7ed0aee9397bc64acd7d1f9396a57c0ca1c219a9))
