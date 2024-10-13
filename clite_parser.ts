@@ -107,28 +107,33 @@ export function cliteRun<O extends Obj>(
           return help;
         }
       } else {
-        if (
-          config?.configCli &&
-          getFieldNames(parseResult.options).includes("config")
-        ) {
-          // deno-lint-ignore no-explicit-any
-          if ((globalThis as any)["Deno"]?.args) {
-            const path = parseResult.options.config as string;
-            try {
-              const json = Deno.readTextFileSync(path);
-              const config = JSON.parse(json);
-              Object.assign(obj, config);
-              obj.config = undefined;
-            } catch (error) {
-              throw new Error(`Error while loading the config file "${path}"`, {
-                cause: { clite: true, error },
-              });
+        if (config?.configCli) {
+          if (getFieldNames(parseResult.options).includes("config")) {
+            // deno-lint-ignore no-explicit-any
+            if ((globalThis as any)["Deno"]?.args) {
+              const path = parseResult.options.config as string;
+              try {
+                const json = Deno.readTextFileSync(path);
+                const config = JSON.parse(json);
+                Object.assign(obj, config);
+                obj.config = path;
+              } catch (error) {
+                throw new Error(
+                  `Error while loading the config file "${path}"`,
+                  {
+                    cause: { clite: true, error },
+                  },
+                );
+              }
+            } else {
+              // TODO NodeJS implementation
+              throw new Error("Load config is not implemented on NodeJs");
             }
           } else {
-            // TODO NodeJS implementation
-            throw new Error("Load config is not implemented on NodeJs");
+            obj.config = undefined;
           }
         }
+
         const command = parseResult.command ?? defaultMethod;
         if (!command) {
           throw new Error(`no method defined or no "main" method`, {
