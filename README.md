@@ -650,6 +650,9 @@ See node usage examples :
 
 - `@subcommand` decorator and `_*_subcommand` (or auto-detect subcommand if
   field is a class ?) :
+  - filter fields
+  - adapt HELP
+  -
 
 ```typescript
 class Tool {
@@ -691,3 +694,4 @@ class Tool {
 - check missing feat (compare to other tools ) ?
 - decorator to specify the arg name of field bug
   `--skip-extract-image-from-mp-3` vs `--skip-extract-image-from-mp3`
+- move noCommand to decorator

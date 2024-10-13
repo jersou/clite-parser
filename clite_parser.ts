@@ -8,6 +8,7 @@ import {
 } from "./src/parse_args.ts";
 import { getFieldNames, getMethodNames } from "./src/reflect.ts";
 import { runCommand } from "./src/command.ts";
+import { getMetadata } from "./src/decorators.ts";
 
 export * from "./src/decorators.ts";
 
@@ -62,22 +63,17 @@ export function cliteRun<O extends Obj>(
   const res = cliteParse(objOrClass, config);
 
   if (!config?.meta || config?.meta.main) {
-    if (res.command === "--help") {
-      console.error(res.help);
-      return res.help;
-    } else {
-      try {
-        return runCommand(res.obj, res.command, res.commandArgs, res.config);
-        // deno-lint-ignore no-explicit-any
-      } catch (e: any) {
-        if (e.cause?.clite || config?.printHelpOnError) {
-          console.error(bgRed(bold("An error occurred ! The help :")));
-          console.error(res.help);
-          console.error();
-          console.error(bgRed(bold("The error :")));
-        }
-        throw e;
+    try {
+      return runCommand<O>(res);
+      // deno-lint-ignore no-explicit-any
+    } catch (e: any) {
+      if (e.cause?.clite || config?.printHelpOnError) {
+        console.error(bgRed(bold("An error occurred ! The help :")));
+        console.error(res.help);
+        console.error();
+        console.error(bgRed(bold("The error :")));
       }
+      throw e;
     }
   }
 }
@@ -106,6 +102,10 @@ export type CliteResult<O extends Obj> = {
    * The generated help
    */
   help: string;
+  /*
+   * The subcommand CliteResult
+   */
+  subcommand?: CliteResult<Obj>;
 };
 
 /**
@@ -161,12 +161,37 @@ export function cliteParse<O extends Obj & { config?: string }>(
           cause: { clite: true },
         });
       }
-      if (!methods.includes(command)) {
+      const subcommandMetadata =
+        // deno-lint-ignore no-explicit-any
+        getMetadata(obj, "clite_subcommand") as Record<string, any> ?? {};
+      const subcommands = [
+        ...Object.keys(subcommandMetadata),
+        ...Object.getOwnPropertyNames(obj)
+          .filter((prop) => obj[`_${prop}_subcommand`] === true),
+      ];
+
+      fillFields(parseResult, obj);
+      if (subcommands.includes(command)) {
+        const subcommandObj = typeof obj[command] === "function"
+          ? new obj[command]()
+          : obj[command];
+        subcommandObj._clite_parent = obj;
+        return {
+          obj,
+          command,
+          commandArgs: [],
+          config,
+          help,
+          subcommand: cliteParse(subcommandObj, {
+            ...config,
+            args: parseResult.commandArgs.map((e) => e.toString()),
+          }),
+        };
+      } else if (!methods.includes(command)) {
         throw new Error(`The command "${command}" doesn't exist`, {
           cause: { clite: true },
         });
       }
-      fillFields(parseResult, obj);
       const commandArgs = config?.dontConvertCmdArgs
         ? parseResult.commandArgs
         : parseResult.commandArgs.map(convertCommandArg);

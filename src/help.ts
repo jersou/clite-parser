@@ -42,14 +42,26 @@ function genCommandHelp(obj: Obj, helpLines: string[]) {
   const methods = allMethods.filter((method) => !method.startsWith("_"));
   const defaultCommand = getDefaultMethod(methods);
   const helpMetadata = getMetadata(obj, "clite_help");
+
+  const subcommandMetadata =
+    // deno-lint-ignore no-explicit-any
+    getMetadata(obj, "clite_subcommand") as Record<string, any> ?? {};
+  const subcommands = [
+    ...Object.keys(subcommandMetadata),
+    ...Object.getOwnPropertyNames(obj)
+      .filter((prop) => obj[`_${prop}_subcommand`] === true),
+  ];
+  methods.push(...subcommands); //TODO REFACTOR
   if (methods.length > 0) {
     helpLines.push(boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`));
     const linesCols: [string, string, string, string][] = [];
     for (const method of methods) {
       let col1 = bold(`  ${method}`);
-      const args = getMethodArgNames(obj, method);
-      if (args.length > 0) {
-        col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
+      if (!subcommands.includes(method)) { //TODO REFACTOR
+        const args = getMethodArgNames(obj, method);
+        if (args.length > 0) {
+          col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
+        }
       }
       let col2 = helpMetadata?.[method] ??
         obj[`_${method}_help`] ??
@@ -175,6 +187,8 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
     : obj._usage
     ? obj._usage
     : undefined;
+  const noCommandMetadata = getMetadata(obj, "clite_noCommand") as Obj;
+  const noCommand = !!noCommandMetadata || obj._no_command;
   const helpMetadata = getMetadata(obj, "clite_help");
   const objHelp = helpMetadata?.[Object.getPrototypeOf(obj).constructor.name] ??
     obj._help ??
@@ -190,13 +204,13 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
   let usage = `${boldUnder("Usage:")} `;
   if (newUsage) {
     usage = `${usage}${newUsage}`;
-  } else if (config?.noCommand) {
+  } else if (config?.noCommand || noCommand) {
     usage = `${usage}${mainFile} [Options] [--] [args]`;
   } else {
     usage = `${usage}${mainFile} [Options] [--] [command [command args]]`;
   }
   helpLines.push(usage);
-  if (!config?.noCommand) {
+  if (!config?.noCommand && !noCommand) {
     genCommandHelp(obj, helpLines);
   }
   genOptionsHelp(obj, helpLines, config);

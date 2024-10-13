@@ -115,3 +115,25 @@ export function hidden(): any {
     addMetadata(target, prop, "clite_hidden", true);
   };
 }
+
+/**
+ * decorator on properties : `@subcommand()`
+ */
+// deno-lint-ignore no-explicit-any
+export function subcommand(): any {
+  // deno-lint-ignore no-explicit-any
+  return function (target: any, prop?: any) {
+    addMetadata(target, prop, "clite_subcommand", true);
+  };
+}
+
+/**
+ * decorator on class : `@noCommand()`
+ */
+// deno-lint-ignore no-explicit-any
+export function noCommand(): any {
+  // deno-lint-ignore no-explicit-any
+  return function (target: any, prop?: any) {
+    addMetadata(target, prop, "clite_noCommand", true);
+  };
+}

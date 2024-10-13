@@ -92,15 +92,18 @@ export function parseArgs(
     boolean: booleanProp.map(toKebabCase),
     collect: arrayProp.map(toKebabCase),
     alias,
+    stopEarly: true,
   });
 
   const fields = getFieldNames(obj);
   const fieldsKebabCase = fields.map(toKebabCase);
   const aliasKey = Object.values(alias).flat();
+  const noCommandMetadata = getMetadata(obj, "clite_noCommand") as Obj;
+  const noCommand = !!noCommandMetadata || obj._no_command;
 
   for (const [key, value] of Object.entries(stdRes)) {
     if (key === "_") {
-      if (config?.noCommand) {
+      if (config?.noCommand || noCommand) {
         argsResult.command = defaultMethod;
         argsResult.commandArgs = stdRes._;
       } else if (stdRes._.length > 0) {
