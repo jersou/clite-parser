@@ -3,7 +3,7 @@ import { stripAnsiCode } from "@std/fmt/colors";
 import { align, genHelp } from "./help.ts";
 import { Tool } from "./test_data.test.ts";
 import { hidden, usage } from "./decorators.ts";
-import { cliteRun, type DontRunResult } from "../clite_parser.ts";
+import { cliteParse } from "../clite_parser.ts";
 
 Deno.test("genHelp", () => {
   const tool = new Tool();
@@ -85,10 +85,7 @@ class ToolUsage {
 Deno.test({
   name: "@usage",
   fn() {
-    const result = cliteRun(ToolUsage, {
-      args: ["--help"],
-      dontRun: true,
-    }) as DontRunResult;
+    const result = cliteParse(ToolUsage, { args: ["--help"] });
     assert(result.help.includes(" new usage\n"));
   },
 });
@@ -100,10 +97,7 @@ class Tool_Usage {
 Deno.test({
   name: "_usage",
   fn() {
-    const result = cliteRun(Tool_Usage, {
-      args: ["--help"],
-      dontRun: true,
-    }) as DontRunResult;
+    const result = cliteParse(Tool_Usage, { args: ["--help"] });
     assert(result.help.includes(" new usage\n"));
   },
 });
@@ -116,10 +110,9 @@ class ToolHiddenField {
 Deno.test({
   name: "@hidden",
   fn() {
-    const result = cliteRun(ToolHiddenField, {
+    const result = cliteParse(ToolHiddenField, {
       args: ["--help"],
-      dontRun: true,
-    }) as DontRunResult;
+    });
     assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
   },
 });
@@ -131,10 +124,7 @@ class Tool_HiddenField {
 Deno.test({
   name: "_hidden",
   fn() {
-    const result = cliteRun(Tool_HiddenField, {
-      args: ["--help"],
-      dontRun: true,
-    }) as DontRunResult;
+    const result = cliteParse(Tool_HiddenField, { args: ["--help"] });
     assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
   },
 });

@@ -1,9 +1,10 @@
 #!/usr/bin/env -S deno run -A
 import {
   alias,
+  cliteParse,
+  CliteResult,
   cliteRun,
   defaultHelp,
-  DontRunResult,
   help,
   hidden,
   type,
@@ -215,10 +216,9 @@ export class StudioPackGenerator {
 
 if (import.meta.main) {
   console.log({ version: denoJson.version, ...Deno.version });
-  const res = cliteRun(StudioPackGenerator, {
+  const res = cliteParse(StudioPackGenerator, {
     noCommand: true,
     configCli: "The json config file",
-    dontRun: true,
-  }) as DontRunResult;
+  });
   console.log(res.obj);
 }

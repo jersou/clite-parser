@@ -48,17 +48,12 @@ export type CliteRunConfig = {
    * don't convert "true"/"false" to true/false in command arguments, and not to number after --
    */
   dontConvertCmdArgs?: boolean;
-
-  /*
-   * don't run the command, return the parsing result
-   */
-  dontRun?: boolean;
 };
 
 /**
- * Result of cliteRun() with `dontRun:true`
+ * Result of cliteParse()
  */
-export type DontRunResult = {
+export type CliteResult = {
   /*
    * The input object overwritten with the data from the parsing result
    */
@@ -90,78 +85,101 @@ export function cliteRun<O extends Obj>(
   objOrClass: O | { new (): O },
   config?: CliteRunConfig,
 ): unknown {
+  const res = cliteParse(objOrClass, config);
+
+  if (!config?.meta || config?.meta.main) {
+    if (res.command === "--help") {
+      console.error(res.help);
+      return res.help;
+    } else {
+      try {
+        return runCommand(res.obj, res.command, res.commandArgs, res.config);
+        // deno-lint-ignore no-explicit-any
+      } catch (e: any) {
+        if (e.cause?.clite || config?.printHelpOnError) {
+          console.error(bgRed(bold("An error occurred ! The help :")));
+          console.error(res.help);
+          console.error();
+          console.error(bgRed(bold("The error :")));
+        }
+        throw e;
+      }
+    }
+  }
+}
+
+/**
+ * Return the parsing result of obj and the Deno/Node script arguments
+ * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
+ * @param config - of clite-parser
+ */
+export function cliteParse<O extends Obj>(
+  objOrClass: O | { new (): O },
+  config?: CliteRunConfig,
+): CliteResult {
   const obj = (
     typeof objOrClass === "function" ? new objOrClass() : objOrClass
   ) as Obj;
-  if (!config?.meta || config?.meta.main) {
-    const help = genHelp(obj, config);
-    try {
-      const methods = getMethodNames(obj);
-      const defaultMethod = getDefaultMethod(methods);
-      const parseResult = parseArgs(obj, config, defaultMethod);
-      if (getFieldNames(parseResult.options).includes("help")) {
-        if (config?.dontRun) {
-          return ({ obj, command: "--help", commandArgs: [], config, help });
-        } else {
-          console.error(help);
-          return help;
-        }
-      } else {
-        if (config?.configCli) {
-          if (getFieldNames(parseResult.options).includes("config")) {
-            // deno-lint-ignore no-explicit-any
-            if ((globalThis as any)["Deno"]?.args) {
-              const path = parseResult.options.config as string;
-              try {
-                const json = Deno.readTextFileSync(path);
-                const config = JSON.parse(json);
-                Object.assign(obj, config);
-                obj.config = path;
-              } catch (error) {
-                throw new Error(
-                  `Error while loading the config file "${path}"`,
-                  {
-                    cause: { clite: true, error },
-                  },
-                );
-              }
-            } else {
-              // TODO NodeJS implementation
-              throw new Error("Load config is not implemented on NodeJs");
+  const help = genHelp(obj, config);
+  try {
+    const methods = getMethodNames(obj);
+    const defaultMethod = getDefaultMethod(methods);
+    const parseResult = parseArgs(obj, config, defaultMethod);
+    if (getFieldNames(parseResult.options).includes("help")) {
+      return ({ obj, command: "--help", commandArgs: [], config, help });
+    } else {
+      if (config?.configCli) {
+        if (getFieldNames(parseResult.options).includes("config")) {
+          // deno-lint-ignore no-explicit-any
+          if ((globalThis as any)["Deno"]?.args) {
+            const path = parseResult.options.config as string;
+            try {
+              const json = Deno.readTextFileSync(path);
+              const config = JSON.parse(json);
+              Object.assign(obj, config);
+              obj.config = path;
+            } catch (error) {
+              throw new Error(
+                `Error while loading the config file "${path}"`,
+                {
+                  cause: { clite: true, error },
+                },
+              );
             }
           } else {
-            obj.config = undefined;
+            // TODO NodeJS implementation
+            throw new Error("Load config is not implemented on NodeJs");
           }
+        } else {
+          obj.config = undefined;
         }
+      }
 
-        const command = parseResult.command ?? defaultMethod;
-        if (!command) {
-          throw new Error(`no method defined or no "main" method`, {
-            cause: { clite: true },
-          });
-        }
-        if (!methods.includes(command)) {
-          throw new Error(`The command "${command}" doesn't exist`, {
-            cause: { clite: true },
-          });
-        }
-        fillFields(parseResult, obj);
-        const commandArgs = config?.dontConvertCmdArgs
-          ? parseResult.commandArgs
-          : parseResult.commandArgs.map(convertCommandArg);
-        return config?.dontRun
-          ? { obj, command, commandArgs, config, help }
-          : runCommand(obj, command, commandArgs, config);
+      const command = parseResult.command ?? defaultMethod;
+      if (!command) {
+        throw new Error(`no method defined or no "main" method`, {
+          cause: { clite: true },
+        });
       }
-      // deno-lint-ignore no-explicit-any
-    } catch (e: any) {
-      if (e.cause?.clite || config?.printHelpOnError) {
-        console.error(bgRed(bold("An error occurred ! The help :")));
-        console.error(help);
-        console.error();
-        console.error(bgRed(bold("The error :")));
+      if (!methods.includes(command)) {
+        throw new Error(`The command "${command}" doesn't exist`, {
+          cause: { clite: true },
+        });
       }
-      throw e;
+      fillFields(parseResult, obj);
+      const commandArgs = config?.dontConvertCmdArgs
+        ? parseResult.commandArgs
+        : parseResult.commandArgs.map(convertCommandArg);
+      return { obj, command, commandArgs, config, help };
     }
+    // deno-lint-ignore no-explicit-any
+  } catch (e: any) {
+    if (e.cause?.clite || config?.printHelpOnError) {
+      console.error(bgRed(bold("An error occurred ! The help :")));
+      console.error(help);
+      console.error();
+      console.error(bgRed(bold("The error :")));
+    }
+    throw e;
   }
 }

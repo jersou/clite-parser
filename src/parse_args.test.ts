@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { parseArgs, type ParseResult } from "./parse_args.ts";
-import { cliteRun, type DontRunResult } from "../clite_parser.ts";
+import { cliteParse } from "../clite_parser.ts";
 import { StudioPackGenerator } from "../examples/studio_pack_generator.ts";
 
 Deno.test("args regex", () => {
@@ -136,10 +136,9 @@ class ToolBooleanBeforeCmd {
 Deno.test({
   name: "ToolBooleanBeforeCmd",
   fn() {
-    const res = cliteRun(ToolBooleanBeforeCmd, {
+    const res = cliteParse(ToolBooleanBeforeCmd, {
       args: ["--retry", "2", "--dry-run", "mainFunc", "bar"],
-      dontRun: true,
-    }) as DontRunResult;
+    });
     assertEquals(res.commandArgs, ["bar"]);
     assertEquals(res.command, "mainFunc");
     assertEquals(res.obj.dryRun, true);
@@ -150,11 +149,10 @@ Deno.test({
 Deno.test({
   name: "ToolBooleanBeforeCmdNoCmd",
   fn() {
-    const res = cliteRun(ToolBooleanBeforeCmd, {
+    const res = cliteParse(ToolBooleanBeforeCmd, {
       args: ["--retry", "2", "--dry-run", "foo", "bar"],
       noCommand: true,
-      dontRun: true,
-    }) as DontRunResult;
+    });
     assertEquals(res.commandArgs, ["foo", "bar"]);
     assertEquals(res.command, "mainFunc");
     assertEquals(res.obj.dryRun, true);
@@ -165,11 +163,10 @@ Deno.test({
 Deno.test({
   name: "ToolBooleanBeforeCmdNoCmdSpg",
   fn() {
-    const res = cliteRun(StudioPackGenerator, {
+    const res = cliteParse(StudioPackGenerator, {
       noCommand: true,
-      dontRun: true,
       args: ["--skip-extract-image-from-mp-3", "https://...xml"],
-    }) as DontRunResult;
+    });
     assertEquals(res.command, "main");
     assertEquals(
       (res.obj as StudioPackGenerator).skipExtractImageFromMp3,
@@ -183,11 +180,10 @@ Deno.test({
   name: "Throw if the option is not found",
   fn() {
     assertThrows(() => {
-      cliteRun(StudioPackGenerator, {
+      cliteParse(StudioPackGenerator, {
         noCommand: true,
-        dontRun: true,
         args: ["--skip-extract-image-from-mp3", "https://...xml"], // should be --skip-extract-image-from-mp-3
-      }) as DontRunResult;
+      });
     });
   },
 });

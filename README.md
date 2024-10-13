@@ -484,7 +484,6 @@ type CliteRunConfig = {
   meta?: ImportMeta; // import.meta to use : don't run if the file is imported, and use import.meta.url in the help
   configCli?: boolean; // enable "--config <path>" to load json config before processing the args, Show in the help if it's a string
   dontConvertCmdArgs?: boolean; // don't convert "true"/"false" to true/false in command arguments, and not to number after --
-  dontRun?: boolean; // don't run the command, return the parsing result
 };
 ```
 
@@ -685,13 +684,11 @@ class Tool {
     deserialize the class to cli/help)
   - "many ways to pass parameters" in doc : `-l=8`,`-l 8`, `-l8`,
     `--out-limit 8`, `--out-limit=8`, `--outLimit 8`, `--outLimit=8`
-- add missing tests
+- add missing tests, check cov
 - refactor the code
 - NodeJS implementation of --config/configCli
 - help on cmd args ?
 - check missing feat ?
-- refactor dontrun : new function vs cliteRun... no dontRun config but new
-  function `clite` ?
 - add return type on cliteRun
 - decorator to specify the arg name of field bug
   `--skip-extract-image-from-mp-3` vs `--skip-extract-image-from-mp3`
