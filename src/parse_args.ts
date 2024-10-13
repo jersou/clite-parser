@@ -39,6 +39,7 @@ export function parseArgs(
   config?: CliteRunConfig,
   defaultMethod = "main",
 ): ParseResult {
+  // TODO : refactor this function
   const argsResult: ParseResult = {
     options: {},
     commandArgs: [],
@@ -83,14 +84,20 @@ export function parseArgs(
   }
 
   const negatableMetadata = getMetadata(obj, "clite_negatables") ?? {};
+  const negatable = Object.keys(negatableMetadata);
 
   const stdRes = stdParseArgs(args, {
-    negatable: Object.keys(negatableMetadata).map(toKebabCase),
+    negatable: negatable.map(toKebabCase),
     string: stringProp.map(toKebabCase),
     boolean: booleanProp.map(toKebabCase),
     collect: arrayProp.map(toKebabCase),
     alias,
   });
+
+  const fields = getFieldNames(obj);
+  const fieldsKebabCase = fields.map(toKebabCase);
+  const aliasKey = Object.values(alias).flat();
+
   for (const [key, value] of Object.entries(stdRes)) {
     if (key === "_") {
       if (config?.noCommand) {
@@ -101,6 +108,14 @@ export function parseArgs(
         argsResult.commandArgs = stdRes._.slice(1);
       }
     } else {
+      if (
+        key !== "help" && !fieldsKebabCase.includes(key) &&
+        !fields.includes(key) && !aliasKey.includes(key)
+      ) {
+        throw new Error(`The option "${key}" doesn't exist`, {
+          cause: { clite: true },
+        });
+      }
       argsResult.options[toCamelCase(key)] = value;
     }
   }

@@ -1,6 +1,15 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun, usage } from "../clite_parser.ts";
-import { alias, defaultHelp, help, type } from "../src/decorators.ts";
+import {
+  alias,
+  cliteRun,
+  defaultHelp,
+  DontRunResult,
+  help,
+  hidden,
+  type,
+  usage,
+} from "../clite_parser.ts";
+import denoJson from "../deno.json" with { type: "json" };
 
 // CLI of https://github.com/jersou/studio-pack-generator
 
@@ -8,9 +17,9 @@ import { alias, defaultHelp, help, type } from "../src/decorators.ts";
   "studio-pack-generator convert a folder or a RSS URL to Studio pack zip for Lunii device",
 )
 @usage(
-  "studio-pack-generator [options] <story path | RSS URL>   convert a folder or RSS url to Studio pack",
+  "studio-pack-generator [options] [--] <story path | RSS URL>   convert a folder or RSS url to Studio pack",
 )
-class SpgCli {
+export class StudioPackGenerator {
   @alias("d")
   @help("add 1 second at the beginning and the end of audio files")
   addDelay = false;
@@ -26,7 +35,7 @@ class SpgCli {
   @type("string")
   @alias("l")
   @help("the lang used to generate menu and items. Auto detected by default")
-  lang?: string;
+  lang: string = "";
 
   @alias("t")
   @help("enable night mode : add transitions to an uniq endpoint")
@@ -116,11 +125,11 @@ class SpgCli {
 
   @help("OpenAi model : tts-1, tts-1-hd")
   @alias("g")
-  openAiModel = "tts-1";
+  openAiModel: string = "tts-1";
 
   @help("OpenAi voice : alloy, echo, fable, onyx, nova, shimmer")
   @alias("p")
-  openAiVoice = "onyx";
+  openAiVoice: string = "onyx";
 
   @help("use coqui TTS")
   useCoquiTts = false;
@@ -159,9 +168,57 @@ class SpgCli {
   @help("custom script to be used for custom image... handling")
   customScript?: string;
 
-  main(storyPath: string) {
-    console.log(this, storyPath);
+  @hidden()
+  storyPath = "";
+
+  @hidden()
+  // deno-lint-ignore no-explicit-any
+  customModule?: any; //CustomModule;
+
+  @help("Metadata of the pack")
+  @type("[object]")
+  metadata?: {
+    title?: string;
+    description?: string;
+    format?: string;
+    version?: number;
+    nightModeAvailable?: boolean;
+    [k: string]: string | number | boolean | undefined | object;
+  };
+  @help("Custom i18n")
+  @type("[object]")
+  i18n?: Record<string, string>;
+
+  // deno-lint-ignore no-explicit-any
+  async main(storyPath: string): Promise<any> {
+    if (!this.storyPath) { // don't set if set by config file or --storyPath
+      this.storyPath = storyPath;
+    }
+    if (!this.storyPath) {
+      throw new Error(
+        "The story path is not defined ! separate option and story path by --",
+        { cause: { clite: true } },
+      );
+    }
+
+    if (this.customScript) {
+      try {
+        this.customModule = await import(this.customScript);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    console.log(this);
+    return this;
   }
 }
 
-cliteRun(new SpgCli(), { noCommand: true, configCli: "The json config file" });
+if (import.meta.main) {
+  console.log({ version: denoJson.version, ...Deno.version });
+  const res = cliteRun(StudioPackGenerator, {
+    noCommand: true,
+    configCli: "The json config file",
+    dontRun: true,
+  }) as DontRunResult;
+  console.log(res.obj);
+}

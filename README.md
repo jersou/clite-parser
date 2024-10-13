@@ -376,15 +376,6 @@ main command Tool { retry: 2, dryRun: false, webUrl: "test" }
 → { ac: { bb: "aaa", dd: { ee: "v", ff: "w" } } }
 ```
 
-### Warning: boolean parameter without value preceding the command
-
-If a boolean param without value is used before the command, you must:
-
-- separate the boolean and the command by a double hyphen `--`
-- or use a value : `--dry-run=true` or `--dry-run true`
-
-Otherwise, the command will be interpreted as the value of boolean parameter.
-
 ### Default command
 
 - If there is only one method/command => this method is the default
@@ -699,3 +690,8 @@ class Tool {
 - NodeJS implementation of --config/configCli
 - help on cmd args ?
 - check missing feat ?
+- refactor dontrun : new function vs cliteRun... no dontRun config but new
+  function `clite` ?
+- add return type on cliteRun
+- decorator to specify the arg name of field bug
+  `--skip-extract-image-from-mp-3` vs `--skip-extract-image-from-mp3`

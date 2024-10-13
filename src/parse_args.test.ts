@@ -1,5 +1,7 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { parseArgs, type ParseResult } from "./parse_args.ts";
+import { cliteRun, type DontRunResult } from "../clite_parser.ts";
+import { StudioPackGenerator } from "../examples/studio_pack_generator.ts";
 
 Deno.test("args regex", () => {
   const result = "force, timeout = 10"
@@ -11,7 +13,12 @@ Deno.test("args regex", () => {
 
 Deno.test("parseArgs", () => {
   const parseResult = parseArgs(
-    {},
+    {
+      opt2: true,
+      opt3: "ee",
+      optSnakeCase: 1,
+      optCamelCase: 4,
+    },
     {
       args: [
         "--opt2=false",
@@ -26,7 +33,7 @@ Deno.test("parseArgs", () => {
   );
   const expected: ParseResult = {
     options: {
-      opt2: "false",
+      opt2: false,
       opt3: "qsdf",
       optSnakeCase: 123,
       optCamelCase: 456,
@@ -39,7 +46,12 @@ Deno.test("parseArgs", () => {
 
 Deno.test("parseArgs noCommand", () => {
   const parseResult = parseArgs(
-    {},
+    {
+      opt2: true,
+      opt3: "ee",
+      optSnakeCase: 1,
+      optCamelCase: 4,
+    },
     {
       args: [
         "--opt2=false",
@@ -55,7 +67,7 @@ Deno.test("parseArgs noCommand", () => {
   );
   const expected: ParseResult = {
     options: {
-      opt2: "false",
+      opt2: false,
       opt3: "qsdf",
       optSnakeCase: 123,
       optCamelCase: 456,
@@ -68,7 +80,16 @@ Deno.test("parseArgs noCommand", () => {
 
 Deno.test("parseArgs full", () => {
   const parseResult = parseArgs(
-    {},
+    {
+      opt1: 1,
+      opt2: true,
+      optSnakeCase: 1,
+      a: false,
+      b: false,
+      c: false,
+      o: 1,
+      u: "a",
+    },
     {
       args: [
         "--opt1=123",
@@ -91,7 +112,7 @@ Deno.test("parseArgs full", () => {
   const expected: ParseResult = {
     options: {
       opt1: 123,
-      opt2: "false",
+      opt2: false,
       u: "qsdf",
       a: true,
       b: true,
@@ -103,4 +124,70 @@ Deno.test("parseArgs full", () => {
     commandArgs: ["true", "-y", "12s"],
   };
   assertEquals(parseResult, expected);
+});
+
+class ToolBooleanBeforeCmd {
+  retry = 1;
+  dryRun = false;
+  mainFunc(arg1: string, arg2: string) {
+    console.log(this, { arg1, arg2 });
+  }
+}
+Deno.test({
+  name: "ToolBooleanBeforeCmd",
+  fn() {
+    const res = cliteRun(ToolBooleanBeforeCmd, {
+      args: ["--retry", "2", "--dry-run", "mainFunc", "bar"],
+      dontRun: true,
+    }) as DontRunResult;
+    assertEquals(res.commandArgs, ["bar"]);
+    assertEquals(res.command, "mainFunc");
+    assertEquals(res.obj.dryRun, true);
+    assertEquals(res.obj.retry, 2);
+  },
+});
+
+Deno.test({
+  name: "ToolBooleanBeforeCmdNoCmd",
+  fn() {
+    const res = cliteRun(ToolBooleanBeforeCmd, {
+      args: ["--retry", "2", "--dry-run", "foo", "bar"],
+      noCommand: true,
+      dontRun: true,
+    }) as DontRunResult;
+    assertEquals(res.commandArgs, ["foo", "bar"]);
+    assertEquals(res.command, "mainFunc");
+    assertEquals(res.obj.dryRun, true);
+    assertEquals(res.obj.retry, 2);
+  },
+});
+
+Deno.test({
+  name: "ToolBooleanBeforeCmdNoCmdSpg",
+  fn() {
+    const res = cliteRun(StudioPackGenerator, {
+      noCommand: true,
+      dontRun: true,
+      args: ["--skip-extract-image-from-mp-3", "https://...xml"],
+    }) as DontRunResult;
+    assertEquals(res.command, "main");
+    assertEquals(
+      (res.obj as StudioPackGenerator).skipExtractImageFromMp3,
+      true,
+    );
+    assertEquals(res.commandArgs, ["https://...xml"]);
+  },
+});
+
+Deno.test({
+  name: "Throw if the option is not found",
+  fn() {
+    assertThrows(() => {
+      cliteRun(StudioPackGenerator, {
+        noCommand: true,
+        dontRun: true,
+        args: ["--skip-extract-image-from-mp3", "https://...xml"], // should be --skip-extract-image-from-mp-3
+      }) as DontRunResult;
+    });
+  },
 });
