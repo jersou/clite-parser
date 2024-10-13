@@ -688,7 +688,6 @@ class Tool {
 - refactor the code
 - NodeJS implementation of --config/configCli
 - help on cmd args ?
-- check missing feat ?
-- add return type on cliteRun
+- check missing feat (compare to other tools ) ?
 - decorator to specify the arg name of field bug
   `--skip-extract-image-from-mp-3` vs `--skip-extract-image-from-mp3`

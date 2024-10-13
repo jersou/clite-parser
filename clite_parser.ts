@@ -51,32 +51,6 @@ export type CliteRunConfig = {
 };
 
 /**
- * Result of cliteParse()
- */
-export type CliteResult = {
-  /*
-   * The input object overwritten with the data from the parsing result
-   */
-  obj: Obj;
-  /*
-   * The command to run from the parsing result
-   */
-  command: string;
-  /*
-   * The command arguments from the parsing result
-   */
-  commandArgs: (string | number | boolean)[];
-  /*
-   * The input CliteRunConfig
-   */
-  config: CliteRunConfig | undefined;
-  /*
-   * The generated help
-   */
-  help: string;
-};
-
-/**
  * Run the command of obj depending on the Deno/Node script arguments
  * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
  * @param config - of clite-parser
@@ -109,17 +83,43 @@ export function cliteRun<O extends Obj>(
 }
 
 /**
+ * Result of cliteParse()
+ */
+export type CliteResult<O extends Obj> = {
+  /*
+   * The input object overwritten with the data from the parsing result
+   */
+  obj: O & { config?: string };
+  /*
+   * The command to run from the parsing result
+   */
+  command: string;
+  /*
+   * The command arguments from the parsing result
+   */
+  commandArgs: (string | number | boolean)[];
+  /*
+   * The input CliteRunConfig
+   */
+  config?: CliteRunConfig;
+  /*
+   * The generated help
+   */
+  help: string;
+};
+
+/**
  * Return the parsing result of obj and the Deno/Node script arguments
  * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
  * @param config - of clite-parser
  */
-export function cliteParse<O extends Obj>(
+export function cliteParse<O extends Obj & { config?: string }>(
   objOrClass: O | { new (): O },
   config?: CliteRunConfig,
-): CliteResult {
+): CliteResult<O> {
   const obj = (
     typeof objOrClass === "function" ? new objOrClass() : objOrClass
-  ) as Obj;
+  ) as O;
   const help = genHelp(obj, config);
   try {
     const methods = getMethodNames(obj);
