@@ -352,6 +352,37 @@ class Tool {
 
 <!-- TODO -->
 
+### `@subcommand` decorator and `_*_subcommand`
+
+<!-- TODO -->
+
+Full exemple in [examples/git-subcommand.ts](examples/git-subcommand.ts)
+
+```typescript
+// → <Tool> [--dry-run] [ [up [--watch] <count>] | [down [--volumes] <force> <timeout>] ]
+class Tool {
+  dryRun = false;
+
+  @subcommand
+  up = class Up {
+    _parent: Tool;
+    watch = false;
+    main(count: number) {
+      console.log("Up", this);
+    }
+  };
+
+  @subcommand
+  down = class Down {
+    _parent: Tool;
+    volumes = false;
+    main(force: boolean, timeout: number) {
+      console.log("Down", this);
+    }
+  };
+}
+```
+
 ## Argument parsing
 
 Clite use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
@@ -648,37 +679,6 @@ See node usage examples :
 
 ## TODO
 
-- `@subcommand` decorator and `_*_subcommand` (or auto-detect subcommand if
-  field is a class ?) :
-  - filter fields
-  - adapt HELP
-  -
-
-```typescript
-class Tool {
-  dryRun = false;
-
-  @subcommand
-  up = class Up {
-    _parent: Tool;
-    watch = false;
-    main(count: number) {
-      console.log("Up", this);
-    }
-  };
-
-  @subcommand
-  down = class Down {
-    _parent: Tool;
-    volumes = false;
-    main(force: boolean, timeout: number) {
-      console.log("Down", this);
-    }
-  };
-}
-// → <Tool> [--dry-run] [ [up [--watch] <count>] | [down [--volumes] <force> <timeout>] ]
-```
-
 - doc:
   - clean the doc and examples
   - compare to other tools (needs to be rephrased):
@@ -687,6 +687,7 @@ class Tool {
     deserialize the class to cli/help)
   - "many ways to pass parameters" in doc : `-l=8`,`-l 8`, `-l8`,
     `--out-limit 8`, `--out-limit=8`, `--outLimit 8`, `--outLimit=8`
+- search "TODO" in code/doc
 - add missing tests, check cov
 - refactor the code
 - NodeJS implementation of --config/configCli
@@ -694,4 +695,5 @@ class Tool {
 - check missing feat (compare to other tools ) ?
 - decorator to specify the arg name of field bug
   `--skip-extract-image-from-mp-3` vs `--skip-extract-image-from-mp3`
-- move noCommand to decorator
+- remove noCommand from config ? (and other config → decorators)
+- auto-detect subcommand if field is a class ?
