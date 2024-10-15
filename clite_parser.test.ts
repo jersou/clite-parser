@@ -1,4 +1,4 @@
-import { assertEquals } from "jsr:@std/assert@1.0.5";
+import { assertEquals, assertThrows } from "jsr:@std/assert@1.0.5";
 import { cliteParse, cliteRun, noCommand, subcommand } from "./clite_parser.ts";
 import { genHelp } from "./src/help.ts";
 import { Tool } from "./src/test_data.test.ts";
@@ -80,5 +80,91 @@ Deno.test({
     assertEquals(result.branch._clite_parent.gitDir, "/tmp");
     assertEquals(result.branch.delete, true);
     assertEquals(result.branchname, "foo");
+  },
+});
+
+Deno.test({
+  name: "config file",
+  fn() {
+    class ToolWithConfig {
+      foo = "bar";
+      main() {}
+    }
+
+    const result = cliteParse(ToolWithConfig, {
+      args: ["--config", "src/test-data/test-config.json"],
+      configCli: true,
+    });
+    assertEquals(result.obj.foo, "from-config");
+  },
+});
+
+Deno.test({
+  name: "bad config file",
+  fn() {
+    class ToolWithConfig {
+      foo = "bar";
+      main() {}
+    }
+    assertThrows(() => {
+      cliteParse(ToolWithConfig, {
+        args: ["--config", "src/test-data/bad-config.json"],
+        configCli: true,
+      });
+    });
+  },
+});
+
+Deno.test({
+  name: "throws on printHelpOnError",
+  fn() {
+    class ToolWithConfig {
+      main() {
+        throw new Error();
+      }
+    }
+    assertThrows(() => {
+      cliteRun(ToolWithConfig, {
+        args: [],
+        printHelpOnError: true,
+      });
+    });
+    // TODO check output
+  },
+});
+
+Deno.test({
+  name: "throws on clite ",
+  fn() {
+    class ToolWithConfig {
+      main() {
+        throw new Error("", { cause: { clite: true } });
+      }
+    }
+    assertThrows(() => {
+      cliteRun(ToolWithConfig, { args: [] });
+      // TODO check output
+    });
+  },
+});
+
+Deno.test({
+  name: "no method defined",
+  fn() {
+    class ToolWithoutCmd {}
+    assertThrows(() => {
+      cliteRun(ToolWithoutCmd, { args: [] });
+      // TODO check output
+    });
+  },
+});
+Deno.test({
+  name: "The command doesn't exist",
+  fn() {
+    class ToolWithoutCmd {}
+    assertThrows(() => {
+      cliteRun(ToolWithoutCmd, { args: ["foo"] });
+      // TODO check output
+    });
   },
 });

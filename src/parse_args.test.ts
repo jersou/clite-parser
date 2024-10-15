@@ -1,7 +1,11 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { parseArgs, type ParseResult } from "./parse_args.ts";
-import { cliteParse } from "../clite_parser.ts";
-import { StudioPackGenerator } from "../examples/studio_pack_generator.ts";
+import {
+  convertCommandArg,
+  getArgs,
+  parseArgs,
+  type ParseResult,
+} from "./parse_args.ts";
+import { alias, cliteParse } from "../clite_parser.ts";
 
 Deno.test("args regex", () => {
   const result = "force, timeout = 10"
@@ -161,29 +165,100 @@ Deno.test({
 });
 
 Deno.test({
-  name: "ToolBooleanBeforeCmdNoCmdSpg",
+  name: "Throw if the option is not found",
   fn() {
-    const res = cliteParse(StudioPackGenerator, {
-      noCommand: true,
-      args: ["--skip-extract-image-from-mp-3", "https://...xml"],
+    class Tool {
+      main() {}
+    }
+    assertThrows(() => {
+      cliteParse(Tool, { args: ["--not-exist"] });
     });
-    assertEquals(res.command, "main");
-    assertEquals(
-      (res.obj as StudioPackGenerator).skipExtractImageFromMp3,
-      true,
-    );
-    assertEquals(res.commandArgs, ["https://...xml"]);
   },
 });
 
 Deno.test({
-  name: "Throw if the option is not found",
+  name: "array option",
   fn() {
-    assertThrows(() => {
-      cliteParse(StudioPackGenerator, {
-        noCommand: true,
-        args: ["--skip-extract-image-from-mp3", "https://...xml"], // should be --skip-extract-image-from-mp-3
-      });
+    class Tool {
+      @alias("a")
+      arr: string[] = [];
+      main() {}
+    }
+    const res = cliteParse(Tool, {
+      args: ["--arr=aa", "--arr", "bb", "-a=cc", "-a", "dd", "--a", "ee"],
     });
+    assertEquals(res.obj.arr, ["aa", "bb", "cc", "dd", "ee"]);
+  },
+});
+
+Deno.test({
+  name: "array option",
+  fn() {
+    class Tool {
+      ac = {};
+      main() {}
+    }
+    const res = cliteParse(Tool, {
+      args: ["--ac.bb", "aaa", "--ac.dd.ee", "v", "--ac.dd.ff", "w"],
+    });
+    assertEquals(res.obj.ac, { bb: "aaa", dd: { ee: "v", ff: "w" } });
+  },
+});
+
+Deno.test({
+  name: "unknown option",
+  fn() {
+    class Tool {
+      main() {}
+    }
+    assertThrows(() =>
+      cliteParse(Tool, {
+        args: ["--config", "aaa"],
+      })
+    );
+  },
+});
+
+Deno.test({
+  name: "_alias",
+  fn() {
+    class Tool_Alias {
+      foo = 12;
+      _foo_alias = "f";
+      main() {}
+    }
+    const result = cliteParse(Tool_Alias, { args: ["-f5"] });
+    assertEquals(result.obj.foo, 5);
+  },
+});
+
+Deno.test({
+  name: "convertCommandArg",
+  fn() {
+    assertEquals(convertCommandArg("str"), "str");
+    assertEquals(convertCommandArg("5"), 5);
+    assertEquals(convertCommandArg("true"), true);
+    assertEquals(convertCommandArg("false"), false);
+  },
+});
+
+Deno.test({
+  name: "getArgs",
+  fn() {
+    assertEquals(getArgs({ args: ["1"] }), ["1"]);
+    assertEquals(getArgs(), []);
+  },
+});
+
+Deno.test({
+  name: "_negatable",
+  fn() {
+    class Tool {
+      _dryRun_negatable = true;
+      dryRun = true;
+      main() {}
+    }
+    const res = cliteParse(Tool, { args: ["--no-dry-run"] });
+    assertEquals(res.obj.dryRun, false);
   },
 });

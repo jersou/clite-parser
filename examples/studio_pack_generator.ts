@@ -2,8 +2,6 @@
 import {
   alias,
   cliteParse,
-  CliteResult,
-  cliteRun,
   defaultHelp,
   help,
   hidden,

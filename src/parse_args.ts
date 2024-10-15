@@ -49,7 +49,10 @@ export function parseArgs(
   const arrayProp: string[] = [];
   const booleanProp: string[] = [];
   const alias: Record<string, string[]> = { help: ["h"] };
-  for (const name of getFieldNames(obj)) {
+  const negatableMetadata = getMetadata(obj, "clite_negatables") ?? {};
+  const negatable = Object.keys(negatableMetadata);
+
+  for (const name of getFieldNames(obj).filter((n) => !n.startsWith("_"))) {
     alias[name] = [];
     const kebabCase = toKebabCase(name);
     if (name !== kebabCase) {
@@ -71,6 +74,9 @@ export function parseArgs(
     if (obj[`_${name}_alias`]) {
       (alias[name] as string[]).push(...obj[`_${name}_alias`]);
     }
+    if (obj[`_${name}_negatable`]) {
+      negatable.push(name);
+    }
   }
   // deno-lint-ignore no-explicit-any
   const aliasMetadata = getMetadata(obj, "clite_alias") as Record<string, any>;
@@ -82,9 +88,6 @@ export function parseArgs(
       alias[prop].push(...aliasName);
     }
   }
-
-  const negatableMetadata = getMetadata(obj, "clite_negatables") ?? {};
-  const negatable = Object.keys(negatableMetadata);
 
   const stdRes = stdParseArgs(args, {
     negatable: negatable.map(toKebabCase),
@@ -113,7 +116,8 @@ export function parseArgs(
     } else {
       if (
         key !== "help" && !fieldsKebabCase.includes(key) &&
-        !fields.includes(key) && !aliasKey.includes(key)
+        !fields.includes(key) && !aliasKey.includes(key) &&
+        (!config?.configCli && key === "config")
       ) {
         throw new Error(`The option "${key}" doesn't exist`, {
           cause: { clite: true },
@@ -155,7 +159,7 @@ export function fillFields(parseResult: ParseResult, obj: Obj) {
 }
 
 // use globalThis instead of Deno/process to be compatible with Node & Deno
-function getArgs(config?: CliteRunConfig) {
+export function getArgs(config?: CliteRunConfig) {
   if (config?.args) {
     return config?.args;
     // deno-lint-ignore no-explicit-any

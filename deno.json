@@ -4,10 +4,11 @@
   "exports": "./clite_parser.ts",
   "license": "MIT",
   "tasks": {
-    "fmt": "deno fmt --ignore=tmp,.cov_profile",
+    "fmt": "deno fmt --ignore=tmp,.cov_profile,src/test-data/bad-config.json",
     "run": "deno run -A example.ts",
     "check": "deno check clite_parser.ts",
-    "gen-cov": "rm -rf .cov_profile && deno test --ignore=tmp,exemple,.cov_profile --coverage=.cov_profile -A && deno coverage .cov_profile --lcov  > .cov_profile/cov_profile.lcov && genhtml -o .cov_profile/html .cov_profile/cov_profile.lcov",
+    "gen-cov": "./gen-cov.ts",
+    "gen-cov-watch": "deno run -A --watch=clite_parser.ts,clite_parser.test.ts,src/ gen-cov.ts",
     "lint": "deno lint --ignore=tmp,.cov_profile,examples",
     "pre-commit": "deno task fmt --check && deno task lint && deno task test && deno task check",
     "publish-dry-run": "deno publish --dry-run",
