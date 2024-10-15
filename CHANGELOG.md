@@ -1,3 +1,10 @@
+## [0.6.5](https://github.com/jersou/clite-parser/compare/0.6.4...0.6.5) (2024-10-15)
+
+### Bug Fixes
+
+- add tests & fix_negatable, configCli
+  ([65e25b0](https://github.com/jersou/clite-parser/commit/65e25b06c2686f6303f724d4b57e823e2d8de515))
+
 ## [0.6.4](https://github.com/jersou/clite-parser/compare/0.6.3...0.6.4) (2024-10-13)
 
 ### Features
