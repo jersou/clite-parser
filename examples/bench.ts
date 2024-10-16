@@ -56,3 +56,4 @@ if (import.meta.main) { // if the file is imported, do not execute this block
     tool.doNothing();
   });
 }
+// deno bench ./bench.ts : 40 µs

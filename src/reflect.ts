@@ -27,17 +27,12 @@ export function getFunctionArgNames(func: Function): string[] {
  */
 export function getMethodNames(obj: object): string[] {
   const prototype = Object.getPrototypeOf(obj);
-  if (prototype.constructor.name === "Object") {
-    return (
-      Object.getOwnPropertyNames(obj)
-        // @ts-ignore dyn
-        .filter((n) => typeof obj[n] === "function")
-    );
-  } else {
-    return Object.getOwnPropertyNames(prototype).filter(
-      (n) => n !== "constructor",
-    );
-  }
+  return prototype.constructor.name === "Object"
+    ? Object.getOwnPropertyNames(obj)
+      // @ts-ignore dyn
+      .filter((n) => typeof obj[n] === "function")
+    : Object.getOwnPropertyNames(prototype)
+      .filter((n) => n !== "constructor");
 }
 
 /**
@@ -45,11 +40,9 @@ export function getMethodNames(obj: object): string[] {
  * @returns field names of the object
  */
 export function getFieldNames<O extends Obj>(obj: O): (keyof O)[] {
-  return (
-    Object.getOwnPropertyNames(obj)
-      // @ts-ignore dyn
-      .filter((n) => typeof obj[n] !== "function")
-  );
+  return Object.getOwnPropertyNames(obj)
+    // @ts-ignore dyn
+    .filter((n) => typeof obj[n] !== "function");
 }
 
 /**

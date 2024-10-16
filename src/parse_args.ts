@@ -32,16 +32,13 @@ export type Obj = Record<string, any>;
  * @param obj to analyse
  * @param metadata - clite metadata
  * @param config - to use to parse
- * @param defaultMethod - to run if no arg
  * @returns the parse result
  */
 export function parseArgs<O extends Obj>(
   obj: O,
   metadata: Metadata<O>,
   config?: CliteRunConfig,
-  defaultMethod = "main",
 ): ParseResult {
-  // TODO : refactor this function
   const argsResult: ParseResult = {
     options: {},
     commandArgs: [],
@@ -91,7 +88,7 @@ export function parseArgs<O extends Obj>(
   for (const [key, value] of Object.entries(stdRes)) {
     if (key === "_") {
       if (config?.noCommand || !!metadata.noCommand) {
-        argsResult.command = defaultMethod;
+        argsResult.command = metadata.defaultCommand ?? "main";
         argsResult.commandArgs = stdRes._;
       } else if (stdRes._.length > 0) {
         argsResult.command = stdRes._[0].toString();
@@ -143,32 +140,22 @@ export function fillFields<O extends Obj>(
 
 // use globalThis instead of Deno/process to be compatible with Node & Deno
 export function getArgs(config?: CliteRunConfig) {
-  if (config?.args) {
-    return config?.args;
-    // deno-lint-ignore no-explicit-any
-  } else if ((globalThis as any)["Deno"]?.args) {
-    // deno-lint-ignore no-explicit-any
-    return (globalThis as any)["Deno"]?.args;
-    // deno-lint-ignore no-explicit-any
-  } else if ((globalThis as any)["process"]) {
-    // deno-lint-ignore no-explicit-any
-    return (globalThis as any)["process"].argv.slice(2);
-  } else {
-    return [];
-  }
+  // deno-lint-ignore no-explicit-any
+  const gt = globalThis as any;
+  return config?.args || gt["Deno"]?.args || gt["process"]?.argv.slice(2) || [];
 }
 
 export function convertCommandArg(v: string | number) {
-  if (typeof v === "string") {
-    if (v === "true") {
+  switch (true) {
+    case v === "true":
       return true;
-    } else if (v === "false") {
+    case v === "false":
       return false;
-    } else {
-      if (!isNaN(v as unknown as number) && !isNaN(parseFloat(v))) {
-        return parseFloat(v);
-      }
-    }
+    case typeof v === "string" &&
+      !isNaN(v as unknown as number) &&
+      !isNaN(parseFloat(v)):
+      return parseFloat(v);
+    default:
+      return v;
   }
-  return v;
 }

@@ -5,9 +5,7 @@ import { getMethodArgNames } from "./reflect.ts";
 import { bold, gray, underline } from "@std/fmt/colors";
 import type { Metadata } from "./metadata.ts";
 
-export function boldUnder(str: string) {
-  return bold(underline(str));
-}
+export const boldUnder = (str: string) => bold(underline(str));
 
 /**
  * Align the 2 columns
@@ -29,35 +27,30 @@ export function align(input: [string, string, string, string][]): string[] {
   );
 }
 
+//TODO REFACTOR
 function genCommandHelp<O extends Obj>(
   obj: O,
   metadata: Metadata<O>,
   helpLines: string[],
 ) {
-  const methods = [...Object.keys(metadata.methods), ...metadata.subcommands]; //TODO REFACTOR
+  const methods = [...Object.keys(metadata.methods), ...metadata.subcommands];
   if (methods.length > 0) {
-    helpLines.push(
-      boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`),
-    );
+    helpLines.push(boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`));
     const linesCols: [string, string, string, string][] = [];
     for (const method of methods) {
       let col1 = bold(`  ${method}`);
       if (!metadata.subcommands.includes(method)) {
-        //TODO REFACTOR
         const args = getMethodArgNames(obj, method);
         if (args.length > 0) {
           col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
         }
       }
       let col2 = metadata.methods?.[method]?.help ?? "";
-
       if (method === metadata.defaultCommand) {
         col2 += col2.length ? " " : "";
         col2 += bold("[default]");
       }
-
-      const col3 = "";
-      linesCols.push(["", col1, col2, col3]);
+      linesCols.push(["", col1, col2, ""]);
     }
     helpLines.push(...align(linesCols));
   }
