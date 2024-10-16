@@ -49,9 +49,7 @@ function genCommandHelp<O extends Obj>(
           col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
         }
       }
-      let col2 = metadata.fields?.[method]?.help ??
-        obj[`_${method}_help`] ??
-        "";
+      let col2 = metadata.methods?.[method]?.help ?? "";
 
       if (method === metadata.defaultCommand) {
         col2 += col2.length ? " " : "";
@@ -119,22 +117,12 @@ function genOptionsHelp<O extends Obj>(
       }
     }
     linesCols.push([col0, col1, col2, col3]);
-    // TODO refactor
     if (metadata.fields[field]?.negatable) {
       linesCols.push([
         bold(" "),
         bold(` --${toKebabCase("no_" + field)}`),
         typeof metadata.fields[field]?.negatable === "string"
           ? metadata.fields[field]?.negatable
-          : "",
-        "",
-      ]);
-    } else if (obj[`_${field}_negatable`]) {
-      linesCols.push([
-        bold(" "),
-        bold(` --${toKebabCase("no_" + field)}`),
-        typeof obj[`_${field}_negatable`] === "string"
-          ? obj[`_${field}_negatable`]
           : "",
         "",
       ]);

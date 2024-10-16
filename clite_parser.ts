@@ -163,7 +163,7 @@ export function cliteParse<O extends Obj & { config?: string }>(
         });
       }
 
-      fillFields(parseResult, obj, metadata);
+      fillFields(parseResult, obj, metadata, config);
       if (metadata.subcommands.includes(command)) {
         const subcommandObj = typeof obj[command] === "function"
           ? new obj[command]()

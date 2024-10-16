@@ -117,30 +117,26 @@ export function fillFields<O extends Obj>(
   parseResult: ParseResult,
   obj: Obj,
   metadata: Metadata<O>,
+  config?: CliteRunConfig,
 ) {
   const aliasNames = Object.entries(metadata.fields)
     .flatMap(([, v]) => v?.alias ?? []);
-  const fields = getFieldNames(obj) as string[];
-  const publicFields = fields.filter(
-    (f) => !f.startsWith("_") && !f.startsWith("#"),
-  );
-  for (const field of publicFields) {
-    if (obj[`_${field}_alias`]) {
-      aliasNames.push(...obj[`_${field}_alias`]);
-    }
-  }
-
+  const fields = Object.keys(metadata.fields);
   for (const option of (getFieldNames(parseResult.options) as string[])) {
     if (fields.includes(option)) {
       obj[option] = parseResult.options[option];
     } else if (fields.includes(toSnakeCase(option))) {
       obj[toSnakeCase(option)] = parseResult.options[option];
-    } else {
-      if (!aliasNames.includes(option)) {
-        throw new Error(`The option "${option}" doesn't exist`, {
+    } else if (option === "config") {
+      if (!config?.configCli) {
+        throw new Error(`The --config option is not enable`, {
           cause: { clite: true },
         });
       }
+    } else if (!aliasNames.includes(option)) {
+      throw new Error(`The option "${option}" doesn't exist`, {
+        cause: { clite: true },
+      });
     }
   }
 }

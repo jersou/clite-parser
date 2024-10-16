@@ -46,7 +46,7 @@ export function getCliteMetadata<O extends Obj>(obj: O): Metadata<O> {
     ),
   ];
   const methods = getMethodNames(obj)
-    .filter((method) => !method.startsWith("_"));
+    .filter((method) => !method.startsWith("_") && !method.startsWith("#"));
   const constructorName = Object.getPrototypeOf(obj).constructor.name;
   const metadata: Metadata<O> = {
     fields: {},
@@ -55,11 +55,12 @@ export function getCliteMetadata<O extends Obj>(obj: O): Metadata<O> {
     subcommands,
     help: helpMetadata?.[constructorName] ?? obj._help,
     usage: usageMetadata?.[constructorName] ?? obj._usage,
+
     noCommand: noCommandMetadata?.[constructorName] || obj._no_command,
   };
 
-  const fields = getFieldNames(obj)
-    .filter((f) => !(f as string).startsWith("_"));
+  const fields = (getFieldNames(obj) as string[])
+    .filter((f) => !f.startsWith("_") && !f.startsWith("#"));
 
   for (const field of fields as string[]) {
     metadata.fields[field as keyof O] = {
