@@ -637,7 +637,7 @@ cliteRun(Tool, { configCli: true });
 
 $ ./load-config.ts --help
 ...
-     --config  Use this file to read option before processing the args [string]
+     --config  Use this json file to read option before processing the args [string]
 ...
 
 $ ./load-config.ts  down
@@ -779,18 +779,16 @@ See node usage examples :
     deserialize the class to cli/help)
   - add doc/example in the code (to see it in IDE and on
     https://jsr.io/@jersou/clite/doc)
+  - use the right CLI vocabulary
+  - better overview, use a real case
 - decorators
-  - remove noCommand from config ? (and other config → decorators)
   - decorator to specify the arg name of field bug
     `--skip-extract-image-from-mp-3` vs `--skip-extract-image-from-mp3`
   - help on cmd args ?
-- add `[--help]` on subcommands
 - search "TODO" in code/doc
 - NodeJS implementation of --config/configCli
 - NodeJS tests
 - check missing feat (compare to other tools ) ?
-- use the right CLI vocabulary
-- better overview, use real case
 - add
   `_clite: { _ : { help :"...", noCommand:true }, dryRun: { help: "...", negatable: true }}`
   ?

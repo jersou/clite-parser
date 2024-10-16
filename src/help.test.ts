@@ -2,7 +2,14 @@ import { assert, assertEquals } from "@std/assert";
 import { stripAnsiCode } from "@std/fmt/colors";
 import { align, genHelp } from "./help.ts";
 import { Tool } from "./test_data.test.ts";
-import { defaultHelp, help, hidden, type, usage } from "./decorators.ts";
+import {
+  defaultHelp,
+  help,
+  hidden,
+  jsonConfig,
+  type,
+  usage,
+} from "./decorators.ts";
 import { cliteParse } from "../clite_parser.ts";
 import { getCliteMetadata } from "./metadata.ts";
 
@@ -165,7 +172,7 @@ Deno.test({
     const result = cliteParse(Tool_Help, { args: ["--help"], configCli: true });
     assert(
       result.help.includes(
-        "Use this file to read option before processing the args",
+        "Use this json file to read option before processing the args",
       ),
     );
   },
@@ -179,6 +186,36 @@ Deno.test({
       configCli: "custom config help",
     });
     assert(result.help.includes("custom config help"));
+  },
+});
+
+Deno.test({
+  name: "@jsonConfig custom help",
+  fn() {
+    @jsonConfig("custom config help")
+    class Tool_Help {
+      foo = 12;
+      main() {}
+    }
+    const result = cliteParse(Tool_Help);
+    assert(result.help.includes("custom config help"));
+  },
+});
+
+Deno.test({
+  name: "@jsonConfig",
+  fn() {
+    @jsonConfig()
+    class Tool_Help {
+      foo = 12;
+      main() {}
+    }
+    const result = cliteParse(Tool_Help);
+    assert(
+      result.help.includes(
+        "Use this json file to read option before processing the args",
+      ),
+    );
   },
 });
 

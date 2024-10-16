@@ -5,6 +5,7 @@ import {
   defaultHelp,
   help,
   hidden,
+  jsonConfig,
   type,
   usage,
 } from "../clite_parser.ts";
@@ -18,6 +19,7 @@ import denoJson from "../deno.json" with { type: "json" };
 @usage(
   "studio-pack-generator [options] [--] <story path | RSS URL>   convert a folder or RSS url to Studio pack",
 )
+@jsonConfig("The json config file")
 export class StudioPackGenerator {
   @alias("d")
   @help("add 1 second at the beginning and the end of audio files")
@@ -214,10 +216,7 @@ export class StudioPackGenerator {
 
 if (import.meta.main) {
   console.log({ version: denoJson.version, ...Deno.version });
-  cliteRun(StudioPackGenerator, {
-    noCommand: true,
-    configCli: "The json config file",
-  });
+  cliteRun(StudioPackGenerator, { noCommand: true });
 }
 
 /*

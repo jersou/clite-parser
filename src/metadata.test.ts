@@ -5,6 +5,7 @@ import {
   defaultHelp,
   help,
   hidden,
+  jsonConfig,
   negatable,
   noCommand,
   subcommand,
@@ -322,7 +323,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "metadata class _noCommand",
+  name: "metadata class _no_command",
   fn() {
     class Tool {
       _no_command = true;
@@ -330,5 +331,29 @@ Deno.test({
     }
     const metadata = getCliteMetadata(new Tool());
     assertEquals(metadata.noCommand, true);
+  },
+});
+
+Deno.test({
+  name: "metadata class @jsonConfig",
+  fn() {
+    @jsonConfig()
+    class Tool {
+      main() {}
+    }
+    const metadata = getCliteMetadata(new Tool());
+    assertEquals(metadata.jsonConfig, true);
+  },
+});
+
+Deno.test({
+  name: "metadata class _jsonConfig",
+  fn() {
+    class Tool {
+      _json_config = true;
+      main() {}
+    }
+    const metadata = getCliteMetadata(new Tool());
+    assertEquals(metadata.jsonConfig, true);
   },
 });

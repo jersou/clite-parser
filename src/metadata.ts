@@ -24,6 +24,7 @@ export type Metadata<O extends Obj> = {
   help?: string;
   usage?: string;
   noCommand?: boolean;
+  jsonConfig?: boolean;
 };
 
 export function getCliteMetadata<O extends Obj>(obj: O): Metadata<O> {
@@ -45,6 +46,7 @@ export function getCliteMetadata<O extends Obj>(obj: O): Metadata<O> {
     help: symb.help?.[constructorName] ?? obj._help,
     usage: symb.usage?.[constructorName] ?? obj._usage,
     noCommand: symb.noCommand?.[constructorName] || obj._no_command,
+    jsonConfig: symb.jsonConfig?.[constructorName] || obj._json_config,
   };
 
   (getFieldNames(obj) as string[])

@@ -82,13 +82,14 @@ function genOptionsHelp<O extends Obj>(
     "Show this help",
     gray("[default: false]"),
   ]);
-  if (config?.configCli) {
+  if (config?.configCli || metadata.jsonConfig) {
+    const configHelp = config?.configCli || metadata.jsonConfig;
     linesCols.push([
       bold(""),
       bold(` --config`),
-      typeof config?.configCli === "string"
-        ? config?.configCli
-        : "Use this file to read option before processing the args",
+      typeof configHelp === "string"
+        ? configHelp
+        : "Use this json file to read option before processing the args",
       gray("[string]"),
     ]);
   }

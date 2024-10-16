@@ -31,11 +31,11 @@ cliteRun(Tool, { configCli: true });
       down <force> <timeout>
 
     Options:
-     -h, --help    Show this help                                  [default: false]
-         --config  Use this file to read option before processing the args [string]
-         --retry                                                       [default: 2]
-         --dry-run                                                 [default: false]
-         --web-url                                                [default: "none"]
+     -h, --help    Show this help                                       [default: false]
+         --config  Use this json file to read option before processing the args [string]
+         --retry                                                            [default: 2]
+         --dry-run                                                      [default: false]
+         --web-url                                                     [default: "none"]
 
     $ ./load-config.ts  down
     down command { force: undefined, timeout: undefined } Tool { retry: 2, dryRun: false, webUrl: "none" }

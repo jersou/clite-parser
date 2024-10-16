@@ -121,8 +121,12 @@ export function cliteParse<O extends Obj & { config?: string }>(
     if (Object.keys(parseResult.options).includes("help")) {
       return ({ obj, command: "--help", commandArgs: [], config, help });
     } else {
-      if (config?.configCli) {
-        loadConfig(parseResult, obj);
+      if (config?.configCli || metadata.jsonConfig) {
+        if (Object.keys(parseResult.options).includes("config")) {
+          loadConfig(parseResult, obj);
+        } else {
+          obj.config = undefined;
+        }
       }
       const command = parseResult.command ?? metadata.defaultCommand;
       if (!command) {
@@ -160,23 +164,19 @@ export function cliteParse<O extends Obj & { config?: string }>(
 }
 
 function loadConfig(parseResult: ParseResult, obj: Obj) {
-  if (Object.keys(parseResult.options).includes("config")) {
-    if ((globalThis as Obj)["Deno"]?.args) { // Deno implementation
-      const path = parseResult.options.config as string;
-      try {
-        Object.assign(obj, JSON.parse(Deno.readTextFileSync(path)));
-        obj.config = path;
-      } catch (error) {
-        throw new Error(
-          `Error while loading the config file "${path}"`,
-          { cause: { clite: true, error } },
-        );
-      }
-    } else { // TODO NodeJS implementation
-      throw new Error("Load config is not implemented on NodeJs");
+  if ((globalThis as Obj)["Deno"]?.args) { // Deno implementation
+    const path = parseResult.options.config as string;
+    try {
+      Object.assign(obj, JSON.parse(Deno.readTextFileSync(path)));
+      obj.config = path;
+    } catch (error) {
+      throw new Error(
+        `Error while loading the config file "${path}"`,
+        { cause: { clite: true, error } },
+      );
     }
-  } else {
-    obj.config = undefined;
+  } else { // TODO NodeJS implementation
+    throw new Error("Load config is not implemented on NodeJs");
   }
 }
 

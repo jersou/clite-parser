@@ -122,3 +122,12 @@ export function noCommand(): DecoratorRetFunc {
   return (target: unknown, prop?: unknown) =>
     addSymbolMetadata(target, prop, "noCommand", true);
 }
+
+/**
+ * decorator on class : `@jsonConfig()`
+ * @param help - to add to the help (optional)
+ */
+export function jsonConfig(help: string | boolean = true): DecoratorRetFunc {
+  return (target: unknown, prop?: unknown) =>
+    addSymbolMetadata(target, prop, "jsonConfig", help);
+}

@@ -98,7 +98,7 @@ export function parseArgs<O extends Obj>(
       if (
         key !== "help" && !fieldsKebabCase.includes(key) &&
         !fields.includes(key) && !aliasKey.includes(key) &&
-        (!config?.configCli && key === "config")
+        (!(config?.configCli || metadata.jsonConfig) && key === "config")
       ) {
         throw new Error(`The option "${key}" doesn't exist`, {
           cause: { clite: true },
@@ -126,7 +126,7 @@ export function fillFields<O extends Obj>(
       obj[toSnakeCase(option)] = parseResult.options[option];
     } else if (
       !aliasNames.includes(option) &&
-      (option !== "config" || !config?.configCli)
+      (option !== "config" || !(config?.configCli || metadata.jsonConfig))
     ) {
       throw new Error(`The option "${option}" doesn't exist`, {
         cause: { clite: true },
