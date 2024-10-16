@@ -6,9 +6,8 @@ import {
   type Obj,
   parseArgs,
 } from "./src/parse_args.ts";
-import { getFieldNames, getMethodNames } from "./src/reflect.ts";
 import { runCommand } from "./src/command.ts";
-import { getCliteMetadata, getDefaultCommand } from "./src/metadata.ts";
+import { getCliteMetadata } from "./src/metadata.ts";
 
 export * from "./src/decorators.ts";
 
@@ -124,16 +123,16 @@ export function cliteParse<O extends Obj & { config?: string }>(
   const metadata = getCliteMetadata(obj);
   const help = genHelp(obj, metadata, config);
   try {
-    const methods = getMethodNames(obj);
-    const defaultMethod = getDefaultCommand(methods);
+    const defaultMethod = metadata.defaultCommand;
     const parseResult = parseArgs(obj, metadata, config, defaultMethod);
-    if (getFieldNames(parseResult.options).includes("help")) {
+
+    if (Object.keys(parseResult.options).includes("help")) {
       return ({ obj, command: "--help", commandArgs: [], config, help });
     } else {
       if (config?.configCli) {
-        if (getFieldNames(parseResult.options).includes("config")) {
+        if (Object.keys(parseResult.options).includes("config")) {
           // deno-lint-ignore no-explicit-any
-          if ((globalThis as any)["Deno"]?.args) {
+          if ((globalThis as any)["Deno"]?.args) { // Deno implementation
             const path = parseResult.options.config as string;
             try {
               const json = Deno.readTextFileSync(path);
@@ -181,7 +180,7 @@ export function cliteParse<O extends Obj & { config?: string }>(
             args: parseResult.commandArgs.map((e) => e.toString()),
           }),
         };
-      } else if (!methods.includes(command)) {
+      } else if (!Object.hasOwn(metadata.methods, command)) {
         throw new Error(`The command "${command}" doesn't exist`, {
           cause: { clite: true },
         });
