@@ -1,10 +1,9 @@
-import { getMetadata } from "./decorators.ts";
 import type { CliteRunConfig } from "../clite_parser.ts";
 import { toKebabCase } from "@std/text";
 import type { Obj } from "./parse_args.ts";
-import { getFieldNames, getMethodArgNames, getMethodNames } from "./reflect.ts";
+import { getMethodArgNames } from "./reflect.ts";
 import { bold, gray, underline } from "@std/fmt/colors";
-import { getDefaultCommand, type Metadata } from "./metadata.ts";
+import type { Metadata } from "./metadata.ts";
 
 export function boldUnder(str: string) {
   return bold(underline(str));
@@ -66,23 +65,14 @@ function genCommandHelp<O extends Obj>(
   }
 }
 
-function genOptionsHelp(
+function genOptionsHelp<O extends Obj>(
   obj: Obj,
+  metadata: Metadata<O>,
   helpLines: string[],
   config?: CliteRunConfig,
 ) {
-  const helpMetadata = getMetadata(obj, "clite_help");
-  const aliasMetadata = getMetadata(obj, "clite_alias") as Obj;
-  const typesMetadata = getMetadata(obj, "clite_types") as Obj;
-  const defaultMetadata = getMetadata(obj, "clite_defaults") as Obj;
-  const negatableMetadata = getMetadata(obj, "clite_negatables") as Obj;
-  const negatables = Object.keys(negatableMetadata ?? {});
-  const hiddenMetadata = getMetadata(obj, "clite_hidden") as Obj;
-  const hidden = hiddenMetadata ? Object.keys(hiddenMetadata) : [];
-  const allFields = getFieldNames(obj);
-  const fields = allFields.filter(
-    (f) => !f.startsWith("_") && !hidden.includes(f) && !obj[`_${f}_hidden`],
-  );
+  const allFields = Object.keys(metadata.fields);
+  const fields = allFields.filter((f) => !metadata.fields[f]?.hidden);
   helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
   const linesCols: [string, string, string, string][] = [];
   linesCols.push([
@@ -103,11 +93,7 @@ function genOptionsHelp(
   }
 
   for (const field of fields) {
-    const alias: string[] = aliasMetadata?.[field] || [];
-    if (obj[`_${field}_alias`]) {
-      alias.push(...obj[`_${field}_alias`]);
-    }
-
+    const alias = metadata.fields[field]?.alias ?? [];
     const aliasHelp = (Array.isArray(alias) ? alias : [alias])
       .map((a) => (a.length === 1 ? `-${a},` : `--${toKebabCase(a)},`))
       .join(" ");
@@ -116,32 +102,30 @@ function genOptionsHelp(
     const col1 = bold(` --${toKebabCase(field)}`);
     let col2 = "";
     let col3 = "";
-    const desc = helpMetadata?.[field] ??
-      obj[`_${field}_help`] ??
-      "";
-    if (desc) {
-      col2 += desc;
+    const help = metadata.fields[field]?.help ?? "";
+    if (help) {
+      col2 += help;
     }
-    const defaultValue = defaultMetadata?.[field] ?? obj[field];
+    const defaultValue = metadata.fields[field]?.defaultHelp ?? obj[field];
     if (defaultValue != undefined) {
       const defaultHelp = typeof defaultValue === "string"
         ? `"${defaultValue}"`
         : defaultValue;
       col3 = gray(`[default: ${defaultHelp}]`);
     } else {
-      const type = typesMetadata?.[field] ?? obj[`_${field}_type`];
+      const type = metadata.fields[field]?.type;
       if (type) {
         col3 = gray(`[${type}]`);
       }
     }
     linesCols.push([col0, col1, col2, col3]);
     // TODO refactor
-    if (negatables.includes(field)) {
+    if (metadata.fields[field]?.negatable) {
       linesCols.push([
         bold(" "),
         bold(` --${toKebabCase("no_" + field)}`),
-        typeof negatableMetadata?.[field] === "string"
-          ? negatableMetadata?.[field]
+        typeof metadata.fields[field]?.negatable === "string"
+          ? metadata.fields[field]?.negatable
           : "",
         "",
       ]);
@@ -193,6 +177,6 @@ export function genHelp<O extends Obj>(
   if (!config?.noCommand && !metadata.noCommand) {
     genCommandHelp(obj, metadata, helpLines);
   }
-  genOptionsHelp(obj, helpLines, config);
+  genOptionsHelp(obj, metadata, helpLines, config);
   return helpLines.join("\n");
 }
