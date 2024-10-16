@@ -35,7 +35,7 @@ Deno.test({
       main() {}
     }
     const metadata = getCliteMetadata(new Tool());
-    // TODO order ?
+    // FIXME order ?
     assertEquals(metadata.fields.dryRun?.alias, ["n", "d"]);
   },
 });

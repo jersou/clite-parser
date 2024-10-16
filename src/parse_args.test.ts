@@ -187,7 +187,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "array option",
+  name: "object option",
   fn() {
     class Tool {
       ac = {};
@@ -255,5 +255,42 @@ Deno.test({
     }
     const res = cliteParse(Tool, { args: ["--no-dry-run"] });
     assertEquals(res.obj.dryRun, false);
+  },
+});
+
+Deno.test({
+  name: "_negatable",
+  fn() {
+    class Tool {
+      _dryRun_negatable = true;
+      dryRun = true;
+      main() {}
+    }
+    const res = cliteParse(Tool, { args: ["--no-dry-run"] });
+    assertEquals(res.obj.dryRun, false);
+  },
+});
+
+Deno.test({
+  name: "many way to pass options",
+  fn() {
+    class Tool {
+      @alias("l")
+      outLimit = 4;
+      main() {}
+    }
+    assertEquals(cliteParse(Tool, { args: ["-l=8"] }).obj.outLimit, 8);
+    assertEquals(cliteParse(Tool, { args: ["-l", "8"] }).obj.outLimit, 8);
+    assertEquals(cliteParse(Tool, { args: ["-l8"] }).obj.outLimit, 8);
+    assertEquals(
+      cliteParse(Tool, { args: ["--out-limit", "8"] }).obj.outLimit,
+      8,
+    );
+    assertEquals(cliteParse(Tool, { args: ["--out-limit=8"] }).obj.outLimit, 8);
+    assertEquals(
+      cliteParse(Tool, { args: ["--outLimit", "8"] }).obj.outLimit,
+      8,
+    );
+    assertEquals(cliteParse(Tool, { args: ["--outLimit=8"] }).obj.outLimit, 8);
   },
 });

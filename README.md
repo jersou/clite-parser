@@ -190,10 +190,63 @@ config, see [CliteRunConfig](#CliteRunConfig) chapter bellow.
 Exemple : `cliteRun(Tool)` or `cliteRun(new Tool())` or
 `cliteRun(Tool, { noCommand: true })`
 
-## Decorator `@*` or inline field `_<field name>_*`
+## `cliteParse()` usage
 
-Fields can be extended with description, type or aliases using decorators or
-`_<field name>_*` field.
+Same as `cliteRun()`, but not run the command, return the parsing "CliteResult"
+that contains:
+
+- obj:The input object overwritten with the data from the parsing result
+- command: The command to run from the parsing result
+- commandArgs: The command arguments from the parsing result
+- config: The input CliteRunConfig
+- help: The generated help;
+- subcommand: The subcommand CliteResult if the command is a subcommand
+
+## Ignore `_*` and `#*` methods and fields (in the help)
+
+Fields and methods that start with "_" are ignored.
+
+```typescript
+_privateData = 12;
+_privateMethod() {
+  console.log("this method is not visible in the help (starts with '_')");
+}
+```
+
+Note: this "private" method can be run by the CLI, it's useful during the
+development.
+
+Note2: js private fields `#*` are also ignored :
+
+```typescript
+#privateData = 12;
+#privateMethod() {
+  console.log("this method is not visible in the help (starts with '#')");
+}
+```
+
+## Decorator `@*` or field `_<field name>_*`
+
+Fields and methods can be extended with description, type or aliases using
+decorators or `_<field name>_*` field. Decorator don't work with Javascript (not
+in the language) !
+
+In summary :
+
+- `@help(description: string)` | `_<field>_help` : add description on
+  class/methods/fields to display in the help
+- `@alias(alias: string)` | `_<field>_alias` : add alias on method/command (
+  `-n` for example)
+- `@type(typeHelp: string)` | `_<field>_type` : type to display in the help
+- `@negatable(help: string | boolean = true)` | `_<field>_negatable`: enable
+  `--no-<option>` (`--no-dry-run` for example)
+- `@defaultHelp(defaultHelp: string)` | `_<field>_default` : default to display
+  in the help
+- `@usage(usage: string)` | `_<field>_usage` : tool usage to display in the help
+- `@hidden()` | `_<field>_hidden`: to hide in the help
+- `@subcommand()` | `_<field>_subcommand` : use this field as a subcommand
+- `@noCommand()` | `_<field>_no_command` : the tool have no command (only the
+  main), process all positional arguments as main() args
 
 ### Help description with the `@help` decorator or inline help
 
@@ -331,55 +384,62 @@ class Tool {
 }
 ```
 
-### @types
-
-<!-- TODO -->
-
-### @defaultHelp
-
-<!-- TODO -->
-
-### @negatable
-
-<!-- TODO -->
-
-### @usage
-
-<!-- TODO -->
-
-### @hidden
-
-<!-- TODO -->
-
 ### `@subcommand` decorator and `_*_subcommand`
 
-<!-- TODO -->
+Use the field (class or object) as a subcommand :
 
 Full exemple in [examples/git-subcommand.ts](examples/git-subcommand.ts)
 
 ```typescript
 // → <Tool> [--dry-run] [ [up [--watch] <count>] | [down [--volumes] <force> <timeout>] ]
+class Up {
+  _parent?: Tool;
+  watch = false;
+  main(_count: number) {
+    console.log("Up", this);
+  }
+}
+
 class Tool {
   dryRun = false;
 
-  @subcommand
-  up = class Up {
-    _parent: Tool;
-    watch = false;
-    main(count: number) {
-      console.log("Up", this);
-    }
-  };
+  @subcommand()
+  up = Up;
 
-  @subcommand
-  down = class Down {
-    _parent: Tool;
-    volumes = false;
+  @subcommand()
+  down = {
+    volumes: false,
     main(force: boolean, timeout: number) {
       console.log("Down", this);
-    }
+    },
   };
 }
+
+cliteRun(new Tool());
+```
+
+```
+./subcommand.ts --help
+Usage: <Tool file> [Options] [--] [command [command args]]
+
+Commands:
+  up --help | [sub Options / cmd / args]
+  down --help | [sub Options / cmd / args]
+
+Options:
+ -h, --help    Show this help [default: false]
+     --dry-run                [default: false]
+     --down         [default: [object Object]]
+
+/$ .subcommand.ts down --help
+Usage: <Object file> [Options] [--] [command [command args]]
+
+Command:
+  main <force> <timeout> [default]
+
+Options:
+ -h, --help    Show this help [default: false]
+     --volumes                [default: false]
 ```
 
 ## Argument parsing
@@ -399,25 +459,22 @@ $ ./simple.ts --webUrl test
 main command Tool { retry: 2, dryRun: false, webUrl: "test" }
 ```
 
-### Passing objects :
+### several ways to pass parameters
 
-```
---ac.bb aaa --ac.dd.ee v --ac.dd.ff w
-→ { ac: { bb: "aaa", dd: { ee: "v", ff: "w" } } }
-```
+For example, for an option `-l, --out-limit` from a field `outLimit` with an
+alias `l` :
 
-### Default command
+- `-l=8`
+- `-l 8`
+- `-l8`
+- `--out-limit 8`
+- `--out-limit=8`
+- `--outLimit 8`
+- `--outLimit=8`
 
-- If there is only one method/command => this method is the default
-- If the main method exist => main is the default
-- else => no default method
+Are equivalent.
 
-```shell
-$ ./example-lite.ts
-main command Tool { retry: 2, webUrl: "none", no_color: undefined }
-```
-
-## Boolean options
+### Passing boolean
 
 ```shell
 $ ./example-lite.ts
@@ -430,75 +487,55 @@ $ ./example-lite.ts --no-color=true
 main command Tool { retry: 2, webUrl: "none", no_color: "true" }
 ```
 
-## Ignore _* and #* methods and fields (in the help)
+### Passing arrays :
 
-Fields and methods that start with "_" are ignored.
+Use several times an option will fill the field if it's an array :
 
-```typescript
-_privateData = 12;
-_privateMethod() {
-  console.log("this method is not visible in the help (starts with '_')");
+```
+class Tool {
+  @alias("a")
+  arr: string[] = [];
+  ...
 }
+$ ./Tool.ts --arr=aa --arr bb -a=cc -a dd --a ee
+→ arr === ["aa", "bb", "cc", "dd", "ee"]
 ```
 
-Note: this "private" method can be run by the CLI, it's useful during the
-development.
+### Passing objects :
 
-Note2: js private fields `#*` are also ignored :
+Object can be deserialized :
 
-```typescript
-#privateData = 12;
-#privateMethod() {
-  console.log("this method is not visible in the help (starts with '#')");
+```
+--ac.bb aaa --ac.dd.ee v --ac.dd.ff w
+```
+
+will fill `ac` field with
+
+```
+{ bb: "aaa", dd: { ee: "v", ff: "w" }
+```
+
+Example :
+
+```
+class Tool {
+  ac = {};
+  ...
 }
+$ ./Tool.ts --ac.bb aaa --ac.dd.ee v --ac.dd.ff w
+→ ac === { bb: "aaa", dd: { ee: "v", ff: "w" } })
 ```
 
-## Plain Object
+### The default command
 
-A plain JS Object can be used :
-
-```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.6.5";
-
-cliteRun({
-  retry: 2,
-  main() {
-    console.log("main command", this);
-  },
-  _up_help: "create and start the services",
-  up(svc: string, timeout = 10) {
-    console.log("up command", { svc, timeout, retry: this.retry });
-  },
-  down(svc: string) {
-    console.log("down command", { svc, retry: this.retry });
-  },
-});
-```
+- If there is only one method/command => this method is the default
+- If the main method exist => main is the default
+- else => no default method
 
 ```shell
-$ ./plain_object_lite.ts --retry=77 up foo 123
-up command { svc: "foo", timeout: "123", retry: "77" }
-
-$ /plain_object_lite.ts --help
-Usage: <Object file> [Options] [--] [command [command args]]
-
-Commands:
-  main                (default)
-  up <svc> <timeout>  create and start the services
-  down <svc>
-
-Options:
-  --retry=<RETRY>  (default "2")
-  --help           Show this help
+$ ./example-lite.ts
+main command Tool { retry: 2, webUrl: "none", no_color: undefined }
 ```
-
-## Print the help on error
-
-If printHelpOnError is enable, the help is print if any error is thrown while
-the command execution. Else, the help is print only for errors that have
-`{ cause: { clite: true } }`.
-
-It's useful if a required option is missing, for example.
 
 ## CliteRunConfig
 
@@ -520,14 +557,17 @@ type CliteRunConfig = {
 ### Return value
 
 If the method run by `cliteRun` return a value != undefined, it will be print in
-stdout.
+stdout. If it's a promise, the result of the promise will be awaited.
 
 This behavior can be disabled with the config :
 `cliteRun(Tool, { dontPrintResult: true })`
 
 ### noCommand
 
-<!-- TODO -->
+No command in the command line → all positional argument are used as arguments
+of the command.
+
+The default command is used.
 
 `cliteRun(Tool, { noCommand: true });` → `./example-no-command.ts ---help` give
 :
@@ -544,9 +584,13 @@ Options:
   --help                 Show this help
 ```
 
-### printHelpOnError
+## Print the help on error
 
-Print the help if an error is thrown and then re-throw the error:
+If printHelpOnError is enabled, the help is print if any error is thrown while
+the command execution. Else, the help is print only for errors that have
+`{ cause: { clite: true } }`.
+
+It's useful if a required option is missing, for example.
 
 ```typescript
 import { cliteRun } from "jsr:@jersou/clite@0.6.5";
@@ -562,7 +606,7 @@ export class Tool {
 cliteRun(Tool, { printHelpOnError: true });
 ```
 
-To print help on specific error without `printHelpOnError=true`, use
+To print help on specific error only, without `printHelpOnError=true`, use
 `{ cause: { clite: true } }` :
 
 ```typescript
@@ -580,11 +624,11 @@ export class Tool {
 cliteRun(Tool);
 ```
 
-### configCli : load config with `--config <path`
+### configCli : load a json config with `--config <path>`
 
 **TODO for Node**
 
-If `configCli === true` in CliteRunConfig
+If `configCli === true` in the CliteRunConfig
 
 ```
 $ cat ./load-config.ts
@@ -652,7 +696,56 @@ This feature does not work with Node (no import.meta.main).
 If `--` is used and dontConvertCmdArgs=true, all command arguments will be
 strings.
 
-<!-- TODO -->
+```
+# with dontConvertCmdArgs: true
+$ ./Tool.ts -- main 123 true foo
+ → command = main
+ → commandArgs = ["123", "true", "foo"]);
+
+# with dontConvertCmdArgs: false
+$ ./Tool.ts -- main 123 true foo
+ → command = main
+ → commandArgs = "123, true, "foo"]);
+```
+
+## Plain Object
+
+A plain JS Object can be used :
+
+```typescript
+import { cliteRun } from "jsr:@jersou/clite@0.6.5";
+
+cliteRun({
+  retry: 2,
+  main() {
+    console.log("main command", this);
+  },
+  _up_help: "create and start the services",
+  up(svc: string, timeout = 10) {
+    console.log("up command", { svc, timeout, retry: this.retry });
+  },
+  down(svc: string) {
+    console.log("down command", { svc, retry: this.retry });
+  },
+});
+```
+
+```shell
+$ ./plain_object_lite.ts --retry=77 up foo 123
+up command { svc: "foo", timeout: 123, retry: 77 }
+
+$ /plain_object_lite.ts --help
+Usage: <Object file> [Options] [--] [command [command args]]
+
+Commands:
+  main               [default]
+  up <svc> <timeout> create and start the services
+  down <svc>
+
+Options:
+ -h, --help  Show this help [default: false]
+     --retry                    [default: 2]
+```
 
 ## Node support : `npx jsr add @jersou/clite`
 
@@ -684,19 +777,20 @@ See node usage examples :
     `other take the cli config (tool format) as input and produce an output data without type/model`
     vs `clite take the expected output model and generate the cli config` (~
     deserialize the class to cli/help)
-  - "many ways to pass parameters" in doc : `-l=8`,`-l 8`, `-l8`,
-    `--out-limit 8`, `--out-limit=8`, `--outLimit 8`, `--outLimit=8`
+  - add doc/example in the code (to see it in IDE and on
+    https://jsr.io/@jersou/clite/doc)
+- decorators
+  - remove noCommand from config ? (and other config → decorators)
+  - decorator to specify the arg name of field bug
+    `--skip-extract-image-from-mp-3` vs `--skip-extract-image-from-mp3`
+  - help on cmd args ?
+- add `[--help]` on subcommands
 - search "TODO" in code/doc
-- add missing tests, check cov
-- refactor the code
 - NodeJS implementation of --config/configCli
-- help on cmd args ?
+- NodeJS tests
 - check missing feat (compare to other tools ) ?
-- decorator to specify the arg name of field bug
-  `--skip-extract-image-from-mp-3` vs `--skip-extract-image-from-mp3`
-- remove noCommand from config ? (and other config → decorators)
-- auto-detect subcommand if field is a class ?
 - use the right CLI vocabulary
-- better overview, real case
-- add doc/example in the code (to see it in IDE and
-  https://jsr.io/@jersou/clite/doc)
+- better overview, use real case
+- add
+  `_clite: { _ : { help :"...", noCommand:true }, dryRun: { help: "...", negatable: true }}`
+  ?

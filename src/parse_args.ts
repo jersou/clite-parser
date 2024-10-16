@@ -117,20 +117,17 @@ export function fillFields<O extends Obj>(
   config?: CliteRunConfig,
 ) {
   const aliasNames = Object.entries(metadata.fields)
-    .flatMap(([, v]) => v?.alias ?? []);
+    .flatMap(([, v]) => v?.alias);
   const fields = Object.keys(metadata.fields);
   for (const option of (getFieldNames(parseResult.options) as string[])) {
     if (fields.includes(option)) {
       obj[option] = parseResult.options[option];
     } else if (fields.includes(toSnakeCase(option))) {
       obj[toSnakeCase(option)] = parseResult.options[option];
-    } else if (option === "config") {
-      if (!config?.configCli) {
-        throw new Error(`The --config option is not enable`, {
-          cause: { clite: true },
-        });
-      }
-    } else if (!aliasNames.includes(option)) {
+    } else if (
+      !aliasNames.includes(option) &&
+      (option !== "config" || !config?.configCli)
+    ) {
       throw new Error(`The option "${option}" doesn't exist`, {
         cause: { clite: true },
       });

@@ -14,10 +14,10 @@ export type Metadata<O extends Obj> = {
     };
   };
   defaultCommand?: string; // TODO test
-  methods: { // TODO test
+  methods: {
     [key in keyof O]?: {
-      help?: string; // TODO test
-      hidden?: boolean; // TODO test
+      help?: string;
+      hidden?: boolean;
     };
   };
   subcommands: string[];

@@ -21,19 +21,27 @@ export function align(input: [string, string, string, string][]): string[] {
     0,
   ) + 1;
   return input.map(([col0, col1, col2, col3]) =>
-    `${col0.padStart(maxCol0)}${col1.padEnd(maxCol1)} ${
-      col2.padEnd(maxCol23 - col3.length) ?? ""
-    }${col3 ?? ""}`.trimEnd()
+    [
+      col0.padStart(maxCol0),
+      col1.padEnd(maxCol1) + " ",
+      col2.padEnd(maxCol23 - col3.length),
+      col3,
+    ].join("").trimEnd()
   );
 }
 
-//TODO REFACTOR
 function genCommandHelp<O extends Obj>(
   obj: O,
   metadata: Metadata<O>,
   helpLines: string[],
 ) {
-  const methods = [...Object.keys(metadata.methods), ...metadata.subcommands];
+  const methods = [
+    ...Object.keys(metadata.methods)
+      .filter((m) => !metadata.methods[m]?.hidden),
+    ...metadata.subcommands.filter((f) =>
+      !metadata.fields[f]?.hidden && !metadata.methods[f]?.hidden
+    ),
+  ];
   if (methods.length > 0) {
     helpLines.push(boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`));
     const linesCols: [string, string, string, string][] = [];
@@ -44,6 +52,8 @@ function genCommandHelp<O extends Obj>(
         if (args.length > 0) {
           col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
         }
+      } else {
+        col1 += " --help | [sub Options / cmd / args]";
       }
       let col2 = metadata.methods?.[method]?.help ?? "";
       if (method === metadata.defaultCommand) {
@@ -84,8 +94,8 @@ function genOptionsHelp<O extends Obj>(
   }
 
   for (const field of fields) {
-    const alias = metadata.fields[field]?.alias ?? [];
-    const aliasHelp = (Array.isArray(alias) ? alias : [alias])
+    const alias = [...(metadata.fields[field]?.alias ?? [])];
+    const aliasHelp = alias
       .map((a) => (a.length === 1 ? `-${a},` : `--${toKebabCase(a)},`))
       .join(" ");
 

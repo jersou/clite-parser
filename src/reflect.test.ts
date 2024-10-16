@@ -41,3 +41,13 @@ Deno.test("getMethodArgNames", () => {
   const tool = new Tool();
   assertEquals(getMethodArgNames(tool, "down"), ["force", "timeout"]);
 });
+
+Deno.test("getMethodArgNames obj", () => {
+  assertEquals(
+    getMethodArgNames({
+      down(_force: boolean, _timeout = 10) {
+      },
+    }, "down"),
+    ["_force", "_timeout"],
+  );
+});

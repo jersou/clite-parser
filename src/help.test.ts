@@ -109,28 +109,39 @@ Deno.test({
   },
 });
 
-class ToolHiddenField {
-  @hidden()
-  foo = 12;
-}
+Deno.test({
+  name: "@hidden method",
+  fn() {
+    class ToolHiddenField {
+      @hidden()
+      foo() {}
+      bar() {}
+    }
+    const result = cliteParse(ToolHiddenField, { args: ["--help"] });
+    assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
+    assert(result.help.includes("bar"));
+  },
+});
 
 Deno.test({
   name: "@hidden",
   fn() {
-    const result = cliteParse(ToolHiddenField, {
-      args: ["--help"],
-    });
+    class ToolHiddenField {
+      @hidden()
+      foo = 12;
+    }
+    const result = cliteParse(ToolHiddenField, { args: ["--help"] });
     assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
   },
 });
 
-class Tool_HiddenField {
-  _foo_hidden = true;
-  foo = 12;
-}
 Deno.test({
   name: "_hidden",
   fn() {
+    class Tool_HiddenField {
+      _foo_hidden = true;
+      foo = 12;
+    }
     const result = cliteParse(Tool_HiddenField, { args: ["--help"] });
     assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
   },

@@ -98,7 +98,7 @@ export type CliteResult<O extends Obj> = {
    */
   help: string;
   /*
-   * The subcommand CliteResult
+   * The subcommand CliteResult if the command is a subcommand
    */
   subcommand?: CliteResult<Obj>;
 };
@@ -172,8 +172,7 @@ function loadConfig(parseResult: ParseResult, obj: Obj) {
           { cause: { clite: true, error } },
         );
       }
-    } else {
-      // TODO NodeJS implementation
+    } else { // TODO NodeJS implementation
       throw new Error("Load config is not implemented on NodeJs");
     }
   } else {

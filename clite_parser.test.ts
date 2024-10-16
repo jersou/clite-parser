@@ -1,9 +1,10 @@
-import { assertEquals, assertThrows } from "jsr:@std/assert@1.0.5";
+import { assert, assertEquals, assertThrows } from "jsr:@std/assert@1.0.5";
 import { cliteParse, cliteRun, noCommand, subcommand } from "./clite_parser.ts";
 import { genHelp } from "./src/help.ts";
 import { Tool } from "./src/test_data.test.ts";
 import type { Obj } from "./src/parse_args.ts";
 import { getCliteMetadata } from "./src/metadata.ts";
+import { stripAnsiCode } from "@std/fmt/colors";
 
 Deno.test("cliteRun", () => {
   const result = cliteRun(new Tool(), {
@@ -42,47 +43,52 @@ Deno.test("cliteParse", () => {
   assertEquals(result.commandArgs, [true]);
 });
 
-@noCommand()
-class Branch {
-  delete = false;
-
-  main(branchname: string) {
-    console.log("main branch command", this, { branchname });
-    return { branch: this, branchname };
-  }
-}
-
-class ToolWithSubcommand {
-  gitDir = ".";
-  @subcommand()
-  branch = Branch;
-
-  @subcommand()
-  commit = {
-    _no_command: true,
-    all: false,
-    message: "",
-    main() {
-      console.log("main commit command", this);
-      return this;
-    },
-  };
-
-  main() {
-    console.log("main command", this);
-    return this;
-  }
-}
-
 Deno.test({
   name: "subcommand",
   fn() {
+    @noCommand()
+    class Branch {
+      delete = false;
+
+      main(branchname: string) {
+        console.log("main branch command", this, { branchname });
+        return { branch: this, branchname };
+      }
+    }
+    class ToolWithSubcommand {
+      gitDir = ".";
+      @subcommand()
+      branch = Branch;
+
+      @subcommand()
+      commit = {
+        _no_command: true,
+        all: false,
+        message: "",
+        main() {
+          console.log("main commit command", this);
+          return this;
+        },
+      };
+
+      main() {
+        console.log("main command", this);
+        return this;
+      }
+    }
     const result = cliteRun(ToolWithSubcommand, {
       args: ["--git-dir=/tmp", "branch", "--delete", "foo"],
     }) as Obj;
     assertEquals(result.branch._clite_parent.gitDir, "/tmp");
     assertEquals(result.branch.delete, true);
     assertEquals(result.branchname, "foo");
+
+    const result2 = cliteRun(ToolWithSubcommand, {
+      args: ["--git-dir=/tmp", "commit", "--all", "--message", "bar"],
+    }) as Obj;
+    assertEquals(result2._clite_parent.gitDir, "/tmp");
+    assertEquals(result2.all, true);
+    assertEquals(result2.message, "bar");
   },
 });
 
@@ -119,6 +125,22 @@ Deno.test({
 });
 
 Deno.test({
+  name: "bad config file wihout configCli",
+  fn() {
+    class ToolWithConfig {
+      foo = "bar";
+      main() {}
+    }
+    assertThrows(() => {
+      cliteParse(ToolWithConfig, {
+        args: ["--config", "src/test-data/test-config.json"],
+        configCli: false,
+      });
+    });
+  },
+});
+
+Deno.test({
   name: "throws on printHelpOnError",
   fn() {
     class ToolWithConfig {
@@ -132,7 +154,6 @@ Deno.test({
         printHelpOnError: true,
       });
     });
-    // TODO check output
   },
 });
 
@@ -146,7 +167,6 @@ Deno.test({
     }
     assertThrows(() => {
       cliteRun(ToolWithConfig, { args: [] });
-      // TODO check output
     });
   },
 });
@@ -157,17 +177,38 @@ Deno.test({
     class ToolWithoutCmd {}
     assertThrows(() => {
       cliteRun(ToolWithoutCmd, { args: [] });
-      // TODO check output
     });
   },
 });
+
 Deno.test({
   name: "The command doesn't exist",
   fn() {
     class ToolWithoutCmd {}
     assertThrows(() => {
       cliteRun(ToolWithoutCmd, { args: ["foo"] });
-      // TODO check output
     });
   },
+});
+
+Deno.test("cliteRun meta", () => {
+  const result = cliteRun(new Tool(), {
+    args: ["--help"],
+    meta: { main: true, url: "./test.ts", resolve: () => "" },
+  }) as string;
+  assert(stripAnsiCode(result).includes("Usage: ./test.ts [Options]"));
+});
+
+Deno.test("dontConvertCmdArgs", () => {
+  const result = cliteParse(Tool, {
+    args: ["--", "main", "123", "true", "foo"],
+    dontConvertCmdArgs: true,
+  });
+  assertEquals(result.command, "main");
+  assertEquals(result.commandArgs, ["123", "true", "foo"]);
+  const result2 = cliteParse(Tool, {
+    args: ["--", "main", "123", "true", "foo"],
+  });
+  assertEquals(result2.command, "main");
+  assertEquals(result2.commandArgs, [123, true, "foo"]);
 });
