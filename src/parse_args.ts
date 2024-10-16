@@ -1,6 +1,6 @@
 import type { CliteRunConfig } from "../clite_parser.ts";
 import { toCamelCase, toKebabCase, toSnakeCase } from "@std/text";
-import { parseArgs as stdParseArgs } from "@std/cli";
+import { parseArgs as stdParseArgs } from "@std/cli/parse-args";
 import { getFieldNames } from "./reflect.ts";
 import type { Metadata } from "./metadata.ts";
 
