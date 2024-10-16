@@ -225,9 +225,8 @@ class Tool {
 cliteRun(Tool);
 ```
 
-Without decorator : optional fields `_<filed or method name>_help` or
-`_<filed or method name>_desc` are displayed as description in the help (_desc
-is deprecated) :
+Without decorator : optional fields `_<filed or method name>_help` are displayed
+as description in the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A

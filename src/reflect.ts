@@ -1,3 +1,5 @@
+import type { Obj } from "./parse_args.ts";
+
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
 
@@ -42,7 +44,7 @@ export function getMethodNames(obj: object): string[] {
  * @param obj Object to analyse
  * @returns field names of the object
  */
-export function getFieldNames(obj: object): string[] {
+export function getFieldNames<O extends Obj>(obj: O): (keyof O)[] {
   return (
     Object.getOwnPropertyNames(obj)
       // @ts-ignore dyn

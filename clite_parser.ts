@@ -1,5 +1,5 @@
 import { bgRed, bold } from "@std/fmt/colors";
-import { genHelp, getDefaultMethod } from "./src/help.ts";
+import { genHelp } from "./src/help.ts";
 import {
   convertCommandArg,
   fillFields,
@@ -9,6 +9,7 @@ import {
 import { getFieldNames, getMethodNames } from "./src/reflect.ts";
 import { runCommand } from "./src/command.ts";
 import { getMetadata } from "./src/decorators.ts";
+import { getCliteMetadata, getDefaultCommand } from "./src/metadata.ts";
 
 export * from "./src/decorators.ts";
 
@@ -120,10 +121,12 @@ export function cliteParse<O extends Obj & { config?: string }>(
   const obj = (
     typeof objOrClass === "function" ? new objOrClass() : objOrClass
   ) as O;
-  const help = genHelp(obj, config);
+
+  const metadata = getCliteMetadata(obj);
+  const help = genHelp(obj, metadata, config);
   try {
     const methods = getMethodNames(obj);
-    const defaultMethod = getDefaultMethod(methods);
+    const defaultMethod = getDefaultCommand(methods);
     const parseResult = parseArgs(obj, config, defaultMethod);
     if (getFieldNames(parseResult.options).includes("help")) {
       return ({ obj, command: "--help", commandArgs: [], config, help });

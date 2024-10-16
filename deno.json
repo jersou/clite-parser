@@ -12,8 +12,8 @@
     "lint": "deno lint --ignore=tmp,.cov_profile,examples",
     "pre-commit": "deno task fmt --check && deno task lint && deno task test && deno task check",
     "publish-dry-run": "deno publish --dry-run",
-    "test": "deno test -A --ignore=tmp,.cov_profile",
-    "test-watch": "deno test -A --watch --ignore=tmp,.cov_profile",
+    "test": "deno test -A --ignore=tmp,.cov_profile --quiet",
+    "test-watch": "deno test -A --watch --ignore=tmp,.cov_profile --quiet",
     "run-example": "deno run examples/example-lite.ts --retry=7 down true 3",
     "update-changelog": "conventional-changelog -p conventionalcommits --same-file -i CHANGELOG.md -k deno.json && deno task fmt"
   },

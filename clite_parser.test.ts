@@ -3,6 +3,7 @@ import { cliteParse, cliteRun, noCommand, subcommand } from "./clite_parser.ts";
 import { genHelp } from "./src/help.ts";
 import { Tool } from "./src/test_data.test.ts";
 import type { Obj } from "./src/parse_args.ts";
+import { getCliteMetadata } from "./src/metadata.ts";
 
 Deno.test("cliteRun", () => {
   const result = cliteRun(new Tool(), {
@@ -29,7 +30,9 @@ Deno.test("cliteRun help", () => {
   const result = cliteRun(new Tool(), {
     args: ["--help"],
   });
-  const expected = genHelp(new Tool());
+  const tool = new Tool();
+  const metadata = getCliteMetadata(tool);
+  const expected = genHelp(tool, metadata);
   assertEquals(result, expected);
 });
 

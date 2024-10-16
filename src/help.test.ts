@@ -4,6 +4,7 @@ import { align, genHelp } from "./help.ts";
 import { Tool } from "./test_data.test.ts";
 import { defaultHelp, help, hidden, type, usage } from "./decorators.ts";
 import { cliteParse } from "../clite_parser.ts";
+import { getCliteMetadata } from "./metadata.ts";
 
 Deno.test("genHelp", () => {
   const tool = new Tool();
@@ -24,7 +25,8 @@ Options:
      --opt-3          option 3 desc [default: "azer"]
      --opt-snake-case
      --opt-camel-case optCamelCase desc`;
-  assertEquals(stripAnsiCode(genHelp(tool)), expected);
+  const metadata = getCliteMetadata(tool);
+  assertEquals(stripAnsiCode(genHelp(tool, metadata)), expected);
 });
 
 Deno.test("genHelp  noCommand", () => {
@@ -40,7 +42,11 @@ Options:
      --opt-3          option 3 desc [default: "azer"]
      --opt-snake-case
      --opt-camel-case optCamelCase desc`;
-  assertEquals(stripAnsiCode(genHelp(tool, { noCommand: true })), expected);
+  const metadata = getCliteMetadata(tool);
+  assertEquals(
+    stripAnsiCode(genHelp(tool, metadata, { noCommand: true })),
+    expected,
+  );
 });
 
 Deno.test("genHelp  mainFile", () => {
@@ -62,8 +68,9 @@ Options:
      --opt-3          option 3 desc [default: "azer"]
      --opt-snake-case
      --opt-camel-case optCamelCase desc`;
+  const metadata = getCliteMetadata(tool);
   assertEquals(
-    stripAnsiCode(genHelp(tool, { mainFile: "the_tool_file" })),
+    stripAnsiCode(genHelp(tool, metadata, { mainFile: "the_tool_file" })),
     expected,
   );
 });

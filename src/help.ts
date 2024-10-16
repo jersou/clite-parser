@@ -4,6 +4,7 @@ import { toKebabCase } from "@std/text";
 import type { Obj } from "./parse_args.ts";
 import { getFieldNames, getMethodArgNames, getMethodNames } from "./reflect.ts";
 import { bold, gray, underline } from "@std/fmt/colors";
+import { getDefaultCommand, type Metadata } from "./metadata.ts";
 
 export function boldUnder(str: string) {
   return bold(underline(str));
@@ -29,46 +30,31 @@ export function align(input: [string, string, string, string][]): string[] {
   );
 }
 
-export function getDefaultMethod(methods: string[]) {
-  if (methods.length == 1) {
-    return methods[0];
-  } else {
-    return methods.includes("main") ? "main" : undefined;
-  }
-}
-
-function genCommandHelp(obj: Obj, helpLines: string[]) {
-  const allMethods = getMethodNames(obj);
-  const methods = allMethods.filter((method) => !method.startsWith("_"));
-  const defaultCommand = getDefaultMethod(methods);
-  const helpMetadata = getMetadata(obj, "clite_help");
-
-  const subcommandMetadata =
-    // deno-lint-ignore no-explicit-any
-    getMetadata(obj, "clite_subcommand") as Record<string, any> ?? {};
-  const subcommands = [
-    ...Object.keys(subcommandMetadata),
-    ...Object.getOwnPropertyNames(obj)
-      .filter((prop) => obj[`_${prop}_subcommand`] === true),
-  ];
-  methods.push(...subcommands); //TODO REFACTOR
-  if (methods.length > 0) {
-    helpLines.push(boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`));
+function genCommandHelp<O extends Obj>(
+  obj: O,
+  metadata: Metadata<O>,
+  helpLines: string[],
+) {
+  metadata.methods.push(...metadata.subcommands); //TODO REFACTOR
+  if (metadata.methods.length > 0) {
+    helpLines.push(
+      boldUnder(`\nCommand${metadata.methods.length > 1 ? "s" : ""}:`),
+    );
     const linesCols: [string, string, string, string][] = [];
-    for (const method of methods) {
+    for (const method of metadata.methods) {
       let col1 = bold(`  ${method}`);
-      if (!subcommands.includes(method)) { //TODO REFACTOR
+      if (!metadata.subcommands.includes(method)) {
+        //TODO REFACTOR
         const args = getMethodArgNames(obj, method);
         if (args.length > 0) {
           col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
         }
       }
-      let col2 = helpMetadata?.[method] ??
+      let col2 = metadata.fields?.[method]?.help ??
         obj[`_${method}_help`] ??
-        obj[`_${method}_desc`] ??
         "";
 
-      if (method === defaultCommand) {
+      if (method === metadata.defaultCommand) {
         col2 += col2.length ? " " : "";
         col2 += bold("[default]");
       }
@@ -94,8 +80,8 @@ function genOptionsHelp(
   const hiddenMetadata = getMetadata(obj, "clite_hidden") as Obj;
   const hidden = hiddenMetadata ? Object.keys(hiddenMetadata) : [];
   const allFields = getFieldNames(obj);
-  const fields = allFields.filter((f) =>
-    !f.startsWith("_") && !hidden.includes(f) && !obj[`_${f}_hidden`]
+  const fields = allFields.filter(
+    (f) => !f.startsWith("_") && !hidden.includes(f) && !obj[`_${f}_hidden`],
   );
   helpLines.push(boldUnder(`\nOption${fields.length ? "s" : ""}:`));
   const linesCols: [string, string, string, string][] = [];
@@ -132,7 +118,6 @@ function genOptionsHelp(
     let col3 = "";
     const desc = helpMetadata?.[field] ??
       obj[`_${field}_help`] ??
-      obj[`_${field}_desc`] ??
       "";
     if (desc) {
       col2 += desc;
@@ -155,7 +140,9 @@ function genOptionsHelp(
       linesCols.push([
         bold(" "),
         bold(` --${toKebabCase("no_" + field)}`),
-        negatableMetadata?.[field] ?? "",
+        typeof negatableMetadata?.[field] === "string"
+          ? negatableMetadata?.[field]
+          : "",
         "",
       ]);
     } else if (obj[`_${field}_negatable`]) {
@@ -176,25 +163,18 @@ function genOptionsHelp(
  * Generate the CLI help of obj
  *
  * @param obj to analyse
+ * @param metadata - clite metadata
  * @param config CliteRunConfig
  * @returns the help as string
  */
-export function genHelp(obj: Obj, config?: CliteRunConfig): string {
+export function genHelp<O extends Obj>(
+  obj: O,
+  metadata: Metadata<O>,
+  config?: CliteRunConfig,
+): string {
   const helpLines: string[] = [];
-  const usageMetadata = getMetadata(obj, "clite_usage") as Obj;
-  const newUsage = usageMetadata
-    ? Object.values(usageMetadata)[0]
-    : obj._usage
-    ? obj._usage
-    : undefined;
-  const noCommandMetadata = getMetadata(obj, "clite_noCommand") as Obj;
-  const noCommand = !!noCommandMetadata || obj._no_command;
-  const helpMetadata = getMetadata(obj, "clite_help");
-  const objHelp = helpMetadata?.[Object.getPrototypeOf(obj).constructor.name] ??
-    obj._help ??
-    obj._desc;
-  if (objHelp) {
-    helpLines.push(objHelp + "\n");
+  if (metadata.help) {
+    helpLines.push(metadata.help + "\n");
   }
   const name = Object.getPrototypeOf(obj).constructor.name;
   const mainFile = config?.mainFile ??
@@ -202,16 +182,16 @@ export function genHelp(obj: Obj, config?: CliteRunConfig): string {
     `<${name} file>`;
 
   let usage = `${boldUnder("Usage:")} `;
-  if (newUsage) {
-    usage = `${usage}${newUsage}`;
-  } else if (config?.noCommand || noCommand) {
+  if (metadata.usage) {
+    usage = `${usage}${metadata.usage}`;
+  } else if (config?.noCommand || metadata.noCommand) {
     usage = `${usage}${mainFile} [Options] [--] [args]`;
   } else {
     usage = `${usage}${mainFile} [Options] [--] [command [command args]]`;
   }
   helpLines.push(usage);
-  if (!config?.noCommand && !noCommand) {
-    genCommandHelp(obj, helpLines);
+  if (!config?.noCommand && !metadata.noCommand) {
+    genCommandHelp(obj, metadata, helpLines);
   }
   genOptionsHelp(obj, helpLines, config);
   return helpLines.join("\n");

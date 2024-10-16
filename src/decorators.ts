@@ -74,7 +74,7 @@ export function type(typeHelp: string): any {
  * @param help - to add to the help (optional)
  */
 // deno-lint-ignore no-explicit-any
-export function negatable(help?: string): any {
+export function negatable(help: string | boolean = true): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
     addMetadata(target, prop, "clite_negatables", help);

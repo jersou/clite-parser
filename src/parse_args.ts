@@ -133,7 +133,7 @@ export function fillFields(parseResult: ParseResult, obj: Obj) {
   // deno-lint-ignore no-explicit-any
   const aliasMetadata = getMetadata(obj, "clite_alias") as Record<string, any>;
   const aliasNames = aliasMetadata ? Object.values(aliasMetadata).flat() : [];
-  const fields = getFieldNames(obj);
+  const fields = getFieldNames(obj) as string[];
   const publicFields = fields.filter(
     (f) => !f.startsWith("_") && !f.startsWith("#"),
   );
@@ -143,7 +143,7 @@ export function fillFields(parseResult: ParseResult, obj: Obj) {
     }
   }
 
-  for (const option of getFieldNames(parseResult.options)) {
+  for (const option of (getFieldNames(parseResult.options) as string[])) {
     if (fields.includes(option)) {
       obj[option] = parseResult.options[option];
     } else if (fields.includes(toSnakeCase(option))) {
