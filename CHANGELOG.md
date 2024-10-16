@@ -1,3 +1,14 @@
+## [0.7.0](https://github.com/jersou/clite-parser/compare/0.6.5...0.7.0) (2024-10-16)
+
+### Features
+
+- add [@json](https://github.com/json)Config to enable --config
+  ([02c6099](https://github.com/jersou/clite-parser/commit/02c60993299ef7273ee4d12d869e7a514fe19395))
+
+### Bug Fixes
+
+- big refactor: add test, fix bugs, clean code
+
 ## [0.6.5](https://github.com/jersou/clite-parser/compare/0.6.4...0.6.5) (2024-10-15)
 
 ### Bug Fixes
