@@ -1,6 +1,6 @@
 // call from decorator with experimentalDecorators = false or true
 // deno-lint-ignore no-explicit-any
-function addMetadata(target: any, prop: any, key: string, val: any) {
+function addSymbolMetadata(target: any, prop: any, key: string, val: any) {
   let metadata;
   let propName;
   if (prop.addInitializer) {
@@ -29,7 +29,7 @@ function addMetadata(target: any, prop: any, key: string, val: any) {
 }
 
 // deno-lint-ignore no-explicit-any
-export function getMetadata(obj: any, key: string): any {
+export function getSymbolMetadata(obj: any, key: string): any {
   return Object.getPrototypeOf(obj).constructor[Symbol.metadata]?.[key];
 }
 
@@ -41,7 +41,7 @@ export function getMetadata(obj: any, key: string): any {
 export function help(description: string): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    addMetadata(target, prop, "clite_help", description);
+    addSymbolMetadata(target, prop, "clite_help", description);
   };
 }
 
@@ -53,7 +53,7 @@ export function help(description: string): any {
 export function alias(alias: string): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    addMetadata(target, prop, "clite_alias", alias);
+    addSymbolMetadata(target, prop, "clite_alias", alias);
   };
 }
 
@@ -65,7 +65,7 @@ export function alias(alias: string): any {
 export function type(typeHelp: string): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    addMetadata(target, prop, "clite_types", typeHelp);
+    addSymbolMetadata(target, prop, "clite_types", typeHelp);
   };
 }
 
@@ -77,7 +77,7 @@ export function type(typeHelp: string): any {
 export function negatable(help: string | boolean = true): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    addMetadata(target, prop, "clite_negatables", help);
+    addSymbolMetadata(target, prop, "clite_negatables", help);
   };
 }
 
@@ -89,7 +89,7 @@ export function negatable(help: string | boolean = true): any {
 export function defaultHelp(defaultHelp: string): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    addMetadata(target, prop, "clite_defaults", defaultHelp);
+    addSymbolMetadata(target, prop, "clite_defaults", defaultHelp);
   };
 }
 
@@ -101,7 +101,7 @@ export function defaultHelp(defaultHelp: string): any {
 export function usage(usage: string): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    addMetadata(target, prop, "clite_usage", usage);
+    addSymbolMetadata(target, prop, "clite_usage", usage);
   };
 }
 
@@ -112,7 +112,7 @@ export function usage(usage: string): any {
 export function hidden(): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    addMetadata(target, prop, "clite_hidden", true);
+    addSymbolMetadata(target, prop, "clite_hidden", true);
   };
 }
 
@@ -123,7 +123,7 @@ export function hidden(): any {
 export function subcommand(): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    addMetadata(target, prop, "clite_subcommand", true);
+    addSymbolMetadata(target, prop, "clite_subcommand", true);
   };
 }
 
@@ -134,6 +134,6 @@ export function subcommand(): any {
 export function noCommand(): any {
   // deno-lint-ignore no-explicit-any
   return function (target: any, prop?: any) {
-    addMetadata(target, prop, "clite_noCommand", true);
+    addSymbolMetadata(target, prop, "clite_noCommand", true);
   };
 }

@@ -126,7 +126,7 @@ export function cliteParse<O extends Obj & { config?: string }>(
   try {
     const methods = getMethodNames(obj);
     const defaultMethod = getDefaultCommand(methods);
-    const parseResult = parseArgs(obj, config, defaultMethod);
+    const parseResult = parseArgs(obj, metadata, config, defaultMethod);
     if (getFieldNames(parseResult.options).includes("help")) {
       return ({ obj, command: "--help", commandArgs: [], config, help });
     } else {
@@ -164,7 +164,7 @@ export function cliteParse<O extends Obj & { config?: string }>(
         });
       }
 
-      fillFields(parseResult, obj);
+      fillFields(parseResult, obj, metadata);
       if (metadata.subcommands.includes(command)) {
         const subcommandObj = typeof obj[command] === "function"
           ? new obj[command]()

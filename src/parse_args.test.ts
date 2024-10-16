@@ -6,6 +6,7 @@ import {
   type ParseResult,
 } from "./parse_args.ts";
 import { alias, cliteParse } from "../clite_parser.ts";
+import { getCliteMetadata } from "./metadata.ts";
 
 Deno.test("args regex", () => {
   const result = "force, timeout = 10"
@@ -16,25 +17,23 @@ Deno.test("args regex", () => {
 });
 
 Deno.test("parseArgs", () => {
-  const parseResult = parseArgs(
-    {
-      opt2: true,
-      opt3: "ee",
-      optSnakeCase: 1,
-      optCamelCase: 4,
-    },
-    {
-      args: [
-        "--opt2=false",
-        "--opt3=qsdf",
-        "--opt-snake-case=123",
-        "--opt-camel-case=456",
-        "down",
-        "true",
-        "12s",
-      ],
-    },
-  );
+  const obj = {
+    opt2: true,
+    opt3: "ee",
+    optSnakeCase: 1,
+    optCamelCase: 4,
+  };
+  const parseResult = parseArgs(obj, getCliteMetadata(obj), {
+    args: [
+      "--opt2=false",
+      "--opt3=qsdf",
+      "--opt-snake-case=123",
+      "--opt-camel-case=456",
+      "down",
+      "true",
+      "12s",
+    ],
+  });
   const expected: ParseResult = {
     options: {
       opt2: false,
@@ -49,26 +48,24 @@ Deno.test("parseArgs", () => {
 });
 
 Deno.test("parseArgs noCommand", () => {
-  const parseResult = parseArgs(
-    {
-      opt2: true,
-      opt3: "ee",
-      optSnakeCase: 1,
-      optCamelCase: 4,
-    },
-    {
-      args: [
-        "--opt2=false",
-        "--opt3=qsdf",
-        "--opt-snake-case=123",
-        "--opt-camel-case=456",
-        "down",
-        "true",
-        "12s",
-      ],
-      noCommand: true,
-    },
-  );
+  const obj = {
+    opt2: true,
+    opt3: "ee",
+    optSnakeCase: 1,
+    optCamelCase: 4,
+  };
+  const parseResult = parseArgs(obj, getCliteMetadata(obj), {
+    args: [
+      "--opt2=false",
+      "--opt3=qsdf",
+      "--opt-snake-case=123",
+      "--opt-camel-case=456",
+      "down",
+      "true",
+      "12s",
+    ],
+    noCommand: true,
+  });
   const expected: ParseResult = {
     options: {
       opt2: false,
@@ -83,35 +80,33 @@ Deno.test("parseArgs noCommand", () => {
 });
 
 Deno.test("parseArgs full", () => {
-  const parseResult = parseArgs(
-    {
-      opt1: 1,
-      opt2: true,
-      optSnakeCase: 1,
-      a: false,
-      b: false,
-      c: false,
-      o: 1,
-      u: "a",
-    },
-    {
-      args: [
-        "--opt1=123",
-        "--opt2=false",
-        "-u=qsdf",
-        "-abc",
-        "--opt-snake-case",
-        "123",
-        "-o",
-        "456",
-        "--",
-        "down",
-        "true",
-        "-y",
-        "12s",
-      ],
-    },
-  );
+  const obj = {
+    opt1: 1,
+    opt2: true,
+    optSnakeCase: 1,
+    a: false,
+    b: false,
+    c: false,
+    o: 1,
+    u: "a",
+  };
+  const parseResult = parseArgs(obj, getCliteMetadata(obj), {
+    args: [
+      "--opt1=123",
+      "--opt2=false",
+      "-u=qsdf",
+      "-abc",
+      "--opt-snake-case",
+      "123",
+      "-o",
+      "456",
+      "--",
+      "down",
+      "true",
+      "-y",
+      "12s",
+    ],
+  });
 
   const expected: ParseResult = {
     options: {

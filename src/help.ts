@@ -34,13 +34,13 @@ function genCommandHelp<O extends Obj>(
   metadata: Metadata<O>,
   helpLines: string[],
 ) {
-  metadata.methods.push(...metadata.subcommands); //TODO REFACTOR
-  if (metadata.methods.length > 0) {
+  const methods = [...Object.keys(metadata.methods), ...metadata.subcommands]; //TODO REFACTOR
+  if (methods.length > 0) {
     helpLines.push(
-      boldUnder(`\nCommand${metadata.methods.length > 1 ? "s" : ""}:`),
+      boldUnder(`\nCommand${methods.length > 1 ? "s" : ""}:`),
     );
     const linesCols: [string, string, string, string][] = [];
-    for (const method of metadata.methods) {
+    for (const method of methods) {
       let col1 = bold(`  ${method}`);
       if (!metadata.subcommands.includes(method)) {
         //TODO REFACTOR

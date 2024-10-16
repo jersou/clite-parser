@@ -1,8 +1,8 @@
-import { getMetadata } from "./decorators.ts";
 import type { CliteRunConfig } from "../clite_parser.ts";
 import { toCamelCase, toKebabCase, toSnakeCase } from "@std/text";
 import { parseArgs as stdParseArgs } from "@std/cli";
 import { getFieldNames } from "./reflect.ts";
+import type { Metadata } from "./metadata.ts";
 
 /**
  * Result of parseArgs()
@@ -30,12 +30,14 @@ export type Obj = Record<string, any>;
  * parse config?.args, or Deno arguments (Deno.args) or node arguments (process.argv)
  *
  * @param obj to analyse
+ * @param metadata - clite metadata
  * @param config - to use to parse
  * @param defaultMethod - to run if no arg
  * @returns the parse result
  */
-export function parseArgs(
-  obj: Obj,
+export function parseArgs<O extends Obj>(
+  obj: O,
+  metadata: Metadata<O>,
   config?: CliteRunConfig,
   defaultMethod = "main",
 ): ParseResult {
@@ -49,16 +51,16 @@ export function parseArgs(
   const arrayProp: string[] = [];
   const booleanProp: string[] = [];
   const alias: Record<string, string[]> = { help: ["h"] };
-  const negatableMetadata = getMetadata(obj, "clite_negatables") ?? {};
-  const negatable = Object.keys(negatableMetadata);
+  const negatable = Object.entries(metadata.fields)
+    .filter(([, v]) => v?.negatable)
+    .map(([k]) => k);
 
-  for (const name of getFieldNames(obj).filter((n) => !n.startsWith("_"))) {
-    alias[name] = [];
+  for (const name of Object.keys(metadata.fields)) {
+    alias[name] = metadata.fields[name]?.alias ?? [];
     const kebabCase = toKebabCase(name);
     if (name !== kebabCase) {
       alias[name].push(kebabCase);
     }
-
     switch (typeof obj[name]) {
       case "boolean":
         booleanProp.push(name);
@@ -71,22 +73,6 @@ export function parseArgs(
           arrayProp.push(name);
         }
     }
-    if (obj[`_${name}_alias`]) {
-      (alias[name] as string[]).push(...obj[`_${name}_alias`]);
-    }
-    if (obj[`_${name}_negatable`]) {
-      negatable.push(name);
-    }
-  }
-  // deno-lint-ignore no-explicit-any
-  const aliasMetadata = getMetadata(obj, "clite_alias") as Record<string, any>;
-  if (aliasMetadata) {
-    for (const [prop, aliasName] of Object.entries(aliasMetadata)) {
-      if (!alias[prop]) {
-        alias[prop] = [];
-      }
-      alias[prop].push(...aliasName);
-    }
   }
 
   const stdRes = stdParseArgs(args, {
@@ -98,15 +84,13 @@ export function parseArgs(
     stopEarly: true,
   });
 
-  const fields = getFieldNames(obj);
+  const fields = Object.keys(metadata.fields);
   const fieldsKebabCase = fields.map(toKebabCase);
   const aliasKey = Object.values(alias).flat();
-  const noCommandMetadata = getMetadata(obj, "clite_noCommand") as Obj;
-  const noCommand = !!noCommandMetadata || obj._no_command;
 
   for (const [key, value] of Object.entries(stdRes)) {
     if (key === "_") {
-      if (config?.noCommand || noCommand) {
+      if (config?.noCommand || !!metadata.noCommand) {
         argsResult.command = defaultMethod;
         argsResult.commandArgs = stdRes._;
       } else if (stdRes._.length > 0) {
@@ -129,10 +113,13 @@ export function parseArgs(
   return argsResult;
 }
 
-export function fillFields(parseResult: ParseResult, obj: Obj) {
-  // deno-lint-ignore no-explicit-any
-  const aliasMetadata = getMetadata(obj, "clite_alias") as Record<string, any>;
-  const aliasNames = aliasMetadata ? Object.values(aliasMetadata).flat() : [];
+export function fillFields<O extends Obj>(
+  parseResult: ParseResult,
+  obj: Obj,
+  metadata: Metadata<O>,
+) {
+  const aliasNames = Object.entries(metadata.fields)
+    .flatMap(([, v]) => v?.alias ?? []);
   const fields = getFieldNames(obj) as string[];
   const publicFields = fields.filter(
     (f) => !f.startsWith("_") && !f.startsWith("#"),
