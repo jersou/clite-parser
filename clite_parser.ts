@@ -8,7 +8,6 @@ import {
 } from "./src/parse_args.ts";
 import { getFieldNames, getMethodNames } from "./src/reflect.ts";
 import { runCommand } from "./src/command.ts";
-import { getMetadata } from "./src/decorators.ts";
 import { getCliteMetadata, getDefaultCommand } from "./src/metadata.ts";
 
 export * from "./src/decorators.ts";
@@ -164,17 +163,9 @@ export function cliteParse<O extends Obj & { config?: string }>(
           cause: { clite: true },
         });
       }
-      const subcommandMetadata =
-        // deno-lint-ignore no-explicit-any
-        getMetadata(obj, "clite_subcommand") as Record<string, any> ?? {};
-      const subcommands = [
-        ...Object.keys(subcommandMetadata),
-        ...Object.getOwnPropertyNames(obj)
-          .filter((prop) => obj[`_${prop}_subcommand`] === true),
-      ];
 
       fillFields(parseResult, obj);
-      if (subcommands.includes(command)) {
+      if (metadata.subcommands.includes(command)) {
         const subcommandObj = typeof obj[command] === "function"
           ? new obj[command]()
           : obj[command];
