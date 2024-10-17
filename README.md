@@ -5,7 +5,12 @@
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
 **CliteParser generates CLI from classes** (or objects) : each method generates
-a "command", each field generates an "option". **example-lite.ts example** :
+a "command", each field generates an "option".
+
+Just write your tool as a class, and call Clite with it... Clite will
+deserialize the command line in your class and launch the right methods or
+display the help... Then you can optionally personalize the displayed help or
+add aliases (for example) to complete your CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
@@ -779,8 +784,8 @@ See node usage examples :
 ## to try in a browser
 
 With [esm.sh](https://code.esm.sh/),
-  [playcode.io](https://playcode.io/javascript),
-  [jsfiddle.net](https://jsfiddle.net/)) :
+[playcode.io](https://playcode.io/javascript),
+[jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
 import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.7.0";
@@ -800,8 +805,21 @@ console.log(res);
   - clean the doc and examples
   - compare to other tools (needs to be rephrased):
     `other take the cli config (tool format) as input and produce an output data without type/model`
-    vs `clite take the expected output model and generate the cli config` (~
-    deserialize the class to cli/help)
+    vs `clite take the expected output model and generate the cli config`
+    (~deserialize the class to cli/help)
+    - With Clite, you don't have to write the data twice to have the parsing
+      output model. You write the output template directly and Clite will fill
+      it according to the command line parsing.
+    - With other CLI parsing tools, you have to configure the tool for the CLI
+      and you have to write the data model produced by the tool in addition.
+    - Do a fairly complete test with checks of options or commands that do not
+      exist, display the Help, trigger different commands with the different
+      tools that exist, i.e. Yargs, Commander, just std/cli. And compare with
+      Clite.
+    - Clite takes the desired model and fills it according to the command line.
+      It generates the help automatically, detects the non-existent option/order
+      errors, and launches the desired command with its parameters,
+- Make a Markdown file apart from the readme and a mini diagram with DrawIO.
   - add doc/example in the code (to see it in IDE and on
     https://jsr.io/@jersou/clite/doc)
   - use the right CLI vocabulary
