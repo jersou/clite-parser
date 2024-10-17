@@ -2,7 +2,7 @@
 import { cliteRun, subcommand } from "../clite_parser.ts";
 
 class Up {
-  _parent?: Tool;
+  _clite_parent?: Tool;
   watch = false;
   main(_count: number) {
     console.log("Up", this);

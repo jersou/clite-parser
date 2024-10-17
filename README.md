@@ -398,7 +398,7 @@ Full exemple in [examples/git-subcommand.ts](examples/git-subcommand.ts)
 ```typescript
 // → <Tool> [--dry-run] [ [up [--watch] <count>] | [down [--volumes] <force> <timeout>] ]
 class Up {
-  _parent?: Tool;
+  _clite_parent?: Tool;
   watch = false;
   main(_count: number) {
     console.log("Up", this);

@@ -15,6 +15,7 @@ export class Tool {
   _up_help = "create and start the services";
   _down_help = "stop and delete the services";
   _priv_field = 123;
+  #priv_field2 = 443;
 
   main() {
     console.log("main command", this);
@@ -42,6 +43,10 @@ export class Tool {
 
   _priv() {
     console.log("this method is not visible in the help (starts with '_')");
+  }
+
+  #priv2() {
+    console.log("this method is not visible in the help (starts with '#')");
   }
 }
 
