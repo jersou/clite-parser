@@ -769,6 +769,13 @@ See node usage examples :
 - https://jsr.io/@jersou/clite
 - https://github.com/jersou/clite-parser
 
+## Dependencies (all)
+
+- `@std/cli` : to parse args
+- `@std/fmt` : to log with colors/bold
+- `@std/text` : to change case
+- `@std/assert` : to test
+
 ## TODO
 
 - doc:
@@ -793,3 +800,18 @@ See node usage examples :
 - add
   `_clite: { _ : { help :"...", noCommand:true }, dryRun: { help: "...", negatable: true }}`
   ?
+- to try in a browser (in [esm.sh](https://code.esm.sh/),
+  [playcode.io](https://playcode.io/javascript),
+  [jsfiddle.net](https://jsfiddle.net/)) :
+
+```javascript
+import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.7.0";
+
+class Tool {
+  opt = 123;
+  main() {}
+}
+
+const res = cliteParse(Tool, { args: ["--opt", "78"] });
+console.log(res);
+```
