@@ -172,7 +172,7 @@ Deno.test({
     const result = cliteParse(Tool_Help, { args: ["--help"], configCli: true });
     assert(
       result.help.includes(
-        "Use this json file to read option before processing the args",
+        "Use this json file or string to read the options",
       ),
     );
   },
@@ -212,9 +212,7 @@ Deno.test({
     }
     const result = cliteParse(Tool_Help);
     assert(
-      result.help.includes(
-        "Use this json file to read option before processing the args",
-      ),
+      result.help.includes("Use this json file or string to read the options"),
     );
   },
 });

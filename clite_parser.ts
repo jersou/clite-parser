@@ -36,7 +36,7 @@ export type CliteRunConfig = {
    */
   meta?: ImportMeta;
   /**
-   * enable "--config <path>" to load json config before processing the args, Show in the help if it's a string
+   * enable "--config <path|json string>" to load json config before processing the args, Show in the help if it's a string
    */
   configCli?: boolean | string;
 
@@ -164,19 +164,23 @@ export function cliteParse<O extends Obj & { config?: string }>(
 }
 
 function loadConfig(parseResult: ParseResult, obj: Obj) {
-  if ((globalThis as Obj)["Deno"]?.args) { // Deno implementation
-    const path = parseResult.options.config as string;
-    try {
-      Object.assign(obj, JSON.parse(Deno.readTextFileSync(path)));
-      obj.config = path;
-    } catch (error) {
-      throw new Error(
-        `Error while loading the config file "${path}"`,
-        { cause: { clite: true, error } },
-      );
+  const pathOrJson = parseResult.options.config as string;
+  try {
+    if (pathOrJson.match(/^\s*{/)) {
+      Object.assign(obj, JSON.parse(pathOrJson));
+    } else {
+      if ((globalThis as Obj)["Deno"]?.args) { // Deno implementation
+        Object.assign(obj, JSON.parse(Deno.readTextFileSync(pathOrJson)));
+      } else { // TODO read the file with NodeJS implementation
+        throw new Error("Load config is not implemented on NodeJs");
+      }
     }
-  } else { // TODO NodeJS implementation
-    throw new Error("Load config is not implemented on NodeJs");
+    obj.config = pathOrJson;
+  } catch (error) {
+    throw new Error(
+      `Error while loading the config "${pathOrJson}"`,
+      { cause: { clite: true, error } },
+    );
   }
 }
 

@@ -109,6 +109,22 @@ Deno.test({
 });
 
 Deno.test({
+  name: "config json",
+  fn() {
+    class ToolWithConfig {
+      foo = "bar";
+      main() {}
+    }
+
+    const result = cliteParse(ToolWithConfig, {
+      args: ["--config", `{"foo": "from-config"}`],
+      configCli: true,
+    });
+    assertEquals(result.obj.foo, "from-config");
+  },
+});
+
+Deno.test({
   name: "bad config file",
   fn() {
     class ToolWithConfig {

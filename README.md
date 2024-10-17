@@ -549,7 +549,7 @@ type CliteRunConfig = {
   printHelpOnError?: boolean; // print the help if an error is thrown and then re-throw the error
   mainFile?: string; // allows to change the name of the file in the help, instead of the default <{Class name} file>
   meta?: ImportMeta; // import.meta to use : don't run if the file is imported, and use import.meta.url in the help
-  configCli?: boolean; // enable "--config <path>" to load json config before processing the args, Show in the help if it's a string
+  configCli?: boolean; // enable "--config <path|json string>" to load json config, Show in the help if it's a string
   dontConvertCmdArgs?: boolean; // don't convert "true"/"false" to true/false in command arguments, and not to number after --
 };
 ```
@@ -624,7 +624,7 @@ export class Tool {
 cliteRun(Tool);
 ```
 
-### configCli : load a json config with `--config <path>`
+### configCli : load a json config with `--config <path | or json string>`
 
 **TODO for Node**
 
@@ -637,7 +637,7 @@ cliteRun(Tool, { configCli: true });
 
 $ ./load-config.ts --help
 ...
-     --config  Use this json file to read option before processing the args [string]
+     --config  Use this json file or string to read the options [string]
 ...
 
 $ ./load-config.ts  down
@@ -776,6 +776,24 @@ See node usage examples :
 - `@std/text` : to change case
 - `@std/assert` : to test
 
+## to try in a browser
+
+With [esm.sh](https://code.esm.sh/),
+  [playcode.io](https://playcode.io/javascript),
+  [jsfiddle.net](https://jsfiddle.net/)) :
+
+```javascript
+import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.7.0";
+
+class Tool {
+  opt = 123;
+  main() {}
+}
+
+const res = cliteParse(Tool, { args: ["--opt", "78"] });
+console.log(res);
+```
+
 ## TODO
 
 - doc:
@@ -796,22 +814,8 @@ See node usage examples :
 - search "TODO" in code/doc
 - NodeJS implementation of --config/configCli
 - NodeJS tests
+- NPM package ?
 - check missing feat (compare to other tools ) ?
 - add
   `_clite: { _ : { help :"...", noCommand:true }, dryRun: { help: "...", negatable: true }}`
   ?
-- to try in a browser (in [esm.sh](https://code.esm.sh/),
-  [playcode.io](https://playcode.io/javascript),
-  [jsfiddle.net](https://jsfiddle.net/)) :
-
-```javascript
-import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.7.0";
-
-class Tool {
-  opt = 123;
-  main() {}
-}
-
-const res = cliteParse(Tool, { args: ["--opt", "78"] });
-console.log(res);
-```

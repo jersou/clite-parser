@@ -89,7 +89,7 @@ function genOptionsHelp<O extends Obj>(
       bold(` --config`),
       typeof configHelp === "string"
         ? configHelp
-        : "Use this json file to read option before processing the args",
+        : "Use this json file or string to read the options",
       gray("[string]"),
     ]);
   }
