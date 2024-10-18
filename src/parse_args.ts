@@ -96,9 +96,11 @@ export function parseArgs<O extends Obj>(
       }
     } else {
       if (
-        key !== "help" && !fieldsKebabCase.includes(key) &&
-        !fields.includes(key) && !aliasKey.includes(key) &&
-        (!(config?.configCli || metadata.jsonConfig) && key === "config")
+        key !== "help" &&
+        !fieldsKebabCase.includes(key) &&
+        !fields.includes(key) &&
+        !aliasKey.includes(key) &&
+        !((config?.configCli || metadata.jsonConfig) && key === "config")
       ) {
         throw new Error(`The option "${key}" doesn't exist`, {
           cause: { clite: true },
@@ -119,7 +121,7 @@ export function fillFields<O extends Obj>(
   const aliasNames = Object.entries(metadata.fields)
     .flatMap(([, v]) => v?.alias);
   const fields = Object.keys(metadata.fields);
-  for (const option of (getFieldNames(parseResult.options) as string[])) {
+  for (const option of getFieldNames(parseResult.options) as string[]) {
     if (fields.includes(option)) {
       obj[option] = parseResult.options[option];
     } else if (fields.includes(toSnakeCase(option))) {
