@@ -222,7 +222,7 @@ if (import.meta.main) {
 /*
 $ ./studio_pack_generator.ts --help
 {
-  version: "0.7.0",
+  version: "0.7.1",
   deno: "2.0.0",
   v8: "12.9.202.13-rusty",
   typescript: "5.6.2"
