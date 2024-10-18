@@ -1,11 +1,9 @@
 #!/usr/bin/env -S deno run -A
 import { alias, cliteRun, help } from "../../clite_parser.ts";
-// or after "deno add @jersou/clite" : import { cliteRun } from "@jersou/clite";
-// or for Node usage, after "npx jsr add @jersou/clite" (same import from "@jersou/clite")
 
 let ret;
 
-@help("This tool is a little example") // optional description
+@help("This tool is a little example")
 class Tool {
   @alias("r")
   retry = 2;
@@ -24,7 +22,7 @@ class Tool {
     };
   }
 
-  @help("create and start") // optional description for "up" command
+  @help("create and start")
   up() {
     ret = {
       command: "up",

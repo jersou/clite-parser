@@ -799,41 +799,79 @@ const res = cliteParse(Tool, { args: ["--opt", "78"] });
 console.log(res);
 ```
 
+## Comparison with other tools : Yars, @std/cli (minimist)
+
+The usual tools rather take a particular configuration of the tool and produce
+an output data **without** a defined model. You need to learn their API to
+define the interface you want.
+
+**Clite follows a different approach: it takes the desired model and fills it
+according to the command line**. If you want to type the parsing output, you
+don't need to do anything else. No duplicate writing for the CIL config and the
+parsing output model/type.
+
+And of course, like classic tools, it also generates the help automatically,
+detects the non-existent option/order errors, and launches the desired command
+with its parameters.
+
+A comparison try is made in the
+[examples/cli-tools-diff](examples/cli-tools-diff) folder, it compares
+
+- Clite : [examples/cli-tools-diff/clite.ts](examples/cli-tools-diff/clite.ts)
+- vs [Yargs](https://github.com/yargs/yargs) :
+  [examples/cli-tools-diff/yargs.ts](examples/cli-tools-diff/yargs.ts)
+- vs [@std/cli](https://jsr.io/@std/cli/doc/parse-args) based on
+  [minimist](https://github.com/minimistjs/minimist) :
+  [examples/cli-tools-diff/std-cli.ts](examples/cli-tools-diff/std-cli.ts)
+
+These 3 files provide the same CLI :
+
+```
+Usage: <Tool file> [Options] [--] [command [command args]]
+
+Commands:
+  main                   [default]
+  up                     create and start
+  down <force> <timeout>
+
+Options:
+ -h, --help    Show this help  [default: false]
+ -r, --retry                       [default: 2]
+ -n, --dry-run no changes mode [default: false]
+     --web-url web url        [default: "none"]
+```
+
+The 3 implementations side by side :
+
+[![diff-600.png](examples/cli-tools-diff/diff-600.png)](examples/cli-tools-diff/diff.png)
+
+## Real case
+
+- The project
+  [Studio-Pack-Generator](https://github.com/jersou/studio-pack-generator) use
+  clite and have
+  [lots of CLI options](https://github.com/jersou/studio-pack-generator?tab=readme-ov-file#cli-usage)
+  generated from
+  [a rather understandable file](https://github.com/jersou/studio-pack-generator/blob/main/studio_pack_generator.ts)
+  (in my opinion, of course).
+- simpler example : [examples/dcpm.ts](examples/dcpm.ts)
+- even simpler : [examples/dcpps.ts](examples/dcpps.ts)
+
 ## TODO
 
-- doc:
-  - clean the doc and examples
-  - compare to other tools (needs to be rephrased):
-    `other take the cli config (tool format) as input and produce an output data without type/model`
-    vs `clite take the expected output model and generate the cli config`
-    (~deserialize the class to cli/help)
-    - With Clite, you don't have to write the data twice to have the parsing
-      output model. You write the output template directly and Clite will fill
-      it according to the command line parsing.
-    - With other CLI parsing tools, you have to configure the tool for the CLI
-      and you have to write the data model produced by the tool in addition.
-    - Do a fairly complete test with checks of options or commands that do not
-      exist, display the Help, trigger different commands with the different
-      tools that exist, i.e. Yargs, Commander, just std/cli. And compare with
-      Clite.
-    - Clite takes the desired model and fills it according to the command line.
-      It generates the help automatically, detects the non-existent option/order
-      errors, and launches the desired command with its parameters,
-- Make a Markdown file apart from the readme and a mini diagram with DrawIO.
+- doc
+  - better overview, use a real case
   - add doc/example in the code (to see it in IDE and on
     https://jsr.io/@jersou/clite/doc)
   - use the right CLI vocabulary
-  - better overview, use a real case
 - decorators
-  - `@required()` ?
-  - decorator to specify the arg name of field bug
-    `--skip-extract-image-from-mp-3` vs `--skip-extract-image-from-mp3`
   - help on cmd args ?
-- search "TODO" in code/doc
-- NodeJS implementation of --config/configCli
-- NodeJS tests
-- NPM package ?
-- check missing feat (compare to other tools ) ?
-- add
-  `_clite: { _ : { help :"...", noCommand:true }, dryRun: { help: "...", negatable: true }}`
-  ?
+  - `@required()` ?
+- defaultCommand test
+- NodeJS
+  - NodeJS implementation of --config/configCli
+  - NodeJS tests
+  - NPM package ?
+  - add
+    `_clite: { _ : { help :"...", noCommand:true }, dryRun: { help: "...", negatable: true }}`
+    ?

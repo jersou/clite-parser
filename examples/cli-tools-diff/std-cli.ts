@@ -1,8 +1,8 @@
 #!/usr/bin/env -S deno run -A
-
-// @std/cli/parse-args is based on minimist
 import { parseArgs } from "jsr:@std/cli@^1.0.6/parse-args";
 import { toKebabCase } from "https://jsr.io/@std/text/1.0.7/to_kebab_case.ts";
+
+let ret;
 
 const defaultOptions = {
   retry: 2,
@@ -32,7 +32,6 @@ for (const key of Object.keys(res)) {
   }
 }
 
-let ret;
 const main = () => {
   ret = {
     command: "main",
@@ -87,6 +86,7 @@ Options:
   }
   console.log(ret);
 }
+
 /*
 $ ./std-cli.ts --help
 This tool is a little example
