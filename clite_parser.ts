@@ -6,6 +6,11 @@ import { runCommand } from "./src/command.ts";
 import { getCliteMetadata } from "./src/metadata.ts";
 
 export * from "./src/decorators.ts";
+// deno-lint-ignore no-explicit-any
+let fs: any = undefined;
+if (!globalThis.Deno) {
+  fs = await import("node:fs");
+}
 
 /**
  * CliteRunConfig
@@ -171,8 +176,10 @@ function loadConfig(parseResult: ParseResult, obj: Obj) {
     } else {
       if ((globalThis as Obj)["Deno"]?.args) { // Deno implementation
         Object.assign(obj, JSON.parse(Deno.readTextFileSync(pathOrJson)));
-      } else { // TODO read the file with NodeJS implementation
-        throw new Error("Load config is not implemented on NodeJs");
+      } else if (fs) {
+        Object.assign(obj, JSON.parse(fs.readFileSync(pathOrJson, "utf8")));
+      } else {
+        throw new Error("Load config is not implemented in this runtime");
       }
     }
     obj.config = pathOrJson;

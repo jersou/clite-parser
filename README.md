@@ -869,7 +869,6 @@ The 3 implementations side by side :
   - `@required()` ?
 - defaultCommand test
 - NodeJS
-  - NodeJS implementation of --config/configCli
   - NodeJS tests
   - NPM package ?
   - add
