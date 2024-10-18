@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/jersou/clite-parser/compare/0.7.0...0.7.1) (2024-10-18)
+
+### Features
+
+- import json from string `--config '{"retry": 44}'`
+  ([5d7e63f](https://github.com/jersou/clite-parser/commit/5d7e63f4cc564741338c670123d4df0500bce1d8))
+
 ## [0.7.0](https://github.com/jersou/clite-parser/compare/0.6.5...0.7.0) (2024-10-16)
 
 ### Features
