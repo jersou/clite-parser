@@ -13,7 +13,7 @@ export type Metadata<O extends Obj> = {
       hidden?: boolean;
     };
   };
-  defaultCommand?: string; // TODO test
+  defaultCommand?: string;
   methods: {
     [key in keyof O]?: {
       help?: string;

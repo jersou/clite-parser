@@ -4,8 +4,8 @@
 [![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**CliteParser generates CLI from classes** (or objects) : each method generates
-a "command", each field generates an "option".
+**CliteParser generates CLI from classes** (or objects) : each field generates
+an "option", each method generates a "command" (positional arguments).
 
 Just write your tool as a class, and call Clite with it... Clite will
 deserialize the command line in your class and launch the right methods or
@@ -859,18 +859,6 @@ The 3 implementations side by side :
 
 ## TODO
 
-- doc
-  - better overview, use a real case
-  - add doc/example in the code (to see it in IDE and on
-    https://jsr.io/@jersou/clite/doc)
-  - use the right CLI vocabulary
-- decorators
-  - help on cmd args ?
-  - `@required()` ?
-- defaultCommand test
 - NodeJS
   - NodeJS tests
   - NPM package ?
-  - add
-    `_clite: { _ : { help :"...", noCommand:true }, dryRun: { help: "...", negatable: true }}`
-    ?
