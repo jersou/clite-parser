@@ -801,6 +801,11 @@ See node usage examples :
 - `@std/text` : to change case
 - `@std/assert` : to test
 
+## Inspiration
+
+Probably inspired by [Clap](https://github.com/clap-rs/clap) after the
+development of [mouse-actions](https://github.com/jersou/mouse-actions).
+
 ## to try in a browser
 
 With [esm.sh](https://code.esm.sh/),
