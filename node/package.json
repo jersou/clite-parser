@@ -1,0 +1,20 @@
+{
+  "name": "clite-parser",
+  "description": "CliteParser generate CLI from a class, each method generate a \"command\", each field generate an \"option\". The help is generated automatically",
+  "version": "0.7.3",
+  "type": "module",
+  "homepage": "https://github.com/jersou/clite-parser",
+  "repository": "https://github.com/jersou/clite-parser",
+  "author": {
+    "name": "jersou"
+  },
+  "types": "./_dist/mod.d.ts",
+  "module": "./dist/mod.mjs",
+  "exports": {
+    ".": {
+      "types": "./_dist/mod.d.ts",
+      "default": "./dist/mod.mjs"
+    }
+  },
+  "files": ["./dist/","./README.md"]
+}

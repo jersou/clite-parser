@@ -1,6 +1,26 @@
 {
+  "name": "@jersou/clite",
+  "version": "0.7.3",
+  "exports": "./mod.ts",
+  "license": "MIT",
   "tasks": {
-    "fmt": "deno fmt --ignore=vendor",
-    "run": "deno run -A example.ts"
+    "fmt": "deno fmt --ignore=tmp,.cov_profile,src/test-data/bad-config.json,node",
+    "run": "deno run -A example.ts",
+    "check": "deno check mod.ts",
+    "gen-cov": "./gen-cov.ts",
+    "gen-cov-watch": "deno run -A --watch=mod.ts,mod.test.ts,src/ gen-cov.ts",
+    "lint": "deno lint --ignore=tmp,.cov_profile,examples,node",
+    "pre-commit": "deno task fmt --check && deno task lint && deno task test && deno task check",
+    "publish-dry-run": "deno publish --dry-run",
+    "test": "deno test -A --ignore=tmp,.cov_profile,node --quiet",
+    "test-watch": "deno test -A --watch --ignore=tmp,.cov_profile,node --quiet",
+    "run-example": "deno run examples/example-lite.ts --retry=7 down true 3",
+    "update-changelog": "conventional-changelog -p conventionalcommits --same-file -i CHANGELOG.md -k deno.json && deno task fmt"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.6",
+    "@std/cli/parse-args": "jsr:@std/cli@1.0.6/parse-args",
+    "@std/fmt/colors": "jsr:@std/fmt@1.0.2/colors",
+    "@std/text": "jsr:@std/text@1.0.7"
   }
 }
