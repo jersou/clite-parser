@@ -15,5 +15,6 @@
       "types": "./_dist/mod.d.ts",
       "default": "./dist/mod.mjs"
     }
-  }
+  },
+  "files": ["./dist/","./README.md"]
 }

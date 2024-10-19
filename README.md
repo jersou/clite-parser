@@ -792,6 +792,7 @@ See node usage examples :
 
 - https://jsr.io/@jersou/clite
 - https://github.com/jersou/clite-parser
+- https://www.npmjs.com/package/clite-parser
 
 ## Dependencies (all)
 
