@@ -10,7 +10,7 @@ import {
   type,
   usage,
 } from "./decorators.ts";
-import { cliteParse } from "../clite_parser.ts";
+import { cliteParse } from "./clite_parser.ts";
 import { getCliteMetadata } from "./metadata.ts";
 
 Deno.test("genHelp", () => {

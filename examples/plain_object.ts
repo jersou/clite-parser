@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../clite_parser.ts";
+import { cliteRun } from "../mod.ts";
 
 function ext(param1: string) {
   console.log("ext", param1, this);

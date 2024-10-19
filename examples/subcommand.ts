@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun, subcommand } from "../clite_parser.ts";
+import { cliteRun, subcommand } from "../mod.ts";
 
 class Up {
   _clite_parent?: Tool;

@@ -10,7 +10,7 @@ import {
   subcommand,
   type,
   usage,
-} from "../clite_parser.ts";
+} from "../mod.ts";
 
 @help("This tool is an example of CliteParser")
 @usage("Usage: full-example [Options] [command [command args]]")

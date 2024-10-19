@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno -A
-import { alias, cliteRun, help } from "../clite_parser.ts";
+import { alias, cliteRun, help } from "../mod.ts";
 
 @help("This tool is a little example of CliteParser") // optional description
 class Tool {

@@ -1,5 +1,6 @@
 import { assertEquals } from "@std/assert";
-import { cliteParse, negatable } from "../clite_parser.ts";
+import { cliteParse } from "./clite_parser.ts";
+import { negatable } from "./decorators.ts";
 
 Deno.test({
   name: "@negatable",

@@ -1,14 +1,11 @@
 import { bgRed, bold } from "@std/fmt/colors";
-import { genHelp } from "./src/help.ts";
-import type { Obj } from "./src/parse_args.ts";
-import { convertCommandArg, fillFields, parseArgs } from "./src/parse_args.ts";
-import { runCommand } from "./src/command.ts";
-import { getCliteMetadata } from "./src/metadata.ts";
-import { loadConfig } from "./src/load_config.ts";
-import type { CliteError, CliteResult, CliteRunConfig } from "./src/types.ts";
-
-export * from "./src/decorators.ts";
-export * from "./src/types.ts";
+import { genHelp } from "./help.ts";
+import type { Obj } from "./parse_args.ts";
+import { convertCommandArg, fillFields, parseArgs } from "./parse_args.ts";
+import { runCommand } from "./command.ts";
+import { getCliteMetadata } from "./metadata.ts";
+import { loadConfig } from "./load_config.ts";
+import type { CliteError, CliteResult, CliteRunConfig } from "./types.ts";
 
 /**
  * Run the command of obj depending on the Deno/Node script arguments

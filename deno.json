@@ -1,14 +1,14 @@
 {
   "name": "@jersou/clite",
   "version": "0.7.1",
-  "exports": "./clite_parser.ts",
+  "exports": "./mod.ts",
   "license": "MIT",
   "tasks": {
     "fmt": "deno fmt --ignore=tmp,.cov_profile,src/test-data/bad-config.json",
     "run": "deno run -A example.ts",
-    "check": "deno check clite_parser.ts",
+    "check": "deno check mod.ts",
     "gen-cov": "./gen-cov.ts",
-    "gen-cov-watch": "deno run -A --watch=clite_parser.ts,clite_parser.test.ts,src/ gen-cov.ts",
+    "gen-cov-watch": "deno run -A --watch=mod.ts,mod.test.ts,src/ gen-cov.ts",
     "lint": "deno lint --ignore=tmp,.cov_profile,examples",
     "pre-commit": "deno task fmt --check && deno task lint && deno task test && deno task check",
     "publish-dry-run": "deno publish --dry-run",

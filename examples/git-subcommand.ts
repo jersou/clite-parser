@@ -1,11 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import {
-  cliteRun,
-  help,
-  noCommand,
-  subcommand,
-  usage,
-} from "../clite_parser.ts";
+import { cliteRun, help, noCommand, subcommand, usage } from "../mod.ts";
 
 @noCommand()
 @usage("git branch [Options] [--] <branchname>")

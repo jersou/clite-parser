@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../clite_parser.ts";
+import { cliteRun } from "../mod.ts";
 import { alias, help, type } from "../src/decorators.ts";
 
 class Tool {

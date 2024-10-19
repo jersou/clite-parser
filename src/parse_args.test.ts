@@ -5,7 +5,8 @@ import {
   parseArgs,
   type ParseResult,
 } from "./parse_args.ts";
-import { alias, cliteParse } from "../clite_parser.ts";
+import { cliteParse } from "./clite_parser.ts";
+import { alias } from "./decorators.ts";
 import { getCliteMetadata } from "./metadata.ts";
 
 Deno.test("args regex", () => {
