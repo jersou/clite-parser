@@ -2,6 +2,7 @@
 import { cliteRun } from "../mod.ts";
 // or after "deno add @jersou/clite" : import { cliteRun } from "@jersou/clite";
 // or for Node usage, after "npx jsr add @jersou/clite" (same import from "@jersou/clite")
+// or for Node usage : import { cliteRun } from "clite-parser"; // after "npm clite-parser"
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
