@@ -1,55 +1,14 @@
 import { bgRed, bold } from "@std/fmt/colors";
 import { genHelp } from "./src/help.ts";
-import type { Obj, ParseResult } from "./src/parse_args.ts";
+import type { Obj } from "./src/parse_args.ts";
 import { convertCommandArg, fillFields, parseArgs } from "./src/parse_args.ts";
 import { runCommand } from "./src/command.ts";
 import { getCliteMetadata } from "./src/metadata.ts";
+import { loadConfig } from "./src/load_config.ts";
+import type { CliteError, CliteResult, CliteRunConfig } from "./src/types.ts";
 
 export * from "./src/decorators.ts";
-// deno-lint-ignore no-explicit-any
-let fs: any = undefined;
-if (!globalThis.Deno) {
-  fs = await import("node:fs");
-}
-
-/**
- * CliteRunConfig
- */
-export type CliteRunConfig = {
-  /**
-   * default : Deno.args or process.argv.slice(2)
-   */
-  args?: string[];
-  /**
-   * default : false, print the command return
-   */
-  dontPrintResult?: boolean;
-  /**
-   * no default command : do not run "main" method if no arg
-   */
-  noCommand?: boolean;
-  /**
-   * print the help if an error is thrown and then re-throw the error
-   */
-  printHelpOnError?: boolean;
-  /**
-   * allows to change the name of the file in the help, instead of the default <{Class name} file>
-   */
-  mainFile?: string;
-  /**
-   * import.meta to use : don't run if the file is imported, and use the basename of import.meta.url in the help
-   */
-  meta?: ImportMeta;
-  /**
-   * enable "--config <path|json string>" to load json config before processing the args, Show in the help if it's a string
-   */
-  configCli?: boolean | string;
-
-  /**
-   * don't convert "true"/"false" to true/false in command arguments, and not to number after --
-   */
-  dontConvertCmdArgs?: boolean;
-};
+export * from "./src/types.ts";
 
 /**
  * Run the command of obj depending on the Deno/Node script arguments
@@ -79,36 +38,6 @@ export function cliteRun<O extends Obj>(
 }
 
 /**
- * Result of cliteParse()
- */
-export type CliteResult<O extends Obj> = {
-  /*
-   * The input object overwritten with the data from the parsing result
-   */
-  obj: O & { config?: string };
-  /*
-   * The command to run from the parsing result
-   */
-  command: string;
-  /*
-   * The command arguments from the parsing result
-   */
-  commandArgs: (string | number | boolean)[];
-  /*
-   * The input CliteRunConfig
-   */
-  config?: CliteRunConfig;
-  /*
-   * The generated help
-   */
-  help: string;
-  /*
-   * The subcommand CliteResult if the command is a subcommand
-   */
-  subcommand?: CliteResult<Obj>;
-};
-
-/**
  * Return the parsing result of obj and the Deno/Node script arguments
  * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
  * @param config - of clite-parser
@@ -124,7 +53,7 @@ export function cliteParse<O extends Obj & { config?: string }>(
     const parseResult = parseArgs(obj, metadata, config);
 
     if (Object.keys(parseResult.options).includes("help")) {
-      return ({ obj, command: "--help", commandArgs: [], config, help });
+      return { obj, command: "--help", commandArgs: [], config, help };
     } else {
       if (config?.configCli || metadata.jsonConfig) {
         if (Object.keys(parseResult.options).includes("config")) {
@@ -167,28 +96,3 @@ export function cliteParse<O extends Obj & { config?: string }>(
     throw e;
   }
 }
-
-function loadConfig(parseResult: ParseResult, obj: Obj) {
-  const pathOrJson = parseResult.options.config as string;
-  try {
-    if (pathOrJson.match(/^\s*{/)) {
-      Object.assign(obj, JSON.parse(pathOrJson));
-    } else {
-      if ((globalThis as Obj)["Deno"]?.args) { // Deno implementation
-        Object.assign(obj, JSON.parse(Deno.readTextFileSync(pathOrJson)));
-      } else if (fs) {
-        Object.assign(obj, JSON.parse(fs.readFileSync(pathOrJson, "utf8")));
-      } else {
-        throw new Error("Load config is not implemented in this runtime");
-      }
-    }
-    obj.config = pathOrJson;
-  } catch (error) {
-    throw new Error(
-      `Error while loading the config "${pathOrJson}"`,
-      { cause: { clite: true, error } },
-    );
-  }
-}
-
-type CliteError = Error & { cause?: { clite?: boolean; error?: Error } };

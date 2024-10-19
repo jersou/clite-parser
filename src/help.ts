@@ -1,9 +1,9 @@
-import type { CliteRunConfig } from "../clite_parser.ts";
 import { toKebabCase } from "@std/text";
 import type { Obj } from "./parse_args.ts";
 import { getMethodArgNames } from "./reflect.ts";
 import { bold, gray, underline } from "@std/fmt/colors";
 import type { Metadata } from "./metadata.ts";
+import type { CliteRunConfig } from "./types.ts";
 
 export const boldUnder = (str: string) => bold(underline(str));
 
