@@ -1,4 +1,4 @@
-import type { Obj } from "./parse_args.ts";
+import type { Obj } from "./types.ts";
 
 // call from decorator with "experimentalDecorators = false" or "experimentalDecorators = true"
 // deno-lint-ignore no-explicit-any

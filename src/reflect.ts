@@ -1,4 +1,4 @@
-import type { Obj } from "./parse_args.ts";
+import type { Obj } from "./types.ts";
 
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;

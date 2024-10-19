@@ -2,7 +2,7 @@ import { toCamelCase, toKebabCase, toSnakeCase } from "@std/text";
 import { parseArgs as stdParseArgs } from "@std/cli/parse-args";
 import { getFieldNames } from "./reflect.ts";
 import type { Metadata } from "./metadata.ts";
-import type { CliteRunConfig } from "./types.ts";
+import type { CliteRunConfig, Obj } from "./types.ts";
 
 /**
  * Result of parseArgs()
@@ -19,12 +19,6 @@ export type ParseResult = {
   command?: string;
   commandArgs: (string | number)[];
 };
-
-/**
- * Obj type
- */
-// deno-lint-ignore no-explicit-any
-export type Obj = Record<string, any>;
 
 /**
  * parse config?.args, or Deno arguments (Deno.args) or node arguments (process.argv)

@@ -8,7 +8,7 @@
     "jsr:@std/assert@1.0.5": "1.0.5",
     "jsr:@std/assert@^1.0.6": "1.0.6",
     "jsr:@std/bytes@0.221": "0.221.0",
-    "jsr:@std/cli@^1.0.6": "1.0.6",
+    "jsr:@std/cli@1.0.6": "1.0.6",
     "jsr:@std/fmt@1": "1.0.2",
     "jsr:@std/fmt@1.0.2": "1.0.2",
     "jsr:@std/fmt@^1.0.2": "1.0.2",
@@ -19,7 +19,7 @@
     "jsr:@std/path@1": "1.0.6",
     "jsr:@std/path@^1.0.6": "1.0.6",
     "jsr:@std/streams@0.221": "0.221.0",
-    "jsr:@std/text@^1.0.7": "1.0.7",
+    "jsr:@std/text@1.0.7": "1.0.7",
     "npm:@types/node@*": "22.5.4"
   },
   "jsr": {
@@ -408,9 +408,9 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@^1.0.6",
-      "jsr:@std/cli@^1.0.6",
-      "jsr:@std/fmt@^1.0.2",
-      "jsr:@std/text@^1.0.7"
+      "jsr:@std/cli@1.0.6",
+      "jsr:@std/fmt@1.0.2",
+      "jsr:@std/text@1.0.7"
     ]
   }
 }

@@ -1,4 +1,5 @@
-import type { Obj, ParseResult } from "./parse_args.ts";
+import type { ParseResult } from "./parse_args.ts";
+import type { Obj } from "./types.ts";
 
 // deno-lint-ignore no-explicit-any
 let fs: any = undefined;

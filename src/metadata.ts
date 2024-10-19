@@ -1,6 +1,6 @@
-import type { Obj } from "./parse_args.ts";
 import { getFieldNames, getMethodNames } from "./reflect.ts";
 import { getCliteSymbolMetadata } from "./decorators.ts";
+import type { Obj } from "./types.ts";
 
 export type Metadata<O extends Obj> = {
   fields: {

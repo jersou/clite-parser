@@ -3,9 +3,9 @@ import { cliteParse, cliteRun } from "./clite_parser.ts";
 import { noCommand, subcommand } from "./decorators.ts";
 import { genHelp } from "./help.ts";
 import { Tool } from "./test_data.test.ts";
-import type { Obj } from "./parse_args.ts";
 import { getCliteMetadata } from "./metadata.ts";
 import { stripAnsiCode } from "@std/fmt/colors";
+import type { Obj } from "./types.ts";
 
 Deno.test("cliteRun", () => {
   const result = cliteRun(new Tool(), {

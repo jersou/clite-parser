@@ -1,5 +1,3 @@
-import type { Obj } from "./parse_args.ts";
-
 /**
  * CliteRunConfig
  */
@@ -38,6 +36,12 @@ export type CliteRunConfig = {
    */
   dontConvertCmdArgs?: boolean;
 };
+
+/**
+ * Obj type
+ */
+// deno-lint-ignore no-explicit-any
+export type Obj = Record<string, any>;
 
 /**
  * Result of cliteParse()
