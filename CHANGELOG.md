@@ -1,3 +1,17 @@
+## [0.7.2](https://github.com/jersou/clite-parser/compare/0.7.1...0.7.2) (2024-10-19)
+
+### Features
+
+- NodeJS implementation of --config/configCli
+  ([780331f](https://github.com/jersou/clite-parser/commit/780331f645876318a749ff88a856edcb98cb2a4d))
+- NPM package
+  ([b427bdd](https://github.com/jersou/clite-parser/commit/b427bdd3096625862643add5cfb8d9c3fa65bbd8))
+
+### Bug Fixes
+
+- config check
+  ([d646c60](https://github.com/jersou/clite-parser/commit/d646c60a2578ed83b5b171a13c22bf25cb5f3b5f))
+
 ## [0.7.1](https://github.com/jersou/clite-parser/compare/0.7.0...0.7.1) (2024-10-18)
 
 ### Features
