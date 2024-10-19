@@ -16,7 +16,7 @@ add aliases (for example) to complete your CLI.
 #!/usr/bin/env -S deno run
 import { cliteRun } from "jsr:@jersou/clite@0.7.2";
 // or after "deno add @jersou/clite" : import { cliteRun } from "@jersou/clite";
-// or for Node usage : import { cliteRun } from "clite-parser"; // after "npm clite-parser"
+// or for Node usage : import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
@@ -752,15 +752,15 @@ Options:
      --retry                    [default: 2]
 ```
 
-## Node support : `npm clite-parser` or `npx jsr add @jersou/clite`
+## Node support : `npm install clite-parser` or `npx jsr add @jersou/clite`
 
-### From NPM : `npm clite-parser`
+### From NPM : `npm install clite-parser`
 
-Run `npm clite-parser` and then, import with
+Run `npm install clite-parser` and then, import with
 `import { cliteRun } from "clite-parser";` :
 
 ```javascript
-import { cliteRun } from "clite-parser"; // after "npm clite-parser"
+import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
 class Tool { ... }
 cliteRun(Tool);
 ```
