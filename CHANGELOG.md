@@ -1,3 +1,10 @@
+## [0.7.3](https://github.com/jersou/clite-parser/compare/0.7.2...0.7.3) (2024-10-19)
+
+### Features
+
+- NPM package: fix README
+  ([845ca1d](https://github.com/jersou/clite-parser/commit/845ca1d5ba65a658399483a1c61e6a7e93e30d7c))
+
 ## [0.7.2](https://github.com/jersou/clite-parser/compare/0.7.1...0.7.2) (2024-10-19)
 
 ### Features
