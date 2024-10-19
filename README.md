@@ -752,7 +752,26 @@ Options:
      --retry                    [default: 2]
 ```
 
-## Node support : `npx jsr add @jersou/clite`
+## Node support : `npm clite-parser` or `npx jsr add @jersou/clite`
+
+### From NPM : `npm clite-parser`
+
+Run `npm clite-parser` and then, import with
+`import { cliteRun } from "clite-parser";` :
+
+```javascript
+import { cliteRun } from "clite-parser";
+class Tool { ... }
+cliteRun(Tool);
+```
+
+See node usage examples :
+
+- [examples/node-npm/dax](examples/node-npm/dax)
+- [examples/node-npm/simple](examples/node-npm/simple)
+- [examples/node-npm/zx](examples/node-npm/zx)
+
+### From JSR : `npx jsr add @jersou/clite`
 
 Run `npx jsr add @jersou/clite` and then, import with
 `import { cliteRun } from "@jersou/clite";` :
@@ -765,9 +784,9 @@ cliteRun(Tool);
 
 See node usage examples :
 
-- [examples/node/dax](examples/node/dax)
-- [examples/node/simple](examples/node/simple)
-- [examples/node/zx](examples/node/zx)
+- [examples/node-jsr/dax](examples/node-jsr/dax)
+- [examples/node-jsr/simple](examples/node-jsr/simple)
+- [examples/node-jsr/zx](examples/node-jsr/zx)
 
 ## Links
 

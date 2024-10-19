@@ -1,11 +1,8 @@
 import type { ParseResult } from "./parse_args.ts";
 import type { Obj } from "./types.ts";
 
-// deno-lint-ignore no-explicit-any
-let fs: any = undefined;
-if (!globalThis.Deno) {
-  fs = await import("node:fs");
-}
+// deno-lint-ignore no-explicit-any prefer-const
+let fs: any = undefined; // BUNDLE-FOR-NPM : import fs from "node:fs;
 
 export function loadConfig(parseResult: ParseResult, obj: Obj) {
   const pathOrJson = parseResult.options.config as string;

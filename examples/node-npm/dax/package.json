@@ -1,0 +1,18 @@
+{
+  "name": "clite-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "example.mjs",
+  "author": "jersou",
+  "license": "MIT",
+  "scripts": {
+    "run": "node example-dax.mjs",
+    "run-help": "node example-dax.mjs --help",
+    "run-full": "node example-dax.mjs --retry=4 --web-url=tttt --no-color down true 14",
+    "shebang-run": "./example-dax.mjs --retry=4 --web-url=tttt --no-color down true 14"
+  },
+  "dependencies": {
+    "clite-parser": "0.7.1",
+    "dax-sh": "0.42.0"
+  }
+}
