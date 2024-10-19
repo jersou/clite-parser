@@ -876,9 +876,3 @@ The 3 implementations side by side :
   (in my opinion, of course).
 - simpler example : [examples/dcpm.ts](examples/dcpm.ts)
 - even simpler : [examples/dcpps.ts](examples/dcpps.ts)
-
-## TODO
-
-- NodeJS
-  - NodeJS tests
-  - NPM package ?
