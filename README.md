@@ -887,8 +887,4 @@ The 3 implementations side by side :
 
 # TODO
 
-- fix `./load-config.ts --retry 88 --config ./load-config.json down` →
-  dryRun=false (because of stdParseArgs returns dryRun=false
-- fix boolean default true , if missings from args, probably set to false
-  because of "boolean" config of stdParseArgs
 - check call of cmd `_...`

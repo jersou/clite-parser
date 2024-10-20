@@ -1,3 +1,4 @@
 {
-  "foo": "from-config"
+  "foo": "from-config",
+  "dryRun": false
 }

@@ -41,6 +41,7 @@ export function parseArgs<O extends Obj>(
   const stringProp: string[] = [];
   const arrayProp: string[] = [];
   const booleanProp: string[] = [];
+  const defaultValues: Obj = {};
   const alias: Record<string, string[]> = { help: ["h"] };
   const negatable = Object.entries(metadata.fields)
     .filter(([, v]) => v?.negatable)
@@ -55,6 +56,7 @@ export function parseArgs<O extends Obj>(
     switch (typeof obj[name]) {
       case "boolean":
         booleanProp.push(name);
+        defaultValues[name] = obj[name];
         break;
       case "string":
         stringProp.push(name);
@@ -71,9 +73,19 @@ export function parseArgs<O extends Obj>(
     string: stringProp.map(toKebabCase),
     boolean: booleanProp.map(toKebabCase),
     collect: arrayProp.map(toKebabCase),
+    default: defaultValues,
     alias,
     stopEarly: true,
   });
+  for (const key of Object.keys(stdRes)) {
+    if (defaultValues[key] === stdRes[key]) {
+      delete stdRes[key];
+    }
+    const keyCamel = toCamelCase(key);
+    if (keyCamel !== key && defaultValues[keyCamel] === stdRes[key]) {
+      delete stdRes[key];
+    }
+  }
 
   const fields = Object.keys(metadata.fields);
   const fieldsKebabCase = fields.map(toKebabCase);

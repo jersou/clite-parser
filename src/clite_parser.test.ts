@@ -94,10 +94,25 @@ Deno.test({
 });
 
 Deno.test({
+  name: "boolean true",
+  fn() {
+    class Tool {
+      dryRun = true;
+      main() {}
+    }
+
+    const result = cliteParse(Tool, {});
+    assertEquals(result.obj.dryRun, true);
+  },
+});
+
+Deno.test({
   name: "config file",
   fn() {
     class ToolWithConfig {
       foo = "bar";
+      b = true;
+      dryRun = true;
       main() {}
     }
 
@@ -106,6 +121,8 @@ Deno.test({
       configCli: true,
     });
     assertEquals(result.obj.foo, "from-config");
+    assertEquals(result.obj.dryRun, false);
+    assertEquals(result.obj.b, true);
   },
 });
 
