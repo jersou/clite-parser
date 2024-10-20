@@ -5,6 +5,7 @@ import { runCommand } from "./command.ts";
 import { getCliteMetadata } from "./metadata.ts";
 import { loadConfig } from "./load_config.ts";
 import type { CliteError, CliteResult, CliteRunConfig, Obj } from "./types.ts";
+import { getMethodNames } from "./reflect.ts";
 
 /**
  * Run the command of obj depending on the Deno/Node script arguments
@@ -74,7 +75,10 @@ export function cliteParse<O extends Obj & { config?: string }>(
         const args = parseResult.commandArgs.map((e) => e.toString());
         const subcommand = cliteParse(subcommandObj, { ...config, args });
         return { obj, command, commandArgs: [], config, help, subcommand };
-      } else if (!Object.hasOwn(metadata.methods, command)) {
+      } else if (
+        !Object.hasOwn(metadata.methods, command) &&
+        !getMethodNames(obj).includes(command) // allow exec of private methods
+      ) {
         throw new Error(`The command "${command}" doesn't exist`, {
           cause: { clite: true },
         });

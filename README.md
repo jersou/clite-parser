@@ -884,7 +884,3 @@ The 3 implementations side by side :
   (in my opinion, of course).
 - simpler example : [examples/dcpps.ts](examples/dcpps.ts)
 - even simpler : [examples/dcpm.ts](examples/dcpm.ts)
-
-# TODO
-
-- check call of cmd `_...`
