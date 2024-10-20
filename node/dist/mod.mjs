@@ -637,6 +637,7 @@ function parseArgs1(obj, metadata, config) {
   const stringProp = [];
   const arrayProp = [];
   const booleanProp = [];
+  const defaultValues = {};
   const alias = {
     help: [
       "h",
@@ -654,6 +655,7 @@ function parseArgs1(obj, metadata, config) {
     switch (typeof obj[name]) {
       case "boolean":
         booleanProp.push(name);
+        defaultValues[name] = obj[name];
         break;
       case "string":
         stringProp.push(name);
@@ -669,9 +671,19 @@ function parseArgs1(obj, metadata, config) {
     string: stringProp.map(toKebabCase),
     boolean: booleanProp.map(toKebabCase),
     collect: arrayProp.map(toKebabCase),
+    default: defaultValues,
     alias,
     stopEarly: true,
   });
+  for (const key of Object.keys(stdRes)) {
+    if (defaultValues[key] === stdRes[key]) {
+      delete stdRes[key];
+    }
+    const keyCamel = toCamelCase(key);
+    if (keyCamel !== key && defaultValues[keyCamel] === stdRes[key]) {
+      delete stdRes[key];
+    }
+  }
   const fields = Object.keys(metadata.fields);
   const fieldsKebabCase = fields.map(toKebabCase);
   const aliasKey = Object.values(alias).flat();
