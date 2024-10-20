@@ -12,6 +12,6 @@
     "shebang-run": "./example.mjs --retry=4 --web-url=tttt --no-color down true 14"
   },
   "dependencies": {
-    "@jersou/clite": "npm:@jsr/jersou__clite@0.7.3"
+    "@jersou/clite": "npm:@jsr/jersou__clite@0.7.4"
   }
 }

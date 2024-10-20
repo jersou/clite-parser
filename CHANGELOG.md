@@ -1,3 +1,15 @@
+## [0.7.4](https://github.com/jersou/clite-parser/compare/0.7.3...0.7.4) (2024-10-20)
+
+### Features
+
+- allow private method call
+  ([0557e90](https://github.com/jersou/clite-parser/commit/0557e90bfe473e6a2415e9fef09d5c4dfd3a8c8a))
+
+### Bug Fixes
+
+- fix "default true" boolean
+  ([b3ce94e](https://github.com/jersou/clite-parser/commit/b3ce94eaf24b1c16b0998834c57714a30c307688))
+
 ## [0.7.3](https://github.com/jersou/clite-parser/compare/0.7.2...0.7.3) (2024-10-19)
 
 ### Features
