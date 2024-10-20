@@ -27,3 +27,4 @@ for (const entry of $.path("dist/src").readDirSync()) {
   const content = entry.path.readTextSync().replaceAll('.ts"', '.d.ts"');
   entry.path.writeTextSync(content);
 }
+await $`cp ../README.md README.md`;

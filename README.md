@@ -15,8 +15,8 @@ add aliases (for example) to complete your CLI.
 ```typescript
 #!/usr/bin/env -S deno run
 import { cliteRun } from "jsr:@jersou/clite@0.7.4";
-// or after "deno add @jersou/clite" : import { cliteRun } from "@jersou/clite";
-// or for Node usage : import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
+// or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
+// or import { cliteRun } from "clite-parser"; // after "npm install clite-parser" for Node usage
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
@@ -197,14 +197,14 @@ Exemple : `cliteRun(Tool)` or `cliteRun(new Tool())` or
 
 ## `cliteParse()` usage
 
-Same as `cliteRun()`, but not run the command, return the parsing "CliteResult"
-that contains:
+Same as `cliteRun()`, but it doesn't run the command, it returns the parsing
+`CliteResult` that contains:
 
-- obj:The input object overwritten with the data from the parsing result
+- obj: The input object overwritten with the data from the parsing result
 - command: The command to run from the parsing result
 - commandArgs: The command arguments from the parsing result
 - config: The input CliteRunConfig
-- help: The generated help;
+- help: The generated help
 - subcommand: The subcommand CliteResult if the command is a subcommand
 
 ## Ignore `_*` and `#*` methods and fields (in the help)
@@ -240,8 +240,8 @@ In summary :
 
 - `@help(description: string)` | `_<field>_help` : add description on
   class/methods/fields to display in the help
-- `@alias(alias: string)` | `_<field>_alias` : add alias on method/command (
-  `-n` for example)
+- `@alias(alias: string)` | `_<field>_alias` : add alias on method (`-n` for
+  example)
 - `@type(typeHelp: string)` | `_<field>_type` : type to display in the help
 - `@negatable(help: string | boolean = true)` | `_<field>_negatable`: enable
   `--no-<option>` (`--no-dry-run` for example)
@@ -436,7 +436,7 @@ Options:
      --dry-run                [default: false]
      --down         [default: [object Object]]
 
-/$ .subcommand.ts down --help
+$ ./subcommand.ts down --help
 Usage: <Object file> [Options] [--] [command [command args]]
 
 Command:
@@ -533,7 +533,7 @@ $ ./Tool.ts --ac.bb aaa --ac.dd.ee v --ac.dd.ff w
 
 ### The default command
 
-- If there is only one method/command => this method is the default
+- If there is only one method/subcommand => this method is the default
 - If the main method exist => main is the default
 - else => no default method
 
@@ -652,7 +652,7 @@ $ cat load-config.json
 $ ./load-config.ts --retry 88 --config ./load-config.json down
 down command { force: undefined, timeout: undefined } Tool {
   retry: 88,
-  dryRun: false,
+  dryRun: true,
   webUrl: "yyy",
   config: "./load-config.json"
 }
@@ -675,7 +675,7 @@ Usage: my-tool [Options] [--] [command [command args]]
 
 ### meta
 
-Use meta to avoid the import.meta.main check :
+Use meta to avoid the manual `import.meta.main` check :
 
 ```typescript
 if (import.meta.main) { // if the file is imported, do not execute this block
@@ -689,14 +689,14 @@ is equivalent to :
 cliteRun(Tool, { meta: import.meta });
 ```
 
-The basename of import.meta.url will be used in the generated help, as
-"mainFile".
+The basename of `import.meta.url` will be used in the generated help, as
+`mainFile`.
 
-This feature does not work with Node (no import.meta.main).
+This feature doesn't work with Node (no import.meta.main).
 
 ### dontConvertCmdArgs
 
-If `--` is used and dontConvertCmdArgs=true, all command arguments will be
+If `--` is used and `dontConvertCmdArgs=true`, all command arguments will be
 strings.
 
 ```
@@ -780,7 +780,7 @@ class Tool { ... }
 cliteRun(Tool);
 ```
 
-See node usage examples :
+### Node usage examples :
 
 - [examples/node-jsr/dax](examples/node-jsr/dax)
 - [examples/node-jsr/simple](examples/node-jsr/simple)
@@ -797,19 +797,19 @@ See node usage examples :
 - `@std/cli` : to parse args
 - `@std/fmt` : to log with colors/bold
 - `@std/text` : to change case
-- `@std/assert` : to test
+- `@std/assert` : for the tests
 
 ## Inspiration
 
 Probably inspired by:
 
 - [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
-  function from CLI with `utils:run "$@"`,
+  function from CLI with `utils:run "$@"`, created 4 years before Clite,
 - and by [Clap](https://github.com/clap-rs/clap) (one year) after the
   development of [mouse-actions](https://github.com/jersou/mouse-actions) :
   deserialize options from CLI to struct.
 
-## to try in a browser
+## Try in a browser
 
 With [esm.sh](https://code.esm.sh/),
 [playcode.io](https://playcode.io/javascript),
@@ -843,7 +843,7 @@ detects the non-existent option/order errors, and launches the desired command
 with its parameters.
 
 A comparison try is made in the
-[examples/cli-tools-diff](examples/cli-tools-diff) folder, it compares
+[examples/cli-tools-diff](examples/cli-tools-diff) folder, it compares :
 
 - Clite : [examples/cli-tools-diff/clite.ts](examples/cli-tools-diff/clite.ts)
 - vs [Yargs](https://github.com/yargs/yargs) :
