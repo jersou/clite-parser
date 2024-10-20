@@ -23,7 +23,7 @@ class Tool {
   dryRun = false; // fields are converted to kebab case as global options
   webUrl = "none"; // → --web-url
 
-  main() { // call if : $ ./example-lite-lite.ts // or if $ ./example-lite-lite.ts main
+  main() { // call if : $ ./example-lite-lite.ts main // or if $ ./example-lite-lite.ts
     console.log("main command", this);
   }
 
@@ -631,8 +631,6 @@ cliteRun(Tool);
 
 ### configCli : load a json config with `--config <path | or json string>`
 
-**TODO for Node**
-
 If `configCli === true` in the CliteRunConfig
 
 ```
@@ -646,7 +644,7 @@ $ ./load-config.ts --help
 ...
 
 $ ./load-config.ts  down
-down command { force: undefined, timeout: undefined } Tool { retry: 2, dryRun: false, webUrl: "none" }
+down command { force: undefined, timeout: undefined } Tool { retry: 2, dryRun: false, webUrl: "none", config: undefined }
 
 $ cat load-config.json
 { "retry": 44, "dryRun": true, "webUrl": "yyy" }
@@ -710,7 +708,7 @@ $ ./Tool.ts -- main 123 true foo
 # with dontConvertCmdArgs: false
 $ ./Tool.ts -- main 123 true foo
  → command = main
- → commandArgs = "123, true, "foo"]);
+ → commandArgs = 123, true, "foo"]);
 ```
 
 ## Plain Object
@@ -803,8 +801,13 @@ See node usage examples :
 
 ## Inspiration
 
-Probably inspired by [Clap](https://github.com/clap-rs/clap) after the
-development of [mouse-actions](https://github.com/jersou/mouse-actions).
+Probably inspired by:
+
+- [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
+  function from CLI with `utils:run "$@"`,
+- and by [Clap](https://github.com/clap-rs/clap) (one year) after the
+  development of [mouse-actions](https://github.com/jersou/mouse-actions) :
+  deserialize options from CLI to struct.
 
 ## to try in a browser
 
@@ -832,7 +835,7 @@ define the interface you want.
 
 **Clite follows a different approach: it takes the desired model and fills it
 according to the command line**. If you want to type the parsing output, you
-don't need to do anything else. No duplicate writing for the CIL config and the
+don't need to do anything else. No duplicate writing for the CLI config and the
 parsing output model/type.
 
 And of course, like classic tools, it also generates the help automatically,
@@ -879,5 +882,13 @@ The 3 implementations side by side :
   generated from
   [a rather understandable file](https://github.com/jersou/studio-pack-generator/blob/main/studio_pack_generator.ts)
   (in my opinion, of course).
-- simpler example : [examples/dcpm.ts](examples/dcpm.ts)
-- even simpler : [examples/dcpps.ts](examples/dcpps.ts)
+- simpler example : [examples/dcpps.ts](examples/dcpps.ts)
+- even simpler : [examples/dcpm.ts](examples/dcpm.ts)
+
+# TODO
+
+- fix `./load-config.ts --retry 88 --config ./load-config.json down` →
+  dryRun=false (because of stdParseArgs returns dryRun=false
+- fix boolean default true , if missings from args, probably set to false
+  because of "boolean" config of stdParseArgs
+- check call of cmd `_...`
