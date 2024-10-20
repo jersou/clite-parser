@@ -909,7 +909,10 @@ function cliteParse(objOrClass, config) {
           help,
           subcommand,
         };
-      } else if (!Object.hasOwn(metadata.methods, command)) {
+      } else if (
+        !Object.hasOwn(metadata.methods, command) &&
+        !getMethodNames(obj).includes(command)
+      ) {
         throw new Error(`The command "${command}" doesn't exist`, {
           cause: {
             clite: true,
