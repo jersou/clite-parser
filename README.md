@@ -1,5 +1,6 @@
 # CLI lite parser for Node and Deno
 
+[![Clite-parser on NPM](https://img.shields.io/npm/v/clite-parser.svg)](https://npmjs.org/package/clite-parser)
 [![JSR](https://jsr.io/badges/@jersou/clite)](https://jsr.io/@jersou/clite)
 [![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
@@ -805,9 +806,9 @@ Probably inspired by:
 
 - [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
   function from CLI with `utils:run "$@"`, created 4 years before Clite,
-- and by [Clap](https://github.com/clap-rs/clap) (one year) after the
-  development of [mouse-actions](https://github.com/jersou/mouse-actions) :
-  deserialize options from CLI to struct.
+- and by [Clap](https://github.com/clap-rs/clap) after the development of
+  [mouse-actions](https://github.com/jersou/mouse-actions) (one year before
+  Clite) : deserialize options from CLI to struct.
 
 ## Try in a browser
 
