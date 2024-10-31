@@ -828,7 +828,7 @@ const res = cliteParse(Tool, { args: ["--opt", "78"] });
 console.log(res);
 ```
 
-## Comparison with other tools : Yars, @std/cli (minimist)
+## Comparison with other tools : Yargs, @std/cli (minimist)
 
 The usual tools rather take a particular configuration of the tool and produce
 an output data **without** a defined model. You need to learn their API to
