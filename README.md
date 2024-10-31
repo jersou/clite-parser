@@ -448,6 +448,15 @@ Options:
      --volumes                [default: false]
 ```
 
+### @jsonConfig decorator and `_json_config`
+
+Enable configCli: see "configCli" chapter below :
+
+`enable "--config <path|json string>" to load json config, Show in the help if it's a string`
+
+If the value is a string, it will be used in the help for "--config"
+description.
+
 ## Argument parsing
 
 Clite use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
@@ -632,7 +641,8 @@ cliteRun(Tool);
 
 ### configCli : load a json config with `--config <path | or json string>`
 
-If `configCli === true` in the CliteRunConfig
+If `configCli === true` in the CliteRunConfig or `@jsonConfig` is used or
+`_json_config = true`
 
 ```
 $ cat ./load-config.ts
@@ -706,7 +716,7 @@ $ ./Tool.ts -- main 123 true foo
  → command = main
  → commandArgs = ["123", "true", "foo"]);
 
-# with dontConvertCmdArgs: false
+# with dontConvertCmdArgs: false (the default)
 $ ./Tool.ts -- main 123 true foo
  → command = main
  → commandArgs = 123, true, "foo"]);
@@ -797,7 +807,7 @@ cliteRun(Tool);
 
 - `@std/cli` : to parse args
 - `@std/fmt` : to log with colors/bold
-- `@std/text` : to change case
+- `@std/text` : to change the option case
 - `@std/assert` : for the tests
 
 ## Inspiration
@@ -806,9 +816,9 @@ Probably inspired by:
 
 - [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
   function from CLI with `utils:run "$@"`, created 4 years before Clite,
-- and by [Clap](https://github.com/clap-rs/clap) after the development of
-  [mouse-actions](https://github.com/jersou/mouse-actions) (one year before
-  Clite) : deserialize options from CLI to struct.
+- and by [Clap](https://github.com/clap-rs/clap) (with the derive feature) after
+  the development of [mouse-actions](https://github.com/jersou/mouse-actions)
+  (one year before Clite) : deserialize options from CLI to struct.
 
 ## Try in a browser
 
