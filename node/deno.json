@@ -1,23 +1,8 @@
 {
-  "exports": "./mod.ts",
-  "tasks": {
-    "fmt": "deno fmt --ignore=tmp,.cov_profile,src/test-data/bad-config.json",
-    "run": "deno run -A simple.ts",
-    "check": "deno check mod.ts",
-    "gen-cov": "./gen-cov.ts",
-    "gen-cov-watch": "deno run -A --watch=mod.ts,mod.test.ts,src/ gen-cov.ts",
-    "lint": "deno lint --ignore=tmp,.cov_profile,examples",
-    "pre-commit": "deno task fmt --check && deno task lint && deno task test && deno task check",
-    "publish-dry-run": "deno publish --dry-run",
-    "test": "deno test -A --ignore=tmp,.cov_profile --quiet",
-    "test-watch": "deno test -A --watch --ignore=tmp,.cov_profile --quiet",
-    "run-example": "deno run examples/example-lite.ts --retry=7 down true 3",
-    "update-changelog": "conventional-changelog -p conventionalcommits --same-file -i CHANGELOG.md -k deno.json && deno task fmt"
-  },
   "imports": {
-    "@std/assert": "./vendor/jsr.io/@std/assert",
     "@std/cli": "./vendor/jsr.io/@std/cli",
     "@std/cli/parse-args": "./vendor/jsr.io/@std/cli/1.0.6/parse_args.ts",
+    "@std/collections": "./vendor/jsr.io/@std/collections/1.0.9/mod.ts",
     "@std/fmt/colors": "./vendor/jsr.io/@std/fmt/1.0.2/colors.ts",
     "@std/text": "./vendor/jsr.io/@std/text/1.0.7/mod.ts"
   },

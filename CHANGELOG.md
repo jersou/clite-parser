@@ -1,3 +1,10 @@
+## [0.7.6](https://github.com/jersou/clite-parser/compare/0.7.5...0.7.6) (2024-11-07)
+
+### Features
+
+- keep decorators on extends
+  ([d9f6b73](https://github.com/jersou/clite-parser/commit/d9f6b7320ee77eb4e3838a765170c496f4158978))
+
 ## [0.7.5](https://github.com/jersou/clite-parser/compare/0.7.4...0.7.5) (2024-11-07)
 
 ### Features

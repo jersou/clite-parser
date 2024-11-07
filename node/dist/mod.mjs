@@ -1,3 +1,100 @@
+function filterInPlace(array, predicate) {
+  let outputIndex = 0;
+  for (const cur of array) {
+    if (!predicate(cur)) {
+      continue;
+    }
+    array[outputIndex] = cur;
+    outputIndex += 1;
+  }
+  array.splice(outputIndex);
+  return array;
+}
+function deepMerge(record, other, options) {
+  return deepMergeInternal(record, other, new Set(), options);
+}
+function deepMergeInternal(record, other, seen, options) {
+  const result = {};
+  const keys = new Set([
+    ...getKeys(record),
+    ...getKeys(other),
+  ]);
+  for (const key of keys) {
+    if (key === "__proto__") {
+      continue;
+    }
+    const a = record[key];
+    if (!Object.hasOwn(other, key)) {
+      result[key] = a;
+      continue;
+    }
+    const b = other[key];
+    if (
+      isNonNullObject(a) && isNonNullObject(b) && !seen.has(a) && !seen.has(b)
+    ) {
+      seen.add(a);
+      seen.add(b);
+      result[key] = mergeObjects(a, b, seen, options);
+      continue;
+    }
+    result[key] = b;
+  }
+  return result;
+}
+function mergeObjects(left, right, seen, options = {
+  arrays: "merge",
+  sets: "merge",
+  maps: "merge",
+}) {
+  if (isMergeable(left) && isMergeable(right)) {
+    return deepMergeInternal(left, right, seen, options);
+  }
+  if (isIterable(left) && isIterable(right)) {
+    if (Array.isArray(left) && Array.isArray(right)) {
+      if (options.arrays === "merge") {
+        return left.concat(right);
+      }
+      return right;
+    }
+    if (left instanceof Map && right instanceof Map) {
+      if (options.maps === "merge") {
+        return new Map([
+          ...left,
+          ...right,
+        ]);
+      }
+      return right;
+    }
+    if (left instanceof Set && right instanceof Set) {
+      if (options.sets === "merge") {
+        return new Set([
+          ...left,
+          ...right,
+        ]);
+      }
+      return right;
+    }
+  }
+  return right;
+}
+function isMergeable(value) {
+  return Object.getPrototypeOf(value) === Object.prototype;
+}
+function isIterable(value) {
+  return typeof value[Symbol.iterator] === "function";
+}
+function isNonNullObject(value) {
+  return value !== null && typeof value === "object";
+}
+function getKeys(record) {
+  const result = Object.getOwnPropertySymbols(record);
+  filterInPlace(
+    result,
+    (key) => Object.prototype.propertyIsEnumerable.call(record, key),
+  );
+  result.push(...Object.keys(record));
+  return result;
+}
 function addSymbolMetadata(target, prop, key, val) {
   let roorMetadata;
   let propName;
@@ -30,7 +127,17 @@ function addSymbolMetadata(target, prop, key, val) {
   }
 }
 function getCliteSymbolMetadata(obj) {
-  return Object.getPrototypeOf(obj).constructor[Symbol.metadata]?.clite || {};
+  const prototypes = [];
+  let o = obj;
+  while (o = Reflect.getPrototypeOf(o)) {
+    prototypes.unshift(o);
+  }
+  let metadata = {};
+  for (const prototype of prototypes) {
+    const protMeta = prototype.constructor[Symbol.metadata]?.clite || {};
+    metadata = deepMerge(metadata, protMeta);
+  }
+  return metadata;
 }
 function help(description) {
   return (target, prop) => addSymbolMetadata(target, prop, "help", description);

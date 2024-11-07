@@ -13,7 +13,7 @@
 //   -h, --help     Show this help                [default: false]
 //       --interval repeat watch every <INTERVAL> sec [default: 1]
 
-import { cliteRun, help } from "jsr:@jersou/clite@0.7.5";
+import { cliteRun, help } from "jsr:@jersou/clite@0.7.6";
 import $ from "jsr:@david/dax@0.42.0";
 import { assert } from "jsr:@std/assert@1.0.5";
 import {
