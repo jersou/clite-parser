@@ -1,4 +1,5 @@
 import type { Obj } from "./types.ts";
+import { deepMerge } from "@std/collections";
 
 // call from decorator with "experimentalDecorators = false" or "experimentalDecorators = true"
 // deno-lint-ignore no-explicit-any
@@ -39,7 +40,18 @@ function addSymbolMetadata(target: any, prop: any, key: string, val: any) {
  * @param obj - to use
  */
 export function getCliteSymbolMetadata(obj: Obj): Obj {
-  return Object.getPrototypeOf(obj).constructor[Symbol.metadata]?.clite || {};
+  const prototypes: object[] = [];
+  let o: object | null = obj;
+  // deno-lint-ignore no-cond-assign
+  while (o = Reflect.getPrototypeOf(o)) {
+    prototypes.unshift(o);
+  }
+  let metadata = {};
+  for (const prototype of prototypes) {
+    const protMeta = prototype.constructor[Symbol.metadata]?.clite || {};
+    metadata = deepMerge(metadata, protMeta);
+  }
+  return metadata;
 }
 
 // deno-lint-ignore no-explicit-any

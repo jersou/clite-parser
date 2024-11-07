@@ -250,14 +250,14 @@ Deno.test("dontConvertCmdArgs", () => {
 Deno.test("extends", () => {
   class Tool {
     retry = 2;
-    @help("no changes mode") // optional description for "--dry-run" field
-    dryRun = false; // fields are converted to kebab case as global options
+    @help("no changes mode")
+    dryRun = false;
     @hidden()
-    webUrl = "none"; // → --web-url
+    webUrl = "none";
     main() {
       console.log("main command", this);
     }
-    @help("create and start") // optional description for "up" command
+    @help("create and start")
     up() {
     }
     down() {
@@ -265,8 +265,10 @@ Deno.test("extends", () => {
   }
 
   class Child extends Tool {
+    @help("opt-from-child")
     optFromChild = 123;
     _up_hidden = true;
+    @help("from-child")
     fromChild() {
     }
   }
@@ -279,12 +281,12 @@ Deno.test("extends", () => {
 Commands:
   main      [default]
   down
-  fromChild
+  fromChild from-child
 
 Options:
  -h, --help           Show this help  [default: false]
      --retry                              [default: 2]
      --dry-run        no changes mode [default: false]
-     --opt-from-child                   [default: 123]`,
+     --opt-from-child opt-from-child    [default: 123]`,
   );
 });
