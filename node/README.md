@@ -1,5 +1,6 @@
 # CLI lite parser for Node and Deno
 
+[![Clite-parser on NPM](https://img.shields.io/npm/v/clite-parser.svg)](https://npmjs.org/package/clite-parser)
 [![JSR](https://jsr.io/badges/@jersou/clite)](https://jsr.io/@jersou/clite)
 [![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
@@ -14,9 +15,9 @@ add aliases (for example) to complete your CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
-import { cliteRun } from "jsr:@jersou/clite@0.7.4";
+import { cliteRun } from "jsr:@jersou/clite@0.7.5";
 // or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
-// or import { cliteRun } from "clite-parser"; // after "npm install clite-parser" for Node usage 
+// or import { cliteRun } from "clite-parser"; // after "npm install clite-parser" for Node usage
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
@@ -85,7 +86,7 @@ Several examples can be found in the [examples/](./examples) folder.
 Works with vanilla typescript or with experimentalDecorators = true
 
 ```typescript
-import { alias, cliteRun, help } from "jsr:@jersou/clite@0.7.4";
+import { alias, cliteRun, help } from "jsr:@jersou/clite@0.7.5";
 
 @help("This tool is a little example of CliteParser") // optional description
 class Tool {
@@ -137,7 +138,7 @@ Options:
 ### Full example without decorator (Javascript)
 
 ```javascript
-import { cliteRun } from "jsr:@jersou/clite@0.7.4";
+import { cliteRun } from "jsr:@jersou/clite@0.7.5";
 
 class Tool {
   _help = "This tool is a little example of CliteParser"; // optional description
@@ -241,7 +242,7 @@ In summary :
 - `@help(description: string)` | `_<field>_help` : add description on
   class/methods/fields to display in the help
 - `@alias(alias: string)` | `_<field>_alias` : add alias on method (`-n` for
-   example)
+  example)
 - `@type(typeHelp: string)` | `_<field>_type` : type to display in the help
 - `@negatable(help: string | boolean = true)` | `_<field>_negatable`: enable
   `--no-<option>` (`--no-dry-run` for example)
@@ -256,7 +257,7 @@ In summary :
 ### Help description with the `@help` decorator or inline help
 
 ```typescript
-import { cliteRun, help } from "jsr:@jersou/clite@0.7.4";
+import { cliteRun, help } from "jsr:@jersou/clite@0.7.5";
 
 @help("This tool is a little example of CliteParser")
 class Tool {
@@ -288,7 +289,7 @@ as description in the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.7.4";
+import { cliteRun } from "jsr:@jersou/clite@0.7.5";
 
 class Tool {
   _help = "This tool is a little example of CliteParser"; // optional description
@@ -447,6 +448,15 @@ Options:
      --volumes                [default: false]
 ```
 
+### @jsonConfig decorator and `_json_config`
+
+Enable configCli: see "configCli" chapter below :
+
+`enable "--config <path|json string>" to load json config, Show in the help if it's a string`
+
+If the value is a string, it will be used in the help for "--config"
+description.
+
 ## Argument parsing
 
 Clite use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
@@ -598,7 +608,7 @@ the command execution. Else, the help is print only for errors that have
 It's useful if a required option is missing, for example.
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.7.4";
+import { cliteRun } from "jsr:@jersou/clite@0.7.5";
 export class Tool {
   throw = "true";
   main() {
@@ -615,7 +625,7 @@ To print help on specific error only, without `printHelpOnError=true`, use
 `{ cause: { clite: true } }` :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.7.4";
+import { cliteRun } from "jsr:@jersou/clite@0.7.5";
 export class Tool {
   noThrow = false;
 
@@ -631,7 +641,8 @@ cliteRun(Tool);
 
 ### configCli : load a json config with `--config <path | or json string>`
 
-If `configCli === true` in the CliteRunConfig
+If `configCli === true` in the CliteRunConfig or `@jsonConfig` is used or
+`_json_config = true`
 
 ```
 $ cat ./load-config.ts
@@ -705,7 +716,7 @@ $ ./Tool.ts -- main 123 true foo
  → command = main
  → commandArgs = ["123", "true", "foo"]);
 
-# with dontConvertCmdArgs: false
+# with dontConvertCmdArgs: false (the default)
 $ ./Tool.ts -- main 123 true foo
  → command = main
  → commandArgs = 123, true, "foo"]);
@@ -716,7 +727,7 @@ $ ./Tool.ts -- main 123 true foo
 A plain JS Object can be used :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.7.4";
+import { cliteRun } from "jsr:@jersou/clite@0.7.5";
 
 cliteRun({
   retry: 2,
@@ -796,7 +807,7 @@ cliteRun(Tool);
 
 - `@std/cli` : to parse args
 - `@std/fmt` : to log with colors/bold
-- `@std/text` : to change case
+- `@std/text` : to change the option case
 - `@std/assert` : for the tests
 
 ## Inspiration
@@ -805,9 +816,9 @@ Probably inspired by:
 
 - [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
   function from CLI with `utils:run "$@"`, created 4 years before Clite,
-- and by [Clap](https://github.com/clap-rs/clap) (one year) after the
-  development of [mouse-actions](https://github.com/jersou/mouse-actions) :
-  deserialize options from CLI to struct.
+- and by [Clap](https://github.com/clap-rs/clap) (with the derive feature) after
+  the development of [mouse-actions](https://github.com/jersou/mouse-actions)
+  (one year before Clite) : deserialize options from CLI to struct.
 
 ## Try in a browser
 
@@ -816,7 +827,7 @@ With [esm.sh](https://code.esm.sh/),
 [jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
-import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.7.4";
+import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.7.5";
 
 class Tool {
   opt = 123;
@@ -827,7 +838,7 @@ const res = cliteParse(Tool, { args: ["--opt", "78"] });
 console.log(res);
 ```
 
-## Comparison with other tools : Yars, @std/cli (minimist)
+## Comparison with other tools : Yargs, @std/cli (minimist)
 
 The usual tools rather take a particular configuration of the tool and produce
 an output data **without** a defined model. You need to learn their API to

@@ -11,6 +11,11 @@ export declare function getFunctionArgNames(func: Function): string[];
 export declare function getMethodNames(obj: object): string[];
 /**
  * @param obj Object to analyse
+ * @returns method names of the object and inherited class
+ */
+export declare function getMethodNamesDeep(obj: object): string[];
+/**
+ * @param obj Object to analyse
  * @returns field names of the object
  */
 export declare function getFieldNames<O extends Obj>(obj: O): (keyof O)[];

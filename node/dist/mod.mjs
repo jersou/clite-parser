@@ -182,7 +182,21 @@ function getMethodNames(obj) {
     ? Object.getOwnPropertyNames(obj).filter((n) =>
       typeof obj[n] === "function"
     )
-    : Object.getOwnPropertyNames(prototype).filter((n) => n !== "constructor");
+    : getMethodNamesDeep(obj);
+}
+function getMethodNamesDeep(obj) {
+  const methods = [];
+  let o = obj;
+  while (o = Reflect.getPrototypeOf(o)) {
+    if (o.constructor.name !== "Object") {
+      methods.unshift(
+        ...Reflect.ownKeys(o).filter((k) =>
+          typeof k === "string" && k !== "constructor" && !methods.includes(k)
+        ),
+      );
+    }
+  }
+  return methods;
 }
 function getFieldNames(obj) {
   return Object.getOwnPropertyNames(obj).filter((n) =>

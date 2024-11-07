@@ -1,3 +1,10 @@
+## [0.7.5](https://github.com/jersou/clite-parser/compare/0.7.4...0.7.5) (2024-11-07)
+
+### Features
+
+- add getMethodNamesDeep to extends tools
+  ([adc758f](https://github.com/jersou/clite-parser/commit/adc758fffe1326149af40f30deaba07f972eb1dd))
+
 ## [0.7.4](https://github.com/jersou/clite-parser/compare/0.7.3...0.7.4) (2024-10-20)
 
 ### Features
