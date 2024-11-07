@@ -4,8 +4,10 @@ import {
   getFunctionArgNames,
   getMethodArgNames,
   getMethodNames,
+  getMethodNamesDeep,
 } from "./reflect.ts";
 import { Tool } from "./test_data.test.ts";
+import { help, hidden } from "./decorators.ts";
 
 Deno.test("getFunctionArgNames", () => {
   function funcTest(arg1: string, arg2: boolean, arg3: number) {
@@ -50,4 +52,41 @@ Deno.test("getMethodArgNames obj", () => {
     }, "down"),
     ["_force", "_timeout"],
   );
+});
+
+Deno.test("extends: getMethodNamesDeep & getFieldNames", () => {
+  class Tool {
+    retry = 2;
+    @help("no changes mode") // optional description for "--dry-run" field
+    dryRun = false; // fields are converted to kebab case as global options
+    @hidden()
+    webUrl = "none"; // → --web-url
+    main() {
+      console.log("main command", this);
+    }
+    @help("create and start") // optional description for "up" command
+    up() {
+    }
+    down() {
+    }
+  }
+
+  class Child extends Tool {
+    optFromChild = 123;
+    fromChild() {
+    }
+  }
+  const child = new Child();
+  assertEquals(getMethodNamesDeep(child), [
+    "main",
+    "up",
+    "down",
+    "fromChild",
+  ]);
+  assertEquals(getFieldNames(child), [
+    "retry",
+    "dryRun",
+    "webUrl",
+    "optFromChild",
+  ]);
 });

@@ -1,6 +1,6 @@
 import { assert, assertEquals, assertThrows } from "jsr:@std/assert@1.0.5";
 import { cliteParse, cliteRun } from "./clite_parser.ts";
-import { noCommand, subcommand } from "./decorators.ts";
+import { help, hidden, noCommand, subcommand } from "./decorators.ts";
 import { genHelp } from "./help.ts";
 import { Tool } from "./test_data.test.ts";
 import { getCliteMetadata } from "./metadata.ts";
@@ -245,4 +245,46 @@ Deno.test("dontConvertCmdArgs", () => {
   });
   assertEquals(result2.command, "main");
   assertEquals(result2.commandArgs, [123, true, "foo"]);
+});
+
+Deno.test("extends", () => {
+  class Tool {
+    retry = 2;
+    @help("no changes mode") // optional description for "--dry-run" field
+    dryRun = false; // fields are converted to kebab case as global options
+    @hidden()
+    webUrl = "none"; // → --web-url
+    main() {
+      console.log("main command", this);
+    }
+    @help("create and start") // optional description for "up" command
+    up() {
+    }
+    down() {
+    }
+  }
+
+  class Child extends Tool {
+    optFromChild = 123;
+    _up_hidden = true;
+    fromChild() {
+    }
+  }
+  const child = new Child();
+  const result = cliteParse(child, {});
+  assertEquals(
+    stripAnsiCode(result.help),
+    `Usage: <Child file> [Options] [--] [command [command args]]
+
+Commands:
+  main      [default]
+  down
+  fromChild
+
+Options:
+ -h, --help           Show this help  [default: false]
+     --retry                              [default: 2]
+     --dry-run        no changes mode [default: false]
+     --opt-from-child                   [default: 123]`,
+  );
 });

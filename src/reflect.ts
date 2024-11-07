@@ -31,8 +31,28 @@ export function getMethodNames(obj: object): string[] {
     ? Object.getOwnPropertyNames(obj)
       // @ts-ignore dyn
       .filter((n) => typeof obj[n] === "function")
-    : Object.getOwnPropertyNames(prototype)
-      .filter((n) => n !== "constructor");
+    : getMethodNamesDeep(obj);
+}
+
+/**
+ * @param obj Object to analyse
+ * @returns method names of the object and inherited class
+ */
+export function getMethodNamesDeep(obj: object): string[] {
+  const methods: string[] = [];
+  let o: object | null = obj;
+  // deno-lint-ignore no-cond-assign
+  while (o = Reflect.getPrototypeOf(o)) {
+    if (o.constructor.name !== "Object") {
+      methods.unshift(
+        ...Reflect.ownKeys(o)
+          .filter((k) =>
+            typeof k === "string" && k !== "constructor" && !methods.includes(k)
+          ) as string[],
+      );
+    }
+  }
+  return methods;
 }
 
 /**
