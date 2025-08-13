@@ -188,6 +188,28 @@ Deno.test({
 });
 
 Deno.test({
+  name: "capital option",
+  fn() {
+    class Tool {
+      @alias("H")
+      helmet = false;
+      main() {}
+    }
+    const res = cliteParse(Tool, {
+      args: ["-H"],
+    });
+    assertEquals(res.command, "main");
+    assertEquals(res.obj.helmet, true);
+
+    const res2 = cliteParse(Tool, {
+      args: ["-h"],
+    });
+    assertEquals(res2.command, "--help");
+    assertEquals(res2.obj.helmet, false);
+  },
+});
+
+Deno.test({
   name: "object option",
   fn() {
     class Tool {
