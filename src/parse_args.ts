@@ -69,10 +69,10 @@ export function parseArgs<O extends Obj>(
   }
 
   const stdRes = stdParseArgs(args, {
-    negatable: negatable.map(toKebabCase),
-    string: stringProp.map(toKebabCase),
-    boolean: booleanProp.map(toKebabCase),
-    collect: arrayProp.map(toKebabCase),
+    negatable: negatable,
+    string: stringProp,
+    boolean: booleanProp,
+    collect: arrayProp,
     default: defaultValues,
     alias,
     stopEarly: true,
@@ -88,7 +88,6 @@ export function parseArgs<O extends Obj>(
   }
 
   const fields = Object.keys(metadata.fields);
-  const fieldsKebabCase = fields.map(toKebabCase);
   const aliasKey = Object.values(alias).flat();
 
   for (const [key, value] of Object.entries(stdRes)) {
@@ -103,7 +102,6 @@ export function parseArgs<O extends Obj>(
     } else {
       if (
         key !== "help" &&
-        !fieldsKebabCase.includes(key) &&
         !fields.includes(key) &&
         !aliasKey.includes(key) &&
         !((config?.configCli || metadata.jsonConfig) && key === "config")
@@ -112,7 +110,16 @@ export function parseArgs<O extends Obj>(
           cause: { clite: true },
         });
       }
-      argsResult.options[toCamelCase(key)] = value;
+      if ((config?.configCli || metadata.jsonConfig) && key === "config") {
+        argsResult.options[key] = value;
+      } else {
+        for (const [name, aliases] of Object.entries(alias)) {
+          if (name === key || aliases.includes(key)) {
+            argsResult.options[name] = value;
+            break;
+          }
+        }
+      }
     }
   }
   return argsResult;
