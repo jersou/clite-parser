@@ -253,25 +253,23 @@ function splitToWords(input) {
   return input.match(WORD_OR_NUMBER_REGEXP) ?? [];
 }
 function capitalizeWord(word) {
-  return word
-    ? word?.[0]?.toLocaleUpperCase() + word.slice(1).toLocaleLowerCase()
-    : word;
+  return word ? word[0].toUpperCase() + word.slice(1).toLowerCase() : word;
 }
 function toCamelCase(input) {
   input = input.trim();
   const [first = "", ...rest] = splitToWords(input);
   return [
-    first.toLocaleLowerCase(),
+    first.toLowerCase(),
     ...rest.map(capitalizeWord),
   ].join("");
 }
 function toKebabCase(input) {
   input = input.trim();
-  return splitToWords(input).join("-").toLocaleLowerCase();
+  return splitToWords(input).join("-").toLowerCase();
 }
 function toSnakeCase(input) {
   input = input.trim();
-  return splitToWords(input).join("_").toLocaleLowerCase();
+  return splitToWords(input).join("_").toLowerCase();
 }
 const COMMENTS_REGEX = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
 const ARGUMENT_NAMES_REGEX = /\((?<args>.*?)\)/m;
@@ -788,10 +786,10 @@ function parseArgs1(obj, metadata, config) {
     }
   }
   const stdRes = parseArgs(args, {
-    negatable: negatable.map(toKebabCase),
-    string: stringProp.map(toKebabCase),
-    boolean: booleanProp.map(toKebabCase),
-    collect: arrayProp.map(toKebabCase),
+    negatable: negatable,
+    string: stringProp,
+    boolean: booleanProp,
+    collect: arrayProp,
     default: defaultValues,
     alias,
     stopEarly: true,
@@ -806,7 +804,6 @@ function parseArgs1(obj, metadata, config) {
     }
   }
   const fields = Object.keys(metadata.fields);
-  const fieldsKebabCase = fields.map(toKebabCase);
   const aliasKey = Object.values(alias).flat();
   for (const [key, value] of Object.entries(stdRes)) {
     if (key === "_") {
@@ -819,8 +816,7 @@ function parseArgs1(obj, metadata, config) {
       }
     } else {
       if (
-        key !== "help" && !fieldsKebabCase.includes(key) &&
-        !fields.includes(key) && !aliasKey.includes(key) &&
+        key !== "help" && !fields.includes(key) && !aliasKey.includes(key) &&
         !((config?.configCli || metadata.jsonConfig) && key === "config")
       ) {
         throw new Error(`The option "${key}" doesn't exist`, {
@@ -829,7 +825,16 @@ function parseArgs1(obj, metadata, config) {
           },
         });
       }
-      argsResult.options[toCamelCase(key)] = value;
+      if ((config?.configCli || metadata.jsonConfig) && key === "config") {
+        argsResult.options[key] = value;
+      } else {
+        for (const [name, aliases] of Object.entries(alias)) {
+          if (name === key || aliases.includes(key)) {
+            argsResult.options[name] = value;
+            break;
+          }
+        }
+      }
     }
   }
   return argsResult;

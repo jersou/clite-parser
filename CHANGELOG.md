@@ -1,3 +1,10 @@
+## [0.7.7](https://github.com/jersou/clite-parser/compare/0.7.6...0.7.7) (2025-08-30)
+
+### Bug Fixes
+
+- fix capital option
+  ([faa0d7](https://github.com/jersou/clite-parser/commit/faa0d701b1445b1ce247c53ea624ca58417af4ec))
+
 ## [0.7.6](https://github.com/jersou/clite-parser/compare/0.7.5...0.7.6) (2024-11-07)
 
 ### Features

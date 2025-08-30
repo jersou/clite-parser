@@ -1,6 +1,6 @@
 {
   "name": "@jersou/clite",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "exports": "./mod.ts",
   "license": "MIT",
   "tasks": {
@@ -14,7 +14,7 @@
     "publish-dry-run": "deno publish --dry-run",
     "test": "deno test -A --ignore=tmp,.cov_profile,node --quiet",
     "test-watch": "deno test -A --watch --ignore=tmp,.cov_profile,node --quiet",
-    "run-example": "deno run examples/example-lite.ts --retry=7 down true 3",
+    "run-example": "deno run examples/example.ts --retry=7 down true 3",
     "update-changelog": "conventional-changelog -p conventionalcommits --same-file -i CHANGELOG.md -k deno.json && deno task fmt"
   },
   "imports": {
