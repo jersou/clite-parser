@@ -47,7 +47,7 @@ export function cliteParse<O extends Obj & { config?: string }>(
   const metadata = getCliteMetadata(obj);
   const help = genHelp(obj, metadata, config);
   try {
-    const parseResult = parseArgs(obj, metadata, config);
+    let parseResult = parseArgs(obj, metadata, config);
 
     if (Object.keys(parseResult.options).includes("help")) {
       return { obj, command: "--help", commandArgs: [], config, help };
@@ -65,9 +65,10 @@ export function cliteParse<O extends Obj & { config?: string }>(
           cause: { clite: true },
         });
       }
-      fillFields(parseResult, obj, metadata, config);
 
       if (metadata.subcommands.includes(command)) {
+        fillFields(parseResult, obj, metadata, config);
+
         const subcommandObj = typeof obj[command] === "function"
           ? new obj[command]()
           : obj[command];
@@ -85,11 +86,13 @@ export function cliteParse<O extends Obj & { config?: string }>(
       }
 
       if (config?.dontParseOptionAfterMethodCmd === undefined) {
-        return cliteParse(obj, {
+        parseResult = parseArgs(obj, metadata, {
           ...config,
           dontParseOptionAfterMethodCmd: false,
         });
       }
+
+      fillFields(parseResult, obj, metadata, config);
 
       const commandArgs = config?.dontConvertCmdArgs
         ? parseResult.commandArgs
