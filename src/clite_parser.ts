@@ -83,6 +83,14 @@ export function cliteParse<O extends Obj & { config?: string }>(
           cause: { clite: true },
         });
       }
+
+      if (config?.dontParseOptionAfterMethodCmd === undefined) {
+        return cliteParse(obj, {
+          ...config,
+          dontParseOptionAfterMethodCmd: false,
+        });
+      }
+
       const commandArgs = config?.dontConvertCmdArgs
         ? parseResult.commandArgs
         : parseResult.commandArgs.map(convertCommandArg);
