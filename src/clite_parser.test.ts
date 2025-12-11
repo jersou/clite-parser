@@ -290,3 +290,20 @@ Options:
      --opt-from-child opt-from-child    [default: 123]`,
   );
 });
+
+Deno.test("testOptionAfterMethodCmd", () => {
+  const result = cliteParse(Tool, {
+    args: ["down", "--opt3=xclkd", "true", "foo"],
+  });
+  assertEquals(result.command, "down");
+  assertEquals(result.obj.opt3, "xclkd");
+  assertEquals(result.commandArgs, [true, "foo"]);
+
+  const result2 = cliteParse(Tool, {
+    args: ["down", "--opt3=xclkd", "true", "foo"],
+    dontParseOptionAfterMethodCmd: true,
+  });
+  assertEquals(result2.command, "down");
+  assertEquals(result2.obj.opt3, "azer");
+  assertEquals(result2.commandArgs, ["--opt3=xclkd", true, "foo"]);
+});
