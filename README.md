@@ -5,8 +5,9 @@
 [![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**CliteParser generates CLI from classes or modules** (or objects) : each field
-generates an "option", each method generates a "command" (positional arguments).
+**CliteParser generates CLI from classes or ESM modules** (or objects) : each
+field generates an "option", each method generates a "command" (positional
+arguments).
 
 Just write your tool as a class (or as **ESM module**), and call Clite with
 it... Clite will deserialize the command line in your class/module and launch
