@@ -53,6 +53,9 @@ class Tool {
 cliteRun(Tool); // or cliteRun(new Tool());
 ```
 
+In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
+to process the CLI.
+
 ## The help is generated automatically:
 
 ![help image](./simple-help.png)
