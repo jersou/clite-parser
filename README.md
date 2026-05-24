@@ -26,6 +26,9 @@ modification of the `opt` option.
 
 ![class-demo.mjs.png](class-demo.mjs.png)
 
+In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
+to process the CLI.
+
 ```typescript
 #!/usr/bin/env -S deno run
 import { cliteRun } from "jsr:@jersou/clite@0.8.0";
@@ -52,9 +55,6 @@ class Tool {
 
 cliteRun(Tool); // or cliteRun(new Tool());
 ```
-
-In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
-to process the CLI.
 
 ## The help is generated automatically:
 
