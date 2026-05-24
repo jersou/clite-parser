@@ -317,6 +317,15 @@ if (import.meta.main) { // if the file is imported, do not execute this block
 }
 ```
 
+Note : on method/function, the help can be defined by the prototype :
+
+```
+// if up is a method :
+(Tool.prototype.up as any)._help = "create and start"
+// if up is a function :
+up._help = "up custom help";
+```
+
 ### Alias
 
 Alias of option can be created, with the `@alias` decorator or with

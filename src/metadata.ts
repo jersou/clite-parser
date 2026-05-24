@@ -62,7 +62,7 @@ export function getCliteMetadata<O extends Obj>(obj: O): Metadata<O> {
 
   methods.forEach(
     (method) => (metadata.methods[method as keyof O] = {
-      help: symb.help?.[method] || obj[`_${method}_help`],
+      help: symb.help?.[method] || obj[method]._help || obj[`_${method}_help`],
       hidden: symb.hidden?.[method] ?? obj[`_${method}_hidden`],
     }),
   );
