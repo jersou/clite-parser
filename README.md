@@ -79,6 +79,10 @@ down command { force: true, timeout: 14 } Tool { retry: 4, dryRun: true, webUrl:
 
 ## Generate a CLI with ESM modules
 
+Example from [examples/example-module.ts](./examples/example-module.ts) or
+[examples/node-npm/simple/example-module.mjs](./examples/node-npm/simple/example-module.mjs)
+(**NodeJs**).
+
 Generate a CLI with `cliteRun(import.meta)` : exported functions are available
 as commands.
 
