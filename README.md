@@ -100,7 +100,7 @@ export const main = () => console.log("main");
 
 cliteRun(import.meta);
 
-// $ ./examples/example-module-lite.ts --opt bar down true 100
+// $ ./examples/example-module-lite.ts down true 100
 // down command { force: true, timeout: 100 }
 //
 // ./examples/example-module-lite.ts --help
