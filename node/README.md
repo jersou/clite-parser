@@ -5,8 +5,8 @@
 [![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**CliteParser generates CLI from classes** (or objects) : each field generates
-an "option", each method generates a "command" (positional arguments).
+**CliteParser generates CLI from classes or modules** (or objects) : each field
+generates an "option", each method generates a "command" (positional arguments).
 
 Just write your tool as a class, and call Clite with it... Clite will
 deserialize the command line in your class and launch the right methods or
@@ -15,7 +15,7 @@ add aliases (for example) to complete your CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
-import { cliteRun } from "jsr:@jersou/clite@0.7.7";
+import { cliteRun } from "jsr:@jersou/clite@0.8.0";
 // or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
 // or import { cliteRun } from "clite-parser"; // after "npm install clite-parser" for Node usage
 
@@ -77,6 +77,86 @@ $ deno https://raw.githubusercontent.com/jersou/clite-parser/refs/heads/main/exa
 down command { force: true, timeout: 14 } Tool { retry: 4, dryRun: true, webUrl: "tttt" }
 ```
 
+## Generate a CLI with ESM modules
+
+Generate a CLI with `cliteRun(import.meta)` : exported functions are available
+as commands.
+
+```typescript
+export function up() {
+  private_function();
+  console.log("up command");
+}
+
+function private_function() {
+  console.log("private_function");
+}
+
+export function down(force = false, timeout = 5) {
+  console.log("down command", { force, timeout });
+}
+
+export const main = () => console.log("main");
+
+cliteRun(import.meta);
+
+// $ ./examples/example-module-lite.ts --opt bar down true 100
+// down command { force: true, timeout: 100 }
+//
+// ./examples/example-module-lite.ts --help
+// Usage: <Object file> [Options] [--] [command [command args]]
+//
+// Commands:
+//   down <force> <timeout>
+//   main                   [default]
+//   up
+//
+// Option:
+//   -h, --help Show this help [default: false]
+```
+
+The var/let variables are exposed only if they are exported and if there is a
+"_set_<name>" function that allows their modification.
+
+```typescript
+export let opt = "foo";
+// To allow the modification of opt from the CLI
+export const _set_opt = (v: string) => (opt = v);
+
+export function up() {
+  private_function();
+  console.log("up command", opt);
+}
+
+function private_function() {
+  console.log("private_function");
+}
+
+down._help = "down custom help";
+export function down(force = false, timeout = 5) {
+  console.log("down command", { force, timeout, opt });
+}
+
+export const main = () => console.log("main", opt);
+
+cliteRun(import.meta);
+
+// $ ./examples/example-module.ts --opt bar down true 100
+// down command { force: true, timeout: 100, opt: "bar" }
+//
+// ./examples/example-module.ts --help
+// Usage: <Object file> [Options] [--] [command [command args]]
+//
+// Commands:
+//   down <force> <timeout> down custom help
+//   main                   [default]
+//   up
+//
+// Options:
+//  -h, --help Show this help [default: false]
+//      --opt                 [default: "foo"]
+```
+
 ## Examples
 
 Several examples can be found in the [examples/](./examples) folder.
@@ -86,7 +166,7 @@ Several examples can be found in the [examples/](./examples) folder.
 Works with vanilla typescript or with experimentalDecorators = true
 
 ```typescript
-import { alias, cliteRun, help } from "jsr:@jersou/clite@0.7.7";
+import { alias, cliteRun, help } from "jsr:@jersou/clite@0.8.0";
 
 @help("This tool is a little example of CliteParser") // optional description
 class Tool {
@@ -138,7 +218,7 @@ Options:
 ### Full example without decorator (Javascript)
 
 ```javascript
-import { cliteRun } from "jsr:@jersou/clite@0.7.7";
+import { cliteRun } from "jsr:@jersou/clite@0.8.0";
 
 class Tool {
   _help = "This tool is a little example of CliteParser"; // optional description
@@ -257,7 +337,7 @@ In summary :
 ### Help description with the `@help` decorator or inline help
 
 ```typescript
-import { cliteRun, help } from "jsr:@jersou/clite@0.7.7";
+import { cliteRun, help } from "jsr:@jersou/clite@0.8.0";
 
 @help("This tool is a little example of CliteParser")
 class Tool {
@@ -289,7 +369,7 @@ as description in the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.7.7";
+import { cliteRun } from "jsr:@jersou/clite@0.8.0";
 
 class Tool {
   _help = "This tool is a little example of CliteParser"; // optional description
@@ -315,6 +395,15 @@ class Tool {
 if (import.meta.main) { // if the file is imported, do not execute this block
   cliteRun(Tool);
 }
+```
+
+Note : on method/function, the help can be defined by the prototype :
+
+```
+// if up is a method :
+(Tool.prototype.up as any)._help = "create and start"
+// if up is a function :
+up._help = "up custom help";
 ```
 
 ### Alias
@@ -608,7 +697,7 @@ the command execution. Else, the help is print only for errors that have
 It's useful if a required option is missing, for example.
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.7.7";
+import { cliteRun } from "jsr:@jersou/clite@0.8.0";
 export class Tool {
   throw = "true";
   main() {
@@ -625,7 +714,7 @@ To print help on specific error only, without `printHelpOnError=true`, use
 `{ cause: { clite: true } }` :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.7.7";
+import { cliteRun } from "jsr:@jersou/clite@0.8.0";
 export class Tool {
   noThrow = false;
 
@@ -727,7 +816,7 @@ $ ./Tool.ts -- main 123 true foo
 A plain JS Object can be used :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.7.7";
+import { cliteRun } from "jsr:@jersou/clite@0.8.0";
 
 cliteRun({
   retry: 2,
@@ -827,7 +916,7 @@ With [esm.sh](https://code.esm.sh/),
 [jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
-import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.7.7";
+import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.8.0";
 
 class Tool {
   opt = 123;

@@ -1,3 +1,14 @@
+## [0.8.0](https://github.com/jersou/clite-parser/compare/0.7.7...0.8.0) (2026-05-24)
+
+### Features
+
+- add help by the prototype
+  ([07e6ee2](https://github.com/jersou/clite-parser/commit/07e6ee28b12928bfc6d8e08cf274d946713914ce))
+- generate a CLI from the ESM module with `cliteRun(import.meta)`
+  ([e4d45ab](https://github.com/jersou/clite-parser/commit/e4d45ab7dc69743d689ab3dd2de52964c55de5b7))
+
+**BREAKING** : `cliteRun()` and `cliteParse()` are async now
+
 ## [0.7.7](https://github.com/jersou/clite-parser/compare/0.7.6...0.7.7) (2025-08-30)
 
 ### Bug Fixes

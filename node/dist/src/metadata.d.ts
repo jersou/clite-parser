@@ -1,5 +1,6 @@
 import type { Obj } from "./types.d.ts";
 export type Metadata<O extends Obj> = {
+  isModule: boolean;
   fields: {
     [key in keyof O]?: {
       alias?: string[];
@@ -23,5 +24,10 @@ export type Metadata<O extends Obj> = {
   noCommand?: boolean;
   jsonConfig?: boolean;
 };
-export declare function getCliteMetadata<O extends Obj>(obj: O): Metadata<O>;
-export declare function getDefaultCommand(methods: string[]): string;
+export declare function getCliteMetadata<O extends Obj>(
+  obj: O,
+  isModule?: boolean,
+): Metadata<O>;
+export declare function getDefaultCommand(
+  methods: string[],
+): string | undefined;

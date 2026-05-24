@@ -9,7 +9,7 @@ export declare function cliteRun<O extends Obj>(
     new (): O;
   },
   config?: CliteRunConfig,
-): unknown;
+): Promise<unknown>;
 /**
  * Return the parsing result of obj and the Deno/Node script arguments
  * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
@@ -24,4 +24,4 @@ export declare function cliteParse<
     new (): O;
   },
   config?: CliteRunConfig,
-): CliteResult<O>;
+): Promise<CliteResult<O>>;
