@@ -8,10 +8,10 @@
 **CliteParser generates CLI from classes or modules** (or objects) : each field
 generates an "option", each method generates a "command" (positional arguments).
 
-Just write your tool as a class, and call Clite with it... Clite will
-deserialize the command line in your class and launch the right methods or
-display the help... Then you can optionally personalize the displayed help or
-add aliases (for example) to complete your CLI.
+Just write your tool as a class (or as **ESM module**), and call Clite with
+it... Clite will deserialize the command line in your class and launch the right
+methods or display the help... Then you can optionally personalize the displayed
+help or add aliases (for example) to complete your CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
