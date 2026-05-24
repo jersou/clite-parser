@@ -9,9 +9,22 @@
 generates an "option", each method generates a "command" (positional arguments).
 
 Just write your tool as a class (or as **ESM module**), and call Clite with
-it... Clite will deserialize the command line in your class and launch the right
-methods or display the help... Then you can optionally personalize the displayed
-help or add aliases (for example) to complete your CLI.
+it... Clite will deserialize the command line in your class/module and launch
+the right methods/function or display the help... Then you can optionally
+personalize the displayed help or add aliases (for example) to complete your
+CLI.
+
+**Example with an ESM module :**
+
+![ESM-demo.mjs.png](ESM-demo.mjs.png)
+
+In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
+to process the CLI, and `export const _set_opt = (v) => (opt = v);` to allow
+modification of the `opt` option.
+
+**Example with a class :**
+
+![class-demo.mjs.png](class-demo.mjs.png)
 
 ```typescript
 #!/usr/bin/env -S deno run

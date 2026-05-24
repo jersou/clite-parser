@@ -5,19 +5,19 @@ export let opt = "foo";
 // To allow the modification of opt from the CLI
 export const _set_opt = (v) => (opt = v);
 
+function private_function() {
+  console.log("private_function");
+}
+
 export function up() {
   private_function();
   console.log("up command", opt);
 }
 
-function private_function() {
-  console.log("private_function");
-}
-
-down._help = "down custom help";
 export function down(force = false, timeout = 5) {
   console.log("down command", { force, timeout, opt });
 }
+down._help = "down custom help";
 
 export const main = () => console.log("main", opt);
 

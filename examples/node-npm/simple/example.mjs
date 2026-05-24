@@ -14,9 +14,9 @@ class Tool {
     console.log("up command", this);
   }
 
-  down(force, timeout) {
-    console.log("down command", { force, timeout }, this);
+  down(force = false, timeout = 5) {
+    console.log("down", { force, timeout }, this);
   }
 }
 
-cliteRun(new Tool());
+cliteRun(Tool);
