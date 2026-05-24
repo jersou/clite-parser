@@ -9,7 +9,9 @@
     "run": "node example.mjs",
     "run-help": "node example.mjs --help",
     "run-full": "node example.mjs --retry=4 --web-url=tttt --no-color down true 14",
-    "shebang-run": "./example.mjs --retry=4 --web-url=tttt --no-color down true 14"
+    "shebang-run": "./example.mjs --retry=4 --web-url=tttt --no-color down true 14",
+    "run-module-help": "node example-module.mjs --help",
+    "run-module": "node example-module.mjs --opt bar down true 100"
   },
   "dependencies": {
     "clite-parser": "0.8.0"
