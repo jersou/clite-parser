@@ -5,8 +5,8 @@
 [![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**CliteParser generates CLI from classes** (or objects) : each field generates
-an "option", each method generates a "command" (positional arguments).
+**CliteParser generates CLI from classes or modules** (or objects) : each field
+generates an "option", each method generates a "command" (positional arguments).
 
 Just write your tool as a class, and call Clite with it... Clite will
 deserialize the command line in your class and launch the right methods or
@@ -75,6 +75,86 @@ main command Tool { retry: 2, dryRun: true, webUrl: "tttt" } # ← main is the d
 
 $ deno https://raw.githubusercontent.com/jersou/clite-parser/refs/heads/main/examples/simple.ts --dry-run --web-url tttt --retry 4 down true  14
 down command { force: true, timeout: 14 } Tool { retry: 4, dryRun: true, webUrl: "tttt" }
+```
+
+## Generate a CLI with ESM modules
+
+Generate a CLI with `cliteRun(import.meta)` : exported functions are available
+as commands.
+
+```typescript
+export function up() {
+  private_function();
+  console.log("up command");
+}
+
+function private_function() {
+  console.log("private_function");
+}
+
+export function down(force = false, timeout = 5) {
+  console.log("down command", { force, timeout });
+}
+
+export const main = () => console.log("main");
+
+cliteRun(import.meta);
+
+// $ ./examples/example-module-lite.ts --opt bar down true 100
+// down command { force: true, timeout: 100 }
+//
+// ./examples/example-module-lite.ts --help
+// Usage: <Object file> [Options] [--] [command [command args]]
+//
+// Commands:
+//   down <force> <timeout>
+//   main                   [default]
+//   up
+//
+// Option:
+//   -h, --help Show this help [default: false]
+```
+
+The var/let variables are exposed only if they are exported and if there is a
+"_set_<name>" function that allows their modification.
+
+```typescript
+export let opt = "foo";
+// To allow the modification of opt from the CLI
+export const _set_opt = (v: string) => (opt = v);
+
+export function up() {
+  private_function();
+  console.log("up command", opt);
+}
+
+function private_function() {
+  console.log("private_function");
+}
+
+down._help = "down custom help";
+export function down(force = false, timeout = 5) {
+  console.log("down command", { force, timeout, opt });
+}
+
+export const main = () => console.log("main", opt);
+
+cliteRun(import.meta);
+
+// $ ./examples/example-module.ts --opt bar down true 100
+// down command { force: true, timeout: 100, opt: "bar" }
+//
+// ./examples/example-module.ts --help
+// Usage: <Object file> [Options] [--] [command [command args]]
+//
+// Commands:
+//   down <force> <timeout> down custom help
+//   main                   [default]
+//   up
+//
+// Options:
+//  -h, --help Show this help [default: false]
+//      --opt                 [default: "foo"]
 ```
 
 ## Examples

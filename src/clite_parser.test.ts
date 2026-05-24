@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertThrows } from "jsr:@std/assert@1.0.5";
+import { assert, assertEquals, assertRejects } from "jsr:@std/assert@1.0.5";
 import { cliteParse, cliteRun } from "./clite_parser.ts";
 import { help, hidden, noCommand, subcommand } from "./decorators.ts";
 import { genHelp } from "./help.ts";
@@ -7,8 +7,8 @@ import { getCliteMetadata } from "./metadata.ts";
 import { stripAnsiCode } from "@std/fmt/colors";
 import type { Obj } from "./types.ts";
 
-Deno.test("cliteRun", () => {
-  const result = cliteRun(new Tool(), {
+Deno.test("cliteRun", async () => {
+  const result = await cliteRun(new Tool(), {
     args: [
       "--opt2=false",
       "--opt3=qsdf",
@@ -28,8 +28,8 @@ Deno.test("cliteRun", () => {
   assertEquals(result, expected);
 });
 
-Deno.test("cliteRun help", () => {
-  const result = cliteRun(new Tool(), {
+Deno.test("cliteRun help", async () => {
+  const result = await cliteRun(new Tool(), {
     args: ["--help"],
   });
   const tool = new Tool();
@@ -38,15 +38,17 @@ Deno.test("cliteRun help", () => {
   assertEquals(result, expected);
 });
 
-Deno.test("cliteParse", () => {
-  const result = cliteParse(Tool, { args: ["--opt1=78", "down", "true"] });
+Deno.test("cliteParse", async () => {
+  const result = await cliteParse(Tool, {
+    args: ["--opt1=78", "down", "true"],
+  });
   assertEquals(result.command, "down");
   assertEquals(result.commandArgs, [true]);
 });
 
 Deno.test({
   name: "subcommand",
-  fn() {
+  async fn() {
     @noCommand()
     class Branch {
       delete = false;
@@ -77,16 +79,16 @@ Deno.test({
         return this;
       }
     }
-    const result = cliteRun(ToolWithSubcommand, {
+    const result = (await cliteRun(ToolWithSubcommand, {
       args: ["--git-dir=/tmp", "branch", "--delete", "foo"],
-    }) as Obj;
+    })) as Obj;
     assertEquals(result.branch._clite_parent.gitDir, "/tmp");
     assertEquals(result.branch.delete, true);
     assertEquals(result.branchname, "foo");
 
-    const result2 = cliteRun(ToolWithSubcommand, {
+    const result2 = (await cliteRun(ToolWithSubcommand, {
       args: ["--git-dir=/tmp", "commit", "--all", "--message", "bar"],
-    }) as Obj;
+    })) as Obj;
     assertEquals(result2._clite_parent.gitDir, "/tmp");
     assertEquals(result2.all, true);
     assertEquals(result2.message, "bar");
@@ -95,20 +97,20 @@ Deno.test({
 
 Deno.test({
   name: "boolean true",
-  fn() {
+  async fn() {
     class Tool {
       dryRun = true;
       main() {}
     }
 
-    const result = cliteParse(Tool, {});
+    const result = await cliteParse(Tool, {});
     assertEquals(result.obj.dryRun, true);
   },
 });
 
 Deno.test({
   name: "config file",
-  fn() {
+  async fn() {
     class ToolWithConfig {
       foo = "bar";
       b = true;
@@ -116,7 +118,7 @@ Deno.test({
       main() {}
     }
 
-    const result = cliteParse(ToolWithConfig, {
+    const result = await cliteParse(ToolWithConfig, {
       args: ["--config", "src/test-data/test-config.json"],
       configCli: true,
     });
@@ -128,13 +130,13 @@ Deno.test({
 
 Deno.test({
   name: "config json",
-  fn() {
+  async fn() {
     class ToolWithConfig {
       foo = "bar";
       main() {}
     }
 
-    const result = cliteParse(ToolWithConfig, {
+    const result = await cliteParse(ToolWithConfig, {
       args: ["--config", `{"foo": "from-config"}`],
       configCli: true,
     });
@@ -149,12 +151,12 @@ Deno.test({
       foo = "bar";
       main() {}
     }
-    assertThrows(() => {
+    assertRejects(() =>
       cliteParse(ToolWithConfig, {
         args: ["--config", "src/test-data/bad-config.json"],
         configCli: true,
-      });
-    });
+      })
+    );
   },
 });
 
@@ -165,12 +167,12 @@ Deno.test({
       foo = "bar";
       main() {}
     }
-    assertThrows(() => {
+    assertRejects(() =>
       cliteParse(ToolWithConfig, {
         args: ["--config", "src/test-data/test-config.json"],
         configCli: false,
-      });
-    });
+      })
+    );
   },
 });
 
@@ -182,12 +184,9 @@ Deno.test({
         throw new Error();
       }
     }
-    assertThrows(() => {
-      cliteRun(ToolWithConfig, {
-        args: [],
-        printHelpOnError: true,
-      });
-    });
+    assertRejects(() =>
+      cliteRun(ToolWithConfig, { args: [], printHelpOnError: true })
+    );
   },
 });
 
@@ -199,9 +198,7 @@ Deno.test({
         throw new Error("", { cause: { clite: true } });
       }
     }
-    assertThrows(() => {
-      cliteRun(ToolWithConfig, { args: [] });
-    });
+    assertRejects(() => cliteRun(ToolWithConfig, { args: [] }));
   },
 });
 
@@ -209,9 +206,7 @@ Deno.test({
   name: "no method defined",
   fn() {
     class ToolWithoutCmd {}
-    assertThrows(() => {
-      cliteRun(ToolWithoutCmd, { args: [] });
-    });
+    assertRejects(() => cliteRun(ToolWithoutCmd, { args: [] }));
   },
 });
 
@@ -219,35 +214,33 @@ Deno.test({
   name: "The command doesn't exist",
   fn() {
     class ToolWithoutCmd {}
-    assertThrows(() => {
-      cliteRun(ToolWithoutCmd, { args: ["foo"] });
-    });
+    assertRejects(() => cliteRun(ToolWithoutCmd, { args: ["foo"] }));
   },
 });
 
-Deno.test("cliteRun meta", () => {
-  const result = cliteRun(new Tool(), {
+Deno.test("cliteRun meta", async () => {
+  const result = await cliteRun(new Tool(), {
     args: ["--help"],
     meta: { main: true, url: "./test.ts", resolve: () => "" },
   }) as string;
   assert(stripAnsiCode(result).includes("Usage: ./test.ts [Options]"));
 });
 
-Deno.test("dontConvertCmdArgs", () => {
-  const result = cliteParse(Tool, {
+Deno.test("dontConvertCmdArgs", async () => {
+  const result = await cliteParse(Tool, {
     args: ["--", "main", "123", "true", "foo"],
     dontConvertCmdArgs: true,
   });
   assertEquals(result.command, "main");
   assertEquals(result.commandArgs, ["123", "true", "foo"]);
-  const result2 = cliteParse(Tool, {
+  const result2 = await cliteParse(Tool, {
     args: ["--", "main", "123", "true", "foo"],
   });
   assertEquals(result2.command, "main");
   assertEquals(result2.commandArgs, [123, true, "foo"]);
 });
 
-Deno.test("extends", () => {
+Deno.test("extends", async () => {
   class Tool {
     retry = 2;
     @help("no changes mode")
@@ -273,7 +266,7 @@ Deno.test("extends", () => {
     }
   }
   const child = new Child();
-  const result = cliteParse(child, {});
+  const result = await cliteParse(child, {});
   assertEquals(
     stripAnsiCode(result.help),
     `Usage: <Child file> [Options] [--] [command [command args]]

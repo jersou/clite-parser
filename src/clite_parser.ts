@@ -12,11 +12,11 @@ import { getMethodNames } from "./reflect.ts";
  * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
  * @param config - of clite-parser
  */
-export function cliteRun<O extends Obj>(
+export async function cliteRun<O extends Obj>(
   objOrClass: O | { new (): O },
   config?: CliteRunConfig,
-): unknown {
-  const res = cliteParse(objOrClass, config);
+): Promise<unknown> {
+  const res = await cliteParse(objOrClass, config);
 
   if (!config?.meta || config?.meta.main) {
     try {
@@ -34,17 +34,36 @@ export function cliteRun<O extends Obj>(
   }
 }
 
+function isImportMeta(obj: Obj) {
+  return (typeof obj === "object" && obj !== null &&
+    Object.getPrototypeOf(obj) === null && "url" in obj);
+}
+
+async function getObj<O extends Obj & { config?: string }>(
+  objOrClass: O | { new (): O },
+) {
+  if (isImportMeta(objOrClass)) {
+    const module = await import((objOrClass as unknown as ImportMeta).url);
+    return Object.create(
+      Object.prototype,
+      Object.getOwnPropertyDescriptors(module),
+    );
+  } else {
+    return typeof objOrClass === "function" ? new objOrClass() : objOrClass;
+  }
+}
+
 /**
  * Return the parsing result of obj and the Deno/Node script arguments
  * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
  * @param config - of clite-parser
  */
-export function cliteParse<O extends Obj & { config?: string }>(
+export async function cliteParse<O extends Obj & { config?: string }>(
   objOrClass: O | { new (): O },
   config?: CliteRunConfig,
-): CliteResult<O> {
-  const obj = typeof objOrClass === "function" ? new objOrClass() : objOrClass;
-  const metadata = getCliteMetadata(obj);
+): Promise<CliteResult<O>> {
+  const obj = await getObj(objOrClass);
+  const metadata = getCliteMetadata(obj, isImportMeta(objOrClass));
   const help = genHelp(obj, metadata, config);
   try {
     const parseResult = parseArgs(obj, metadata, config);
@@ -73,7 +92,7 @@ export function cliteParse<O extends Obj & { config?: string }>(
           : obj[command];
         subcommandObj._clite_parent = obj;
         const args = parseResult.commandArgs.map((e) => e.toString());
-        const subcommand = cliteParse(subcommandObj, { ...config, args });
+        const subcommand = await cliteParse(subcommandObj, { ...config, args });
         return { obj, command, commandArgs: [], config, help, subcommand };
       } else if (
         !Object.hasOwn(metadata.methods, command) &&

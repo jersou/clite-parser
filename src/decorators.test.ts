@@ -4,13 +4,13 @@ import { negatable } from "./decorators.ts";
 
 Deno.test({
   name: "@negatable",
-  fn() {
+  async fn() {
     class Tool {
       @negatable()
       dryRun = true;
       main() {}
     }
-    const res = cliteParse(Tool, { args: ["--no-dry-run"] });
+    const res = await cliteParse(Tool, { args: ["--no-dry-run"] });
     assertEquals(res.obj.dryRun, false);
   },
 });

@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "@std/assert";
+import { assertEquals, assertRejects } from "@std/assert";
 import {
   convertCommandArg,
   getArgs,
@@ -135,8 +135,8 @@ class ToolBooleanBeforeCmd {
 }
 Deno.test({
   name: "ToolBooleanBeforeCmd",
-  fn() {
-    const res = cliteParse(ToolBooleanBeforeCmd, {
+  async fn() {
+    const res = await cliteParse(ToolBooleanBeforeCmd, {
       args: ["--retry", "2", "--dry-run", "mainFunc", "bar"],
     });
     assertEquals(res.commandArgs, ["bar"]);
@@ -148,8 +148,8 @@ Deno.test({
 
 Deno.test({
   name: "ToolBooleanBeforeCmdNoCmd",
-  fn() {
-    const res = cliteParse(ToolBooleanBeforeCmd, {
+  async fn() {
+    const res = await cliteParse(ToolBooleanBeforeCmd, {
       args: ["--retry", "2", "--dry-run", "foo", "bar"],
       noCommand: true,
     });
@@ -166,21 +166,19 @@ Deno.test({
     class Tool {
       main() {}
     }
-    assertThrows(() => {
-      cliteParse(Tool, { args: ["--not-exist"] });
-    });
+    assertRejects(() => cliteParse(Tool, { args: ["--not-exist"] }));
   },
 });
 
 Deno.test({
   name: "array option",
-  fn() {
+  async fn() {
     class Tool {
       @alias("a")
       arr: string[] = [];
       main() {}
     }
-    const res = cliteParse(Tool, {
+    const res = await cliteParse(Tool, {
       args: ["--arr=aa", "--arr", "bb", "-a=cc", "-a", "dd", "--a", "ee"],
     });
     assertEquals(res.obj.arr, ["aa", "bb", "cc", "dd", "ee"]);
@@ -189,19 +187,19 @@ Deno.test({
 
 Deno.test({
   name: "capital option",
-  fn() {
+  async fn() {
     class Tool {
       @alias("H")
       helmet = false;
       main() {}
     }
-    const res = cliteParse(Tool, {
+    const res = await cliteParse(Tool, {
       args: ["-H"],
     });
     assertEquals(res.command, "main");
     assertEquals(res.obj.helmet, true);
 
-    const res2 = cliteParse(Tool, {
+    const res2 = await cliteParse(Tool, {
       args: ["-h"],
     });
     assertEquals(res2.command, "--help");
@@ -211,12 +209,12 @@ Deno.test({
 
 Deno.test({
   name: "object option",
-  fn() {
+  async fn() {
     class Tool {
       ac = {};
       main() {}
     }
-    const res = cliteParse(Tool, {
+    const res = await cliteParse(Tool, {
       args: ["--ac.bb", "aaa", "--ac.dd.ee", "v", "--ac.dd.ff", "w"],
     });
     assertEquals(res.obj.ac, { bb: "aaa", dd: { ee: "v", ff: "w" } });
@@ -229,23 +227,19 @@ Deno.test({
     class Tool {
       main() {}
     }
-    assertThrows(() =>
-      cliteParse(Tool, {
-        args: ["--config", "aaa"],
-      })
-    );
+    assertRejects(() => cliteParse(Tool, { args: ["--config", "aaa"] }));
   },
 });
 
 Deno.test({
   name: "_alias",
-  fn() {
+  async fn() {
     class Tool_Alias {
       foo = 12;
       _foo_alias = "f";
       main() {}
     }
-    const result = cliteParse(Tool_Alias, { args: ["-f5"] });
+    const result = await cliteParse(Tool_Alias, { args: ["-f5"] });
     assertEquals(result.obj.foo, 5);
   },
 });
@@ -270,50 +264,59 @@ Deno.test({
 
 Deno.test({
   name: "_negatable",
-  fn() {
+  async fn() {
     class Tool {
       _dryRun_negatable = true;
       dryRun = true;
       main() {}
     }
-    const res = cliteParse(Tool, { args: ["--no-dry-run"] });
+    const res = await cliteParse(Tool, { args: ["--no-dry-run"] });
     assertEquals(res.obj.dryRun, false);
   },
 });
 
 Deno.test({
   name: "_negatable",
-  fn() {
+  async fn() {
     class Tool {
       _dryRun_negatable = true;
       dryRun = true;
       main() {}
     }
-    const res = cliteParse(Tool, { args: ["--no-dry-run"] });
+    const res = await cliteParse(Tool, { args: ["--no-dry-run"] });
     assertEquals(res.obj.dryRun, false);
   },
 });
 
 Deno.test({
   name: "many way to pass options",
-  fn() {
+  async fn() {
     class Tool {
       @alias("l")
       outLimit = 4;
       main() {}
     }
-    assertEquals(cliteParse(Tool, { args: ["-l=8"] }).obj.outLimit, 8);
-    assertEquals(cliteParse(Tool, { args: ["-l", "8"] }).obj.outLimit, 8);
-    assertEquals(cliteParse(Tool, { args: ["-l8"] }).obj.outLimit, 8);
+    assertEquals((await cliteParse(Tool, { args: ["-l=8"] })).obj.outLimit, 8);
     assertEquals(
-      cliteParse(Tool, { args: ["--out-limit", "8"] }).obj.outLimit,
+      (await cliteParse(Tool, { args: ["-l", "8"] })).obj.outLimit,
       8,
     );
-    assertEquals(cliteParse(Tool, { args: ["--out-limit=8"] }).obj.outLimit, 8);
+    assertEquals((await cliteParse(Tool, { args: ["-l8"] })).obj.outLimit, 8);
     assertEquals(
-      cliteParse(Tool, { args: ["--outLimit", "8"] }).obj.outLimit,
+      (await cliteParse(Tool, { args: ["--out-limit", "8"] })).obj.outLimit,
       8,
     );
-    assertEquals(cliteParse(Tool, { args: ["--outLimit=8"] }).obj.outLimit, 8);
+    assertEquals(
+      (await cliteParse(Tool, { args: ["--out-limit=8"] })).obj.outLimit,
+      8,
+    );
+    assertEquals(
+      (await cliteParse(Tool, { args: ["--outLimit", "8"] })).obj.outLimit,
+      8,
+    );
+    assertEquals(
+      (await cliteParse(Tool, { args: ["--outLimit=8"] })).obj.outLimit,
+      8,
+    );
   },
 });

@@ -98,8 +98,8 @@ class ToolUsage {
 
 Deno.test({
   name: "@usage",
-  fn() {
-    const result = cliteParse(ToolUsage, { args: ["--help"] });
+  async fn() {
+    const result = await cliteParse(ToolUsage, { args: ["--help"] });
     assert(result.help.includes(" new usage\n"));
   },
 });
@@ -110,21 +110,21 @@ class Tool_Usage {
 
 Deno.test({
   name: "_usage",
-  fn() {
-    const result = cliteParse(Tool_Usage, { args: ["--help"] });
+  async fn() {
+    const result = await cliteParse(Tool_Usage, { args: ["--help"] });
     assert(result.help.includes(" new usage\n"));
   },
 });
 
 Deno.test({
   name: "@hidden method",
-  fn() {
+  async fn() {
     class ToolHiddenField {
       @hidden()
       foo() {}
       bar() {}
     }
-    const result = cliteParse(ToolHiddenField, { args: ["--help"] });
+    const result = await cliteParse(ToolHiddenField, { args: ["--help"] });
     assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
     assert(result.help.includes("bar"));
   },
@@ -132,24 +132,24 @@ Deno.test({
 
 Deno.test({
   name: "@hidden",
-  fn() {
+  async fn() {
     class ToolHiddenField {
       @hidden()
       foo = 12;
     }
-    const result = cliteParse(ToolHiddenField, { args: ["--help"] });
+    const result = await cliteParse(ToolHiddenField, { args: ["--help"] });
     assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
   },
 });
 
 Deno.test({
   name: "_hidden",
-  fn() {
+  async fn() {
     class Tool_HiddenField {
       _foo_hidden = true;
       foo = 12;
     }
-    const result = cliteParse(Tool_HiddenField, { args: ["--help"] });
+    const result = await cliteParse(Tool_HiddenField, { args: ["--help"] });
     assert(!result.help.includes("foo"), "Help includes foo :\n" + result.help);
   },
 });
@@ -160,16 +160,19 @@ class Tool_Help {
 }
 Deno.test({
   name: "_help",
-  fn() {
-    const result = cliteParse(Tool_Help, { args: ["--help"] });
+  async fn() {
+    const result = await cliteParse(Tool_Help, { args: ["--help"] });
     assert(result.help.includes("foo help"));
   },
 });
 
 Deno.test({
   name: "config",
-  fn() {
-    const result = cliteParse(Tool_Help, { args: ["--help"], configCli: true });
+  async fn() {
+    const result = await cliteParse(Tool_Help, {
+      args: ["--help"],
+      configCli: true,
+    });
     assert(
       result.help.includes(
         "Use this json file or string to read the options",
@@ -180,8 +183,8 @@ Deno.test({
 
 Deno.test({
   name: "config custom help",
-  fn() {
-    const result = cliteParse(Tool_Help, {
+  async fn() {
+    const result = await cliteParse(Tool_Help, {
       args: ["--help"],
       configCli: "custom config help",
     });
@@ -191,26 +194,26 @@ Deno.test({
 
 Deno.test({
   name: "@jsonConfig custom help",
-  fn() {
+  async fn() {
     @jsonConfig("custom config help")
     class Tool_Help {
       foo = 12;
       main() {}
     }
-    const result = cliteParse(Tool_Help);
+    const result = await cliteParse(Tool_Help);
     assert(result.help.includes("custom config help"));
   },
 });
 
 Deno.test({
   name: "@jsonConfig",
-  fn() {
+  async fn() {
     @jsonConfig()
     class Tool_Help {
       foo = 12;
       main() {}
     }
-    const result = cliteParse(Tool_Help);
+    const result = await cliteParse(Tool_Help);
     assert(
       result.help.includes("Use this json file or string to read the options"),
     );
@@ -226,8 +229,8 @@ class Tool_Alias {
 
 Deno.test({
   name: "_alias",
-  fn() {
-    const result = cliteParse(Tool_Alias, { args: ["--help"] });
+  async fn() {
+    const result = await cliteParse(Tool_Alias, { args: ["--help"] });
     assertEquals(
       stripAnsiCode(result.help),
       `Usage: <Tool_Alias file> [Options] [--] [command [command args]]
@@ -242,7 +245,7 @@ Options:
 
 Deno.test({
   name: "@help",
-  fn() {
+  async fn() {
     class ToolHelp {
       @help("foo help")
       foo = 12;
@@ -252,7 +255,7 @@ Deno.test({
       unk: unknown;
     }
 
-    const result = cliteParse(ToolHelp, { args: ["--help"] });
+    const result = await cliteParse(ToolHelp, { args: ["--help"] });
     assertEquals(
       stripAnsiCode(result.help),
       `Usage: <ToolHelp file> [Options] [--] [command [command args]]
@@ -268,10 +271,10 @@ Options:
 
 Deno.test({
   name: "@help",
-  fn() {
+  async fn() {
     class ToolHelp {
     }
-    const result = cliteParse(ToolHelp, {
+    const result = await cliteParse(ToolHelp, {
       args: ["--help"],
       mainFile: "CustomTitle",
     });
@@ -287,10 +290,10 @@ Option:
 
 Deno.test({
   name: "@help",
-  fn() {
+  async fn() {
     class ToolHelp {
     }
-    const result = cliteParse(ToolHelp, {
+    const result = await cliteParse(ToolHelp, {
       args: ["--help"],
       meta: import.meta,
     });
@@ -306,13 +309,13 @@ Option:
 
 Deno.test({
   name: "_negatable help",
-  fn() {
+  async fn() {
     class Tool {
       _dryRun_negatable = true;
       dryRun = true;
       main() {}
     }
-    const res = cliteParse(Tool, { args: [] });
+    const res = await cliteParse(Tool, { args: [] });
     assertEquals(
       stripAnsiCode(res.help),
       `Usage: <Tool file> [Options] [--] [command [command args]]
@@ -330,13 +333,13 @@ Options:
 
 Deno.test({
   name: "_negatable custom help",
-  fn() {
+  async fn() {
     class Tool {
       _dryRun_negatable = "to cancel dry-run";
       dryRun = true;
       main() {}
     }
-    const res = cliteParse(Tool, { args: [] });
+    const res = await cliteParse(Tool, { args: [] });
     assertEquals(
       stripAnsiCode(res.help),
       `Usage: <Tool file> [Options] [--] [command [command args]]
