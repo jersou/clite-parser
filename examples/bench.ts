@@ -81,7 +81,7 @@ if (import.meta.main) { // if the file is imported, do not execute this block
     console.log(`cliteRun() : ${(t1 - t0).toFixed(3)} ms.`);
     // → cliteRun() : 3 ms / 0.30 ms / 0.15 ms / 0.11 ms
   }
-} else { // deno bench ./becnh.ts : 40 µs
+} else { // deno bench ./bench.ts : 40 µs
   const tool = new Tool();
   Deno.bench('cliteRun(Tool, { args: ["doNothing"] })', () => {
     cliteRun(Tool, { args: ["doNothing"] });
@@ -102,12 +102,12 @@ if (import.meta.main) { // if the file is imported, do not execute this block
   Deno.bench("new ToolDecor().doNothing()", () => {
     new ToolDecor().doNothing();
   });
-  // benchmark                                      time/iter (avg)        iter/s      (min … max)           p75      p99     p995
-  // ---------------------------------------------- ----------------------------- --------------------- --------------------------
-  // cliteRun(Tool, { args: ["doNothing"] })                40.2 µs        24,860 ( 34.1 µs … 917.1 µs)  40.1 µs  92.4 µs 135.3 µs
-  // cliteRun(tool, { args: ["doNothing"] })                37.0 µs        27,020 ( 34.3 µs … 837.5 µs)  36.4 µs  50.3 µs  76.2 µs
-  // cliteRun(ToolDecor, { args: ["doNothing"] })           35.6 µs        28,050 ( 32.0 µs … 325.4 µs)  36.3 µs  49.6 µs  69.7 µs
-  // cliteRun(toolDecor, { args: ["doNothing"] })           33.9 µs        29,460 ( 32.0 µs … 218.2 µs)  33.4 µs  45.1 µs  55.5 µs
-  // toolDecor.doNothing()                                   5.4 ns   183,500,000 (  5.4 ns …  17.0 ns)   5.4 ns   5.8 ns   6.5 ns
-  // new ToolDecor().doNothing()                             7.1 ns   141,400,000 (  7.0 ns …  19.5 ns)   7.0 ns   7.5 ns   7.6 ns
+  // | benchmark                                      | time/iter (avg) |        iter/s |      (min … max)      |      p75 |      p99 |     p995 |
+  // | ---------------------------------------------- | --------------- | ------------- | --------------------- | -------- | -------- | -------- |
+  // | cliteRun(Tool, { args: ["doNothing"] })        |        547.6 ns |     1,826,000 | (119.3 ns …   3.2 µs) | 690.5 ns |   2.3 µs |   3.2 µs |
+  // | cliteRun(tool, { args: ["doNothing"] })        |        591.0 ns |     1,692,000 | (116.7 ns …  12.2 µs) | 697.0 ns |  12.2 µs |  12.2 µs |
+  // | cliteRun(ToolDecor, { args: ["doNothing"] })   |        665.8 ns |     1,502,000 | (111.5 ns …  15.4 µs) | 722.6 ns |  15.4 µs |  15.4 µs |
+  // | cliteRun(toolDecor, { args: ["doNothing"] })   |        589.5 ns |     1,696,000 | (105.0 ns …  12.0 µs) | 760.3 ns |   3.2 µs |  12.0 µs |
+  // | toolDecor.doNothing()                          |          3.5 ns |   288,500,000 | (  3.4 ns …   8.9 ns) |   3.4 ns |   4.0 ns |   4.0 ns |
+  // | new ToolDecor().doNothing()                    |          4.6 ns |   216,500,000 | (  4.6 ns …   7.0 ns) |   4.6 ns |   5.1 ns |   5.3 ns |
 }

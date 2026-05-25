@@ -15,6 +15,7 @@
     "test": "deno test -A --ignore=tmp,.cov_profile,node --quiet",
     "test-watch": "deno test -A --watch --ignore=tmp,.cov_profile,node --quiet",
     "run-example": "deno run examples/example.ts --retry=7 down true 3",
+    "bench": "deno bench examples/bench.ts",
     "update-changelog": "conventional-changelog -p conventionalcommits --same-file -i CHANGELOG.md -k deno.json && deno task fmt"
   },
   "imports": {
