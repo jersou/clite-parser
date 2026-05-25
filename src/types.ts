@@ -73,4 +73,6 @@ export type CliteResult<O extends Obj> = {
   subcommand?: CliteResult<Obj>;
 };
 
-export type CliteError = Error & { cause?: { clite?: boolean; error?: Error } };
+export type CliteError = Error & {
+  cause?: { clite?: boolean; relaunchAfterUpdate?: boolean; error?: Error };
+};
