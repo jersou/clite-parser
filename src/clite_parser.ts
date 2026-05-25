@@ -5,7 +5,9 @@ import { runCommand } from "./command.ts";
 import { getCliteMetadata } from "./metadata.ts";
 import { loadConfig } from "./load_config.ts";
 import type { CliteError, CliteResult, CliteRunConfig, Obj } from "./types.ts";
-import { getMethodNames } from "./reflect.ts";
+import { getFieldNames, getMethodNames } from "./reflect.ts";
+import fs from "node:fs";
+import path from "node:path";
 
 /**
  * Run the command of obj depending on the Deno/Node script arguments
@@ -44,10 +46,43 @@ async function getObj<O extends Obj & { config?: string }>(
 ) {
   if (isImportMeta(objOrClass)) {
     const module = await import((objOrClass as unknown as ImportMeta).url);
-    return Object.create(
+    const obj = Object.create(
       Object.prototype,
       Object.getOwnPropertyDescriptors(module),
     );
+    const allMethods = getMethodNames(obj);
+    const fields = getFieldNames(obj) as string[];
+    const missingSetters = fields.filter((field) =>
+      !allMethods.includes(`_set_${field}`)
+    );
+    if (missingSetters.length) {
+      const meta  =  (objOrClass as unknown as ImportMeta)
+      const tempPath =
+        meta.dirname + "/.temp-clite." + path.basename(meta.filename!);
+      const rawCode = fs.readFileSync(
+        new URL((objOrClass as unknown as ImportMeta).url),
+        "utf-8",
+      );
+      const setters = missingSetters.map(
+        (field) => `export function _set_${field}(v) { ${field} = v; }`,
+      );
+      const newCode = [rawCode, ...setters].join("\n");
+      try {
+        fs.writeFileSync(tempPath, newCode, "utf-8");
+        const newModule = await import(tempPath.toString());
+         throw new Error("fork")
+      // return  Object.create(
+      //     Object.prototype,
+      //     Object.getOwnPropertyDescriptors(newModule),
+      //   );
+      } finally {
+        if (fs.existsSync(tempPath)) {
+          fs.unlinkSync(tempPath);
+        }
+      }
+    } else {
+      return obj;
+    }
   } else {
     return typeof objOrClass === "function" ? new objOrClass() : objOrClass;
   }

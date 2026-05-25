@@ -3,7 +3,7 @@ import { cliteRun } from "../mod.ts";
 
 export let opt = "foo";
 // To allow the modification of opt from the CLI
-export const _set_opt = (v: string) => (opt = v);
+// export const _set_opt = (v: string) => (opt = v);
 
 export function up() {
   private_function();
@@ -19,7 +19,9 @@ export function down(force = false, timeout = 5) {
   console.log("down command", { force, timeout, opt });
 }
 
-export const main = () => console.log("main", opt);
+export const main = () => {
+  console.log("main", { opt });
+};
 
 cliteRun(import.meta);
 
