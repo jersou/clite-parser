@@ -33,7 +33,7 @@ to process the CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
-import { cliteRun } from "jsr:@jersou/clite@0.8.0";
+import { cliteRun } from "jsr:@jersou/clite@0.8.1";
 // or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
 // or import { cliteRun } from "clite-parser"; // after "npm install clite-parser" for Node usage
 
@@ -105,6 +105,8 @@ Generate a CLI with `cliteRun(import.meta)` : exported functions are available
 as commands.
 
 ```typescript
+import { cliteRun } from "clite-parser";
+
 export function up() {
   private_function();
   console.log("up command");
@@ -151,7 +153,11 @@ You must append these lines to "example-module.ts" :
 Do you want me to append this lines at the end of "example-module.ts" now ? [Y/n]
 ```
 
+Example with an option setter :
+
 ```typescript
+import { cliteRun } from "clite-parser";
+
 export let opt = "foo";
 // To allow the modification of opt from the CLI
 export const _set_opt = (v: typeof opt) => (opt = v);
@@ -190,6 +196,15 @@ cliteRun(import.meta);
 //      --opt                 [default: "foo"]
 ```
 
+Note: Clite can generate CLI from imported module with `import * as ...` :
+
+```
+import { cliteRun } from "clite-parser";
+import * as tool from "./example-module.ts";
+
+cliteRun(tool);
+```
+
 ## Examples
 
 Several examples can be found in the [examples/](./examples) folder.
@@ -199,7 +214,7 @@ Several examples can be found in the [examples/](./examples) folder.
 Works with vanilla typescript or with experimentalDecorators = true
 
 ```typescript
-import { alias, cliteRun, help } from "jsr:@jersou/clite@0.8.0";
+import { alias, cliteRun, help } from "jsr:@jersou/clite@0.8.1";
 
 @help("This tool is a little example of CliteParser") // optional description
 class Tool {
@@ -251,7 +266,7 @@ Options:
 ### Full example without decorator (Javascript)
 
 ```javascript
-import { cliteRun } from "jsr:@jersou/clite@0.8.0";
+import { cliteRun } from "jsr:@jersou/clite@0.8.1";
 
 class Tool {
   _help = "This tool is a little example of CliteParser"; // optional description
@@ -370,7 +385,7 @@ In summary :
 ### Help description with the `@help` decorator or inline help
 
 ```typescript
-import { cliteRun, help } from "jsr:@jersou/clite@0.8.0";
+import { cliteRun, help } from "jsr:@jersou/clite@0.8.1";
 
 @help("This tool is a little example of CliteParser")
 class Tool {
@@ -402,7 +417,7 @@ as description in the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.8.0";
+import { cliteRun } from "jsr:@jersou/clite@0.8.1";
 
 class Tool {
   _help = "This tool is a little example of CliteParser"; // optional description
@@ -730,7 +745,7 @@ the command execution. Else, the help is print only for errors that have
 It's useful if a required option is missing, for example.
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.8.0";
+import { cliteRun } from "jsr:@jersou/clite@0.8.1";
 export class Tool {
   throw = "true";
   main() {
@@ -747,7 +762,7 @@ To print help on specific error only, without `printHelpOnError=true`, use
 `{ cause: { clite: true } }` :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.8.0";
+import { cliteRun } from "jsr:@jersou/clite@0.8.1";
 export class Tool {
   noThrow = false;
 
@@ -849,7 +864,7 @@ $ ./Tool.ts -- main 123 true foo
 A plain JS Object can be used :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.8.0";
+import { cliteRun } from "jsr:@jersou/clite@0.8.1";
 
 cliteRun({
   retry: 2,
@@ -949,7 +964,7 @@ With [esm.sh](https://code.esm.sh/),
 [jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
-import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.8.0";
+import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.8.1";
 
 class Tool {
   opt = 123;

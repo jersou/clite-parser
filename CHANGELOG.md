@@ -1,3 +1,14 @@
+## [0.8.1](https://github.com/jersou/clite-parser/compare/0.8.0...0.8.1) (2026-05-26)
+
+### Features
+
+- CLI from ESM: ask to automatically append setters to the file
+  ([4da432f](https://github.com/jersou/clite-parser/commit/4da432f7effbdc9d71027d2cf96d0356d09e5e01))
+- CLI from an imported ES module
+  ([e7507a9](https://github.com/jersou/clite-parser/commit/e7507a95015e9625dd5579f1b17b8885ba3f68d4))
+- **help:** <{Class name} file> → <script path>
+  ([80ce39d](https://github.com/jersou/clite-parser/commit/80ce39d8232a0c2ffd0a88ffd2941945df5845e6))
+
 ## [0.8.0](https://github.com/jersou/clite-parser/compare/0.7.7...0.8.0) (2026-05-24)
 
 ### Features

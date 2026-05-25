@@ -19,7 +19,7 @@ export type CliteRunConfig = {
    */
   printHelpOnError?: boolean;
   /**
-   * allows to change the name of the file in the help, instead of the default <{Class name} file>
+   * allows to change the name of the file in the help, instead of the default <script path>
    */
   mainFile?: string;
   /**

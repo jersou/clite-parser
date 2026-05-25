@@ -471,9 +471,8 @@ function genHelp(obj, metadata, config) {
   if (metadata.help) {
     helpLines.push(metadata.help + "\n");
   }
-  const name = Object.getPrototypeOf(obj).constructor.name;
   const mainFile = config?.mainFile ??
-    config?.meta?.url?.replace(/.*\//, "./") ?? `<${name} file>`;
+    config?.meta?.url?.replace(/.*\//, "./") ?? "<script path>";
   let usage2 = `${boldUnder("Usage:")} `;
   if (metadata.usage) {
     usage2 = `${usage2}${metadata.usage}`;
@@ -1019,7 +1018,7 @@ function loadConfig(parseResult, obj) {
 import { appendFileSync } from "node:fs";
 import readline from "node:readline/promises";
 import path from "node:path";
-async function cliteRun(objOrClass, config) {
+async function cliteRun(objOrClass, config = {}) {
   let res;
   try {
     res = await cliteParse(objOrClass, config);
@@ -1044,87 +1043,13 @@ async function cliteRun(objOrClass, config) {
     }
   }
 }
-function isImportMeta(obj) {
-  return typeof obj === "object" && obj !== null &&
-    Object.getPrototypeOf(obj) === null && "url" in obj;
-}
-async function handleMissingEsmSetter(meta, missingSetters) {
-  const typescript = meta.filename.toLowerCase().endsWith(".ts");
-  const setters = missingSetters.map((field) =>
-    typescript
-      ? `export const _set_${field} = (v: typeof ${field}) => (${field} = v);`
-      : `export const _set_${field} = (v) => (${field} = v);`
-  );
-  const msg = [
-    `This module contains exported variables without 'clite' setters : ${
-      missingSetters.join(", ")
-    }.`,
-    `It's necessary for Clite to process options (= exported var/let) due to ESM security limitations.`,
-    `You must append these lines to "${path.basename(meta.filename)}" :`,
-    `${setters.map((s) => `    ${s}`).join("\n")}`,
-    bold(
-      `Do you want me to append this lines at the end of "${meta.filename}" now ?`,
-    ),
-  ];
-  const userResp = await confirmDefaultTrue(bgYellow(msg.join("\n")));
-  if (userResp) {
-    const newCode = [
-      "",
-      "// Clite setters for options",
-      ...setters,
-    ].join("\n");
-    appendFileSync(meta.filename, newCode);
-    console.log(bgGreen(`File updated !`));
-    console.log(bgYellow(`You must relaunch your command !`));
-    throw new Error("file updated, relaunch !", {
-      cause: {
-        clite: true,
-        relaunchAfterUpdate: true,
-      },
-    });
-  } else {
-    console.log(bgYellow(`Ignore these missing setters...`));
-  }
-}
-async function getObj(objOrClass) {
-  if (isImportMeta(objOrClass)) {
-    const meta = objOrClass;
-    const module = await import(meta.url);
-    const obj = Object.create(
-      Object.prototype,
-      Object.getOwnPropertyDescriptors(module),
-    );
-    const allMethods = getMethodNames(obj);
-    const fields = getFieldNames(obj);
-    const missingSetters = fields.filter((field) =>
-      !allMethods.includes(`_set_${field}`)
-    );
-    if (missingSetters.length) {
-      await handleMissingEsmSetter(meta, missingSetters);
-    }
-    return obj;
-  } else {
-    return typeof objOrClass === "function" ? new objOrClass() : objOrClass;
-  }
-}
-async function confirmDefaultTrue(message) {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false,
-  });
-  const answer = await rl.question(`${message} [Y/n] `);
-  rl.close();
-  if (answer === null) {
-    return true;
-  } else {
-    const input = answer.trim().toLowerCase();
-    return !input.startsWith("n");
-  }
-}
-async function cliteParse(objOrClass, config) {
+async function cliteParse(objOrClass, config = {}) {
   const obj = await getObj(objOrClass);
-  const metadata = getCliteMetadata(obj, isImportMeta(objOrClass));
+  const isImportMetaObj = isImportMeta(objOrClass);
+  if (isImportMetaObj && !config.meta) {
+    config.meta = objOrClass;
+  }
+  const metadata = getCliteMetadata(obj, isImportMetaObj);
   const help2 = genHelp(obj, metadata, config);
   try {
     const parseResult = parseArgs2(obj, metadata, config);
@@ -1199,6 +1124,91 @@ async function cliteParse(objOrClass, config) {
 ${bgRed(bold("The error :"))}`);
     }
     throw e;
+  }
+}
+function isImportMeta(obj) {
+  return typeof obj === "object" && obj !== null &&
+    Object.getPrototypeOf(obj) === null && "url" in obj;
+}
+async function handleMissingEsmSetter(meta, missingSetters) {
+  const typescript = meta.filename.toLowerCase().endsWith(".ts");
+  const setters = missingSetters.map((field) =>
+    typescript
+      ? `export const _set_${field} = (v: typeof ${field}) => (${field} = v);`
+      : `export const _set_${field} = (v) => (${field} = v);`
+  );
+  const msg = [
+    `This module contains exported variables without 'clite' setters : ${
+      missingSetters.join(", ")
+    }.`,
+    `It's necessary for Clite to process options (= exported var/let) due to ESM security limitations.`,
+    `You must append these lines to "${path.basename(meta.filename)}" :`,
+    `${setters.map((s) => `    ${s}`).join("\n")}`,
+    bold(
+      `Do you want me to append this lines at the end of "${meta.filename}" now ?`,
+    ),
+  ];
+  const userResp = await confirmDefaultTrue(bgYellow(msg.join("\n")));
+  if (userResp) {
+    const newCode = [
+      "",
+      "// Clite setters for options",
+      ...setters,
+    ].join("\n");
+    appendFileSync(meta.filename, newCode);
+    console.log(bgGreen(`File updated !`));
+    console.log(bgYellow(`You must relaunch your command !`));
+    throw new Error("file updated, relaunch !", {
+      cause: {
+        clite: true,
+        relaunchAfterUpdate: true,
+      },
+    });
+  } else {
+    console.log(bgYellow(`Ignore these missing setters...`));
+  }
+}
+async function getObj(objOrClass) {
+  if (isImportMeta(objOrClass)) {
+    const meta = objOrClass;
+    const module = await import(meta.url);
+    const obj = Object.create(
+      Object.prototype,
+      Object.getOwnPropertyDescriptors(module),
+    );
+    const allMethods = getMethodNames(obj);
+    const fields = getFieldNames(obj);
+    const missingSetters = fields.filter((field) =>
+      !allMethods.includes(`_set_${field}`)
+    );
+    if (missingSetters.length) {
+      await handleMissingEsmSetter(meta, missingSetters);
+    }
+    return obj;
+  } else if (Object.prototype.toString.call(objOrClass) === "[object Module]") {
+    return Object.create(
+      Object.prototype,
+      Object.getOwnPropertyDescriptors(objOrClass),
+    );
+  } else if (typeof objOrClass === "function") {
+    return new objOrClass();
+  } else {
+    return objOrClass;
+  }
+}
+async function confirmDefaultTrue(message) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false,
+  });
+  const answer = await rl.question(`${message} [Y/n] `);
+  rl.close();
+  if (answer === null) {
+    return true;
+  } else {
+    const input = answer.trim().toLowerCase();
+    return !input.startsWith("n");
   }
 }
 export {
