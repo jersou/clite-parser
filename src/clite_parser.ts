@@ -53,6 +53,46 @@ function isImportMeta(obj: Obj) {
     Object.getPrototypeOf(obj) === null && "url" in obj);
 }
 
+async function handleMissingEsmSetter(
+  meta: ImportMeta,
+  missingSetters: string[],
+) {
+  const typescript = meta.filename!.toLowerCase().endsWith(".ts");
+  const setters = missingSetters.map((field) =>
+    typescript
+      ? `export const _set_${field} = (v: typeof ${field}) => (${field} = v);`
+      : `export const _set_${field} = (v) => (${field} = v);`
+  );
+
+  const msg = [
+    `This module contains exported variables without 'clite' setters : ${
+      missingSetters.join(", ")
+    }.`,
+    `It's necessary for Clite to process options (= exported var/let) due to ESM security limitations.`,
+    `You must append these lines to "${path.basename(meta.filename!)}" :`,
+  ];
+  console.log(bgYellow(msg.join("\n")));
+
+  console.log(`${setters.map((s) => `    ${s}`).join("\n")}`);
+
+  const userResp = await confirmDefaultTrue(
+    bold(
+      bgYellow(
+        `Do you want me to append this lines at the end of "${meta.filename}" now ?`,
+      ),
+    ),
+  );
+  if (userResp) {
+    const newCode = ["", ...setters].join("\n");
+    appendFileSync(meta.filename!, newCode);
+    console.log(bgGreen(`File updated !`));
+    console.log(bgYellow(`You must relauch your command`));
+    throw new Error("file updated, relaunch !", {
+      cause: { clite: true, relaunchAfterUpdate: true },
+    });
+  }
+}
+
 async function getObj<O extends Obj & { config?: string }>(
   objOrClass: O | { new (): O },
 ) {
@@ -70,41 +110,7 @@ async function getObj<O extends Obj & { config?: string }>(
     );
 
     if (missingSetters.length) {
-      const typescript = meta.filename!.toLowerCase().endsWith(".ts");
-      const setters = missingSetters.map(
-        (field) =>
-          typescript
-            ? `export const _set_${field} = (v: typeof ${field}) => (${field} = v);`
-            : `export const _set_${field} = (v) => (${field} = v);`,
-      );
-      console.log(
-        bgYellow(
-          `This module contains exported variables without 'clite' setters : ${
-            missingSetters.join(", ")
-          }`,
-        ),
-      );
-      console.log(
-        bgYellow(
-          `You must append this lines to "${path.basename(meta.filename!)}" :`,
-        ),
-      );
-      console.log(`${setters.map((s) => `    ${s}`).join("\n")}`);
-
-      const userResp = await confirmDefaultTrue(
-        bold(bgYellow(
-          `Do you want me to append this lines at the end of "${meta.filename}" now ?`,
-        )),
-      );
-      if (userResp) {
-        const newCode = ["", ...setters].join("\n");
-        appendFileSync(meta.filename!, newCode);
-        console.log(bgGreen(`File updated !`));
-        console.log(bgYellow(`You must relauch your command`));
-        throw new Error("file updated, relaunch !", {
-          cause: { clite: true, relaunchAfterUpdate: true },
-        });
-      }
+      await handleMissingEsmSetter(meta, missingSetters);
     } else {
       return obj;
     }
