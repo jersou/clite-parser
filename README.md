@@ -5,17 +5,17 @@
 [![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**CliteParser generates CLI from classes or ESM modules** (or objects) : each
+**CliteParser generates CLI from classes or ES modules** (or objects) : each
 field generates an "option", each method generates a "command" (positional
 arguments).
 
-Just write your tool as a class (or as **ESM module**), and call Clite with
-it... Clite will deserialize the command line in your class/module and launch
-the right methods/function or display the help... Then you can optionally
+Just write your tool as a class (or as **ES module**), and call Clite with it...
+Clite will deserialize the command line in your class/module and launch the
+right methods/function or display the help... Then you can optionally
 personalize the displayed help or add aliases (for example) to complete your
 CLI.
 
-**Example with an ESM module :**
+**Example with an ES module :**
 
 ![ESM-demo.mjs.png](ESM-demo.mjs.png)
 
@@ -94,7 +94,7 @@ $ deno https://raw.githubusercontent.com/jersou/clite-parser/refs/heads/main/exa
 down command { force: true, timeout: 14 } Tool { retry: 4, dryRun: true, webUrl: "tttt" }
 ```
 
-## Generate a CLI with ESM modules
+## Generate a CLI with ES modules
 
 Example from [examples/example-module.ts](./examples/example-module.ts) or
 [examples/node-npm/simple/example-module.mjs](./examples/node-npm/simple/example-module.mjs)
