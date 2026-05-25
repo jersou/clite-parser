@@ -2,4 +2,3 @@
 /tmp*
 /.cov_profile
 **/node_modules
-/node/vendor

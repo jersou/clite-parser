@@ -21,7 +21,8 @@ CLI.
 
 In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
 to process the CLI, and `export const _set_opt = (v) => (opt = v);` to allow
-modification of the `opt` option.
+modification of the `opt` option (Clite suggests adding it automatically at
+first run).
 
 **Example with a class :**
 
@@ -136,13 +137,24 @@ cliteRun(import.meta);
 //   -h, --help Show this help [default: false]
 ```
 
-The var/let variables are exposed only if they are exported and if there is a
+Due to ESM security limitations (exported variables are read only), the var/let
+variables are exposed as CLI options only if they are exported and if there is a
 "_set_<name>" function that allows their modification.
+
+Clite suggests adding it automatically at first run :
+
+```
+This module contains exported variables without 'clite' setters : opt.
+It's necessary for Clite to process options (= exported var/let) due to ESM security limitations.
+You must append these lines to "example-module.ts" :
+    export const _set_opt = (v: typeof opt) => (opt = v);
+Do you want me to append this lines at the end of "example-module.ts" now ? [Y/n]
+```
 
 ```typescript
 export let opt = "foo";
 // To allow the modification of opt from the CLI
-export const _set_opt = (v: string) => (opt = v);
+export const _set_opt = (v: typeof opt) => (opt = v);
 
 export function up() {
   private_function();

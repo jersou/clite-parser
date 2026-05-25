@@ -55,6 +55,7 @@ export type CliteResult<O extends Obj> = {
 export type CliteError = Error & {
   cause?: {
     clite?: boolean;
+    relaunchAfterUpdate?: boolean;
     error?: Error;
   };
 };

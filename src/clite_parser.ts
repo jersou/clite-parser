@@ -7,6 +7,7 @@ import { loadConfig } from "./load_config.ts";
 import type { CliteError, CliteResult, CliteRunConfig, Obj } from "./types.ts";
 import { getFieldNames, getMethodNames } from "./reflect.ts";
 import { appendFileSync } from "node:fs";
+import readline from "node:readline/promises";
 import path from "node:path";
 
 /**
@@ -66,30 +67,29 @@ async function handleMissingEsmSetter(
 
   const msg = [
     `This module contains exported variables without 'clite' setters : ${
-      missingSetters.join(", ")
+      missingSetters.join(
+        ", ",
+      )
     }.`,
     `It's necessary for Clite to process options (= exported var/let) due to ESM security limitations.`,
     `You must append these lines to "${path.basename(meta.filename!)}" :`,
-  ];
-  console.log(bgYellow(msg.join("\n")));
-
-  console.log(`${setters.map((s) => `    ${s}`).join("\n")}`);
-
-  const userResp = await confirmDefaultTrue(
+    `${setters.map((s) => `    ${s}`).join("\n")}`,
     bold(
-      bgYellow(
-        `Do you want me to append this lines at the end of "${meta.filename}" now ?`,
-      ),
+      `Do you want me to append this lines at the end of "${meta.filename}" now ?`,
     ),
-  );
+  ];
+
+  const userResp = await confirmDefaultTrue(bgYellow(msg.join("\n")));
   if (userResp) {
-    const newCode = ["", ...setters].join("\n");
+    const newCode = ["", "// Clite setters for options", ...setters].join("\n");
     appendFileSync(meta.filename!, newCode);
     console.log(bgGreen(`File updated !`));
-    console.log(bgYellow(`You must relauch your command`));
+    console.log(bgYellow(`You must relaunch your command !`));
     throw new Error("file updated, relaunch !", {
       cause: { clite: true, relaunchAfterUpdate: true },
     });
+  } else {
+    console.log(bgYellow(`Ignore these missing setters...`));
   }
 }
 
@@ -111,25 +111,25 @@ async function getObj<O extends Obj & { config?: string }>(
 
     if (missingSetters.length) {
       await handleMissingEsmSetter(meta, missingSetters);
-    } else {
-      return obj;
     }
+    return obj;
   } else {
     return typeof objOrClass === "function" ? new objOrClass() : objOrClass;
   }
 }
 
 async function confirmDefaultTrue(message: string): Promise<boolean> {
-  await Deno.stdout.write(new TextEncoder().encode(`${message} [Y/n] `));
-  const buffer = new Uint8Array(1024);
-  const n = await Deno.stdin.read(buffer);
-  if (n === null) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false,
+  });
+  const answer = await rl.question(`${message} [Y/n] `);
+  rl.close();
+  if (answer === null) {
     return true;
   } else {
-    const input = new TextDecoder()
-      .decode(buffer.subarray(0, n))
-      .trim()
-      .toLowerCase();
+    const input = answer.trim().toLowerCase();
     return !input.startsWith("n");
   }
 }

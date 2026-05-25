@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run -A
+#!/usr/bin/env -S node
 import { cliteRun } from "./dist/mod.mjs";
 
 class Tool {
