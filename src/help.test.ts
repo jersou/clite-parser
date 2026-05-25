@@ -17,7 +17,7 @@ Deno.test("genHelp", () => {
   const tool = new Tool();
   const expected = `test data
 
-Usage: <Tool file> [Options] [--] [command [command args]]
+Usage: <script path> [Options] [--] [command [command args]]
 
 Commands:
   up
@@ -40,7 +40,7 @@ Deno.test("genHelp  noCommand", () => {
   const tool = new Tool();
   const expected = `test data
 
-Usage: <Tool file> [Options] [--] [args]
+Usage: <script path> [Options] [--] [args]
 
 Options:
  -h, --help           Show this help [default: false]
@@ -233,7 +233,7 @@ Deno.test({
     const result = await cliteParse(Tool_Alias, { args: ["--help"] });
     assertEquals(
       stripAnsiCode(result.help),
-      `Usage: <Tool_Alias file> [Options] [--] [command [command args]]
+      `Usage: <script path> [Options] [--] [command [command args]]
 
 Options:
        -h, --help Show this help [default: false]
@@ -258,7 +258,7 @@ Deno.test({
     const result = await cliteParse(ToolHelp, { args: ["--help"] });
     assertEquals(
       stripAnsiCode(result.help),
-      `Usage: <ToolHelp file> [Options] [--] [command [command args]]
+      `Usage: <script path> [Options] [--] [command [command args]]
 
 Options:
  -h, --help    Show this help [default: false]
@@ -318,7 +318,7 @@ Deno.test({
     const res = await cliteParse(Tool, { args: [] });
     assertEquals(
       stripAnsiCode(res.help),
-      `Usage: <Tool file> [Options] [--] [command [command args]]
+      `Usage: <script path> [Options] [--] [command [command args]]
 
 Command:
   main [default]
@@ -342,7 +342,7 @@ Deno.test({
     const res = await cliteParse(Tool, { args: [] });
     assertEquals(
       stripAnsiCode(res.help),
-      `Usage: <Tool file> [Options] [--] [command [command args]]
+      `Usage: <script path> [Options] [--] [command [command args]]
 
 Command:
   main [default]

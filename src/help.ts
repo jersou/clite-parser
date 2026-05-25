@@ -151,10 +151,9 @@ export function genHelp<O extends Obj>(
   if (metadata.help) {
     helpLines.push(metadata.help + "\n");
   }
-  const name = Object.getPrototypeOf(obj).constructor.name;
   const mainFile = config?.mainFile ??
     config?.meta?.url?.replace(/.*\//, "./") ??
-    `<${name} file>`;
+    "<script path>";
 
   let usage = `${boldUnder("Usage:")} `;
   if (metadata.usage) {
