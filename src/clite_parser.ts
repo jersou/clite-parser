@@ -49,91 +49,6 @@ export async function cliteRun<O extends Obj>(
   }
 }
 
-function isImportMeta(obj: Obj) {
-  return (typeof obj === "object" && obj !== null &&
-    Object.getPrototypeOf(obj) === null && "url" in obj);
-}
-
-async function handleMissingEsmSetter(
-  meta: ImportMeta,
-  missingSetters: string[],
-) {
-  const typescript = meta.filename!.toLowerCase().endsWith(".ts");
-  const setters = missingSetters.map((field) =>
-    typescript
-      ? `export const _set_${field} = (v: typeof ${field}) => (${field} = v);`
-      : `export const _set_${field} = (v) => (${field} = v);`
-  );
-
-  const msg = [
-    `This module contains exported variables without 'clite' setters : ${
-      missingSetters.join(
-        ", ",
-      )
-    }.`,
-    `It's necessary for Clite to process options (= exported var/let) due to ESM security limitations.`,
-    `You must append these lines to "${path.basename(meta.filename!)}" :`,
-    `${setters.map((s) => `    ${s}`).join("\n")}`,
-    bold(
-      `Do you want me to append this lines at the end of "${meta.filename}" now ?`,
-    ),
-  ];
-
-  const userResp = await confirmDefaultTrue(bgYellow(msg.join("\n")));
-  if (userResp) {
-    const newCode = ["", "// Clite setters for options", ...setters].join("\n");
-    appendFileSync(meta.filename!, newCode);
-    console.log(bgGreen(`File updated !`));
-    console.log(bgYellow(`You must relaunch your command !`));
-    throw new Error("file updated, relaunch !", {
-      cause: { clite: true, relaunchAfterUpdate: true },
-    });
-  } else {
-    console.log(bgYellow(`Ignore these missing setters...`));
-  }
-}
-
-async function getObj<O extends Obj & { config?: string }>(
-  objOrClass: O | { new (): O },
-) {
-  if (isImportMeta(objOrClass)) {
-    const meta = objOrClass as unknown as ImportMeta;
-    const module = await import(meta.url);
-    const obj = Object.create(
-      Object.prototype,
-      Object.getOwnPropertyDescriptors(module),
-    );
-    const allMethods = getMethodNames(obj);
-    const fields = getFieldNames(obj) as string[];
-    const missingSetters = fields.filter((field) =>
-      !allMethods.includes(`_set_${field}`)
-    );
-
-    if (missingSetters.length) {
-      await handleMissingEsmSetter(meta, missingSetters);
-    }
-    return obj;
-  } else {
-    return typeof objOrClass === "function" ? new objOrClass() : objOrClass;
-  }
-}
-
-async function confirmDefaultTrue(message: string): Promise<boolean> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false,
-  });
-  const answer = await rl.question(`${message} [Y/n] `);
-  rl.close();
-  if (answer === null) {
-    return true;
-  } else {
-    const input = answer.trim().toLowerCase();
-    return !input.startsWith("n");
-  }
-}
-
 /**
  * Return the parsing result of obj and the Deno/Node script arguments
  * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
@@ -194,5 +109,94 @@ export async function cliteParse<O extends Obj & { config?: string }>(
       console.error(`${help}\n${bgRed(bold("The error :"))}`);
     }
     throw e;
+  }
+}
+
+function isImportMeta(obj: Obj) {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    Object.getPrototypeOf(obj) === null &&
+    "url" in obj
+  );
+}
+
+async function handleMissingEsmSetter(
+  meta: ImportMeta,
+  missingSetters: string[],
+) {
+  const typescript = meta.filename!.toLowerCase().endsWith(".ts");
+  const setters = missingSetters.map((field) =>
+    typescript
+      ? `export const _set_${field} = (v: typeof ${field}) => (${field} = v);`
+      : `export const _set_${field} = (v) => (${field} = v);`
+  );
+
+  const msg = [
+    `This module contains exported variables without 'clite' setters : ${
+      missingSetters.join(
+        ", ",
+      )
+    }.`,
+    `It's necessary for Clite to process options (= exported var/let) due to ESM security limitations.`,
+    `You must append these lines to "${path.basename(meta.filename!)}" :`,
+    `${setters.map((s) => `    ${s}`).join("\n")}`,
+    bold(
+      `Do you want me to append this lines at the end of "${meta.filename}" now ?`,
+    ),
+  ];
+
+  const userResp = await confirmDefaultTrue(bgYellow(msg.join("\n")));
+  if (userResp) {
+    const newCode = ["", "// Clite setters for options", ...setters].join("\n");
+    appendFileSync(meta.filename!, newCode);
+    console.log(bgGreen(`File updated !`));
+    console.log(bgYellow(`You must relaunch your command !`));
+    throw new Error("file updated, relaunch !", {
+      cause: { clite: true, relaunchAfterUpdate: true },
+    });
+  } else {
+    console.log(bgYellow(`Ignore these missing setters...`));
+  }
+}
+
+async function getObj<O extends Obj & { config?: string }>(
+  objOrClass: O | { new (): O },
+) {
+  if (isImportMeta(objOrClass)) {
+    const meta = objOrClass as unknown as ImportMeta;
+    const module = await import(meta.url);
+    const obj = Object.create(
+      Object.prototype,
+      Object.getOwnPropertyDescriptors(module),
+    );
+    const allMethods = getMethodNames(obj);
+    const fields = getFieldNames(obj) as string[];
+    const missingSetters = fields.filter(
+      (field) => !allMethods.includes(`_set_${field}`),
+    );
+
+    if (missingSetters.length) {
+      await handleMissingEsmSetter(meta, missingSetters);
+    }
+    return obj;
+  } else {
+    return typeof objOrClass === "function" ? new objOrClass() : objOrClass;
+  }
+}
+
+async function confirmDefaultTrue(message: string): Promise<boolean> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false,
+  });
+  const answer = await rl.question(`${message} [Y/n] `);
+  rl.close();
+  if (answer === null) {
+    return true;
+  } else {
+    const input = answer.trim().toLowerCase();
+    return !input.startsWith("n");
   }
 }
