@@ -17,7 +17,7 @@ import path from "node:path";
  */
 export async function cliteRun<O extends Obj>(
   objOrClass: O | { new (): O },
-  config?: CliteRunConfig,
+  config: CliteRunConfig = {},
 ): Promise<unknown> {
   let res;
   try {
@@ -56,10 +56,14 @@ export async function cliteRun<O extends Obj>(
  */
 export async function cliteParse<O extends Obj & { config?: string }>(
   objOrClass: O | { new (): O },
-  config?: CliteRunConfig,
+  config: CliteRunConfig = {},
 ): Promise<CliteResult<O>> {
   const obj = await getObj(objOrClass);
-  const metadata = getCliteMetadata(obj, isImportMeta(objOrClass));
+  const isImportMetaObj = isImportMeta(objOrClass);
+  if (isImportMetaObj && !config.meta) {
+    config.meta = objOrClass as unknown as ImportMeta;
+  }
+  const metadata = getCliteMetadata(obj, isImportMetaObj);
   const help = genHelp(obj, metadata, config);
   try {
     const parseResult = parseArgs(obj, metadata, config);
@@ -180,8 +184,15 @@ async function getObj<O extends Obj & { config?: string }>(
       await handleMissingEsmSetter(meta, missingSetters);
     }
     return obj;
+  } else if (Object.prototype.toString.call(objOrClass) === "[object Module]") {
+    return Object.create(
+      Object.prototype,
+      Object.getOwnPropertyDescriptors(objOrClass),
+    );
+  } else if (typeof objOrClass === "function") {
+    return new objOrClass();
   } else {
-    return typeof objOrClass === "function" ? new objOrClass() : objOrClass;
+    return objOrClass;
   }
 }
 

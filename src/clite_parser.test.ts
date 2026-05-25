@@ -269,7 +269,7 @@ Deno.test("extends", async () => {
   const result = await cliteParse(child, {});
   assertEquals(
     stripAnsiCode(result.help),
-    `Usage: <scrip path> [Options] [--] [command [command args]]
+    `Usage: <script path> [Options] [--] [command [command args]]
 
 Commands:
   main      [default]

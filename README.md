@@ -105,6 +105,8 @@ Generate a CLI with `cliteRun(import.meta)` : exported functions are available
 as commands.
 
 ```typescript
+import { cliteRun } from "clite-parser";
+
 export function up() {
   private_function();
   console.log("up command");
@@ -151,7 +153,11 @@ You must append these lines to "example-module.ts" :
 Do you want me to append this lines at the end of "example-module.ts" now ? [Y/n]
 ```
 
+Example with an option setter :
+
 ```typescript
+import { cliteRun } from "clite-parser";
+
 export let opt = "foo";
 // To allow the modification of opt from the CLI
 export const _set_opt = (v: typeof opt) => (opt = v);
@@ -188,6 +194,15 @@ cliteRun(import.meta);
 // Options:
 //  -h, --help Show this help [default: false]
 //      --opt                 [default: "foo"]
+```
+
+Note: Clite can generate CLI from imported module with `import * as ...` :
+
+```
+import { cliteRun } from "clite-parser";
+import * as tool from "./example-module.ts";
+
+cliteRun(tool);
 ```
 
 ## Examples
