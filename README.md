@@ -22,7 +22,7 @@ CLI.
 In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
 to process the CLI, and `export const _set_opt = (v) => (opt = v);` to allow
 modification of the `opt` option (Clite suggests adding it automatically at
-first run).
+first run if missing).
 
 **Example with a class :**
 
