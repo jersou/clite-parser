@@ -71,6 +71,25 @@ class ToolDecor {
   _priv_method() {
   }
 }
+// ESM BEGIN
+export let retry = 2;
+export let webUrl = "none";
+export let no_color = "";
+let _priv_field = 123;
+export function main() {}
+main._help = "do up/down/clean";
+export async function up() {}
+up._help = "create and start the services";
+export function clean() {}
+clean._help = "clean all data";
+export function down(force: boolean, timeout: number) {}
+down._help = "stop and delete the services";
+export function doNothing() {}
+function _priv_method() {}
+export const _set_no_color = (v: typeof no_color) => (no_color = v);
+export const _set_retry = (v: typeof retry) => (retry = v);
+export const _set_webUrl = (v: typeof webUrl) => (webUrl = v);
+// ESM END
 
 if (import.meta.main) { // if the file is imported, do not execute this block
   const tool = new Tool();
@@ -81,33 +100,38 @@ if (import.meta.main) { // if the file is imported, do not execute this block
     console.log(`cliteRun() : ${(t1 - t0).toFixed(3)} ms.`);
     // → cliteRun() : 3 ms / 0.30 ms / 0.15 ms / 0.11 ms
   }
-} else { // deno bench ./bench.ts : 40 µs
+} else {
+  // deno bench ./bench.ts : 40 µs
   const tool = new Tool();
-  Deno.bench('cliteRun(Tool, { args: ["doNothing"] })', () => {
-    cliteRun(Tool, { args: ["doNothing"] });
+  Deno.bench('cliteRun(import.meta, { args: ["doNothing"] })', async () => {
+    await cliteRun(import.meta, { args: ["doNothing"] });
   });
-  Deno.bench('cliteRun(tool, { args: ["doNothing"] })', () => {
-    cliteRun(tool, { args: ["doNothing"] });
+  Deno.bench('cliteRun(Tool, { args: ["doNothing"] })', async () => {
+    await cliteRun(Tool, { args: ["doNothing"] });
+  });
+  Deno.bench('cliteRun(tool, { args: ["doNothing"] })', async () => {
+    await cliteRun(tool, { args: ["doNothing"] });
   });
   const toolDecor = new ToolDecor();
-  Deno.bench('cliteRun(ToolDecor, { args: ["doNothing"] })', () => {
-    cliteRun(ToolDecor, { args: ["doNothing"] });
+  Deno.bench('cliteRun(ToolDecor, { args: ["doNothing"] })', async () => {
+    await cliteRun(ToolDecor, { args: ["doNothing"] });
   });
-  Deno.bench('cliteRun(toolDecor, { args: ["doNothing"] })', () => {
-    cliteRun(toolDecor, { args: ["doNothing"] });
-  });
-  Deno.bench("toolDecor.doNothing()", () => {
-    toolDecor.doNothing();
+  Deno.bench('cliteRun(toolDecor, { args: ["doNothing"] })', async () => {
+    await cliteRun(toolDecor, { args: ["doNothing"] });
   });
   Deno.bench("new ToolDecor().doNothing()", () => {
     new ToolDecor().doNothing();
   });
-  // | benchmark                                      | time/iter (avg) |        iter/s |      (min … max)      |      p75 |      p99 |     p995 |
-  // | ---------------------------------------------- | --------------- | ------------- | --------------------- | -------- | -------- | -------- |
-  // | cliteRun(Tool, { args: ["doNothing"] })        |        547.6 ns |     1,826,000 | (119.3 ns …   3.2 µs) | 690.5 ns |   2.3 µs |   3.2 µs |
-  // | cliteRun(tool, { args: ["doNothing"] })        |        591.0 ns |     1,692,000 | (116.7 ns …  12.2 µs) | 697.0 ns |  12.2 µs |  12.2 µs |
-  // | cliteRun(ToolDecor, { args: ["doNothing"] })   |        665.8 ns |     1,502,000 | (111.5 ns …  15.4 µs) | 722.6 ns |  15.4 µs |  15.4 µs |
-  // | cliteRun(toolDecor, { args: ["doNothing"] })   |        589.5 ns |     1,696,000 | (105.0 ns …  12.0 µs) | 760.3 ns |   3.2 µs |  12.0 µs |
-  // | toolDecor.doNothing()                          |          3.5 ns |   288,500,000 | (  3.4 ns …   8.9 ns) |   3.4 ns |   4.0 ns |   4.0 ns |
-  // | new ToolDecor().doNothing()                    |          4.6 ns |   216,500,000 | (  4.6 ns …   7.0 ns) |   4.6 ns |   5.1 ns |   5.3 ns |
+  Deno.bench("toolDecor.doNothing()", () => {
+    toolDecor.doNothing();
+  });
+  // | benchmark                                        | time/iter (avg) | time/iter (avg sec) |        iter/s |      (min … max)      |      p75 |      p99 |     p995 |
+  // | ------------------------------------------------ | --------------- | ------------------- | ------------- | --------------------- | -------- | -------- | -------- |
+  // | cliteRun(import.meta, { args: ["doNothing"] })   |         31.5 µs |     0.0000315       |        31,770 | ( 27.1 µs … 346.7 µs) |  31.6 µs |  56.8 µs |  93.7 µs |
+  // | cliteRun(Tool, { args: ["doNothing"] })          |         19.7 µs |     0.0000197       |        50,670 | ( 16.4 µs … 506.9 µs) |  19.5 µs |  36.2 µs |  79.1 µs |
+  // | cliteRun(tool, { args: ["doNothing"] })          |         17.8 µs |     0.0000178       |        56,120 | ( 16.2 µs … 198.9 µs) |  17.5 µs |  25.8 µs |  34.6 µs |
+  // | cliteRun(ToolDecor, { args: ["doNothing"] })     |         19.2 µs |     0.0000192       |        52,020 | ( 16.6 µs … 263.4 µs) |  18.7 µs |  35.1 µs |  48.9 µs |
+  // | cliteRun(toolDecor, { args: ["doNothing"] })     |         18.5 µs |     0.0000185       |        54,110 | ( 16.7 µs … 263.8 µs) |  18.1 µs |  28.8 µs |  34.1 µs |
+  // | new ToolDecor().doNothing()                      |          3.6 ns |     0.0000000036    |   278,400,000 | (  3.4 ns …  15.8 ns) |   3.6 ns |   4.5 ns |   4.6 ns |
+  // | toolDecor.doNothing()                            |        294.0 ps |     0.000000000294  | 3,402,000,000 | (263.5 ps …  14.0 ns) | 294.7 ps | 409.7 ps | 499.1 ps |
 }
