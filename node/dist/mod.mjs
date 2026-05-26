@@ -477,7 +477,10 @@ function genHelp(obj, metadata, config) {
   if (metadata.usage) {
     usage2 = `${usage2}${metadata.usage}`;
   } else if (config?.noCommand || metadata.noCommand) {
-    usage2 = `${usage2}${mainFile} [Options] [--] [args]`;
+    const method = Object.keys(metadata.methods)[0];
+    const args = getMethodArgNames(obj, method);
+    const argsHelp = args.map((arg) => `<${arg}>`).join(" ");
+    usage2 = `${usage2}${mainFile} [Options] [--] ${argsHelp}`;
   } else {
     usage2 = `${usage2}${mainFile} [Options] [--] [command [command args]]`;
   }
@@ -1045,6 +1048,9 @@ async function cliteRun(objOrClass, config = {}) {
 }
 async function cliteParse(objOrClass, config = {}) {
   const obj = await getObj(objOrClass);
+  if (typeof objOrClass === "function" && !isConstructor(objOrClass)) {
+    config.noCommand = true;
+  }
   const isImportMetaObj = isImportMeta(objOrClass);
   if (isImportMetaObj && !config.meta) {
     config.meta = objOrClass;
@@ -1168,6 +1174,19 @@ async function handleMissingEsmSetter(meta, missingSetters) {
     console.log(bgYellow(`Ignore these missing setters...`));
   }
 }
+function isConstructor(fn) {
+  if (typeof fn !== "function") {
+    return false;
+  }
+  try {
+    Reflect.construct(String, [], fn);
+    if (fn.toString().startsWith("class ")) {
+      return true;
+    }
+  } catch (_) {
+    return false;
+  }
+}
 async function getObj(objOrClass) {
   if (isImportMeta(objOrClass)) {
     const meta = objOrClass;
@@ -1191,7 +1210,13 @@ async function getObj(objOrClass) {
       Object.getOwnPropertyDescriptors(objOrClass),
     );
   } else if (typeof objOrClass === "function") {
-    return new objOrClass();
+    if (isConstructor(objOrClass)) {
+      return new objOrClass();
+    } else {
+      return {
+        tool: objOrClass,
+      };
+    }
   } else {
     return objOrClass;
   }

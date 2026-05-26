@@ -22,18 +22,18 @@ CLI.
 In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
 to process the CLI, and `export const _set_opt = (v) => (opt = v);` to allow
 modification of the `opt` option (Clite suggests adding it automatically at
-first run).
+first run if missing).
 
 **Example with a class :**
 
 ![class-demo.mjs.png](class-demo.mjs.png)
 
-In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
-to process the CLI.
+In this example, the CliteParser specific code is simply `cliteRun(Tool)` to
+process the CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
-import { cliteRun } from "jsr:@jersou/clite@0.8.1";
+import { cliteRun } from "jsr:@jersou/clite@0.8.2";
 // or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
 // or import { cliteRun } from "clite-parser"; // after "npm install clite-parser" for Node usage
 
@@ -214,7 +214,7 @@ Several examples can be found in the [examples/](./examples) folder.
 Works with vanilla typescript or with experimentalDecorators = true
 
 ```typescript
-import { alias, cliteRun, help } from "jsr:@jersou/clite@0.8.1";
+import { alias, cliteRun, help } from "jsr:@jersou/clite@0.8.2";
 
 @help("This tool is a little example of CliteParser") // optional description
 class Tool {
@@ -266,7 +266,7 @@ Options:
 ### Full example without decorator (Javascript)
 
 ```javascript
-import { cliteRun } from "jsr:@jersou/clite@0.8.1";
+import { cliteRun } from "jsr:@jersou/clite@0.8.2";
 
 class Tool {
   _help = "This tool is a little example of CliteParser"; // optional description
@@ -385,7 +385,7 @@ In summary :
 ### Help description with the `@help` decorator or inline help
 
 ```typescript
-import { cliteRun, help } from "jsr:@jersou/clite@0.8.1";
+import { cliteRun, help } from "jsr:@jersou/clite@0.8.2";
 
 @help("This tool is a little example of CliteParser")
 class Tool {
@@ -417,7 +417,7 @@ as description in the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.8.1";
+import { cliteRun } from "jsr:@jersou/clite@0.8.2";
 
 class Tool {
   _help = "This tool is a little example of CliteParser"; // optional description
@@ -745,7 +745,7 @@ the command execution. Else, the help is print only for errors that have
 It's useful if a required option is missing, for example.
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.8.1";
+import { cliteRun } from "jsr:@jersou/clite@0.8.2";
 export class Tool {
   throw = "true";
   main() {
@@ -762,7 +762,7 @@ To print help on specific error only, without `printHelpOnError=true`, use
 `{ cause: { clite: true } }` :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.8.1";
+import { cliteRun } from "jsr:@jersou/clite@0.8.2";
 export class Tool {
   noThrow = false;
 
@@ -864,7 +864,7 @@ $ ./Tool.ts -- main 123 true foo
 A plain JS Object can be used :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.8.1";
+import { cliteRun } from "jsr:@jersou/clite@0.8.2";
 
 cliteRun({
   retry: 2,
@@ -896,6 +896,29 @@ Commands:
 Options:
  -h, --help  Show this help [default: false]
      --retry                    [default: 2]
+```
+
+## Function
+
+A function can be used :
+
+```typescript
+import { cliteRun } from "clite-parser";
+
+function down(force = false, timeout = 5) {
+  console.log("down command", { force, timeout });
+}
+
+cliteRun(down);
+
+// $ ./examples/example-function.ts true 100
+// down command { force: true, timeout: 100 }
+//
+// ./examples/example-function.ts --help
+// Usage: <script path> [Options] [--] <force> <timeout>
+//
+// Option:
+//   -h, --help Show this help [default: false]
 ```
 
 ## Node support : `npm install clite-parser` or `npx jsr add @jersou/clite`
@@ -964,7 +987,7 @@ With [esm.sh](https://code.esm.sh/),
 [jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
-import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.8.1";
+import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.8.2";
 
 class Tool {
   opt = 123;
@@ -1020,6 +1043,12 @@ Options:
 The 3 implementations side by side :
 
 [![diff-600.png](examples/cli-tools-diff/diff-600.png)](examples/cli-tools-diff/diff.png)
+
+Note: I have only recently discovered (May 2026) other projects sharing the same
+concept.
+
+- https://github.com/google/python-fire
+- https://github.com/fastapi/typer
 
 ## Real case
 

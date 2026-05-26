@@ -1,3 +1,15 @@
+## [0.8.2](https://github.com/jersou/clite-parser/compare/0.8.1...0.8.2) (2026-05-26)
+
+### Features
+
+- run clite with function
+  ([ffad674](https://github.com/jersou/clite-parser/commit/ffad674a4adfa128a37100b36725b7f15b45511b))
+
+### Bug Fixes
+
+- fix help if noCommand===true
+  ([695da33](https://github.com/jersou/clite-parser/commit/695da3351d366a18998e337f1c4bda420fce520b))
+
 ## [0.8.1](https://github.com/jersou/clite-parser/compare/0.8.0...0.8.1) (2026-05-26)
 
 ### Features
