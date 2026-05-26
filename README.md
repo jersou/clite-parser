@@ -28,8 +28,8 @@ first run).
 
 ![class-demo.mjs.png](class-demo.mjs.png)
 
-In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
-to process the CLI.
+In this example, the CliteParser specific code is simply `cliteRun(Tool)` to
+process the CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
@@ -1020,6 +1020,12 @@ Options:
 The 3 implementations side by side :
 
 [![diff-600.png](examples/cli-tools-diff/diff-600.png)](examples/cli-tools-diff/diff.png)
+
+Note: I have only recently discovered (May 2026) other projects sharing the same
+concept.
+
+- https://github.com/google/python-fire
+- https://github.com/fastapi/typer
 
 ## Real case
 
