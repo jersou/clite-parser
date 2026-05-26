@@ -59,6 +59,9 @@ export async function cliteParse<O extends Obj & { config?: string }>(
   config: CliteRunConfig = {},
 ): Promise<CliteResult<O>> {
   const obj = await getObj(objOrClass);
+  if (typeof objOrClass === "function" && !isConstructor(objOrClass)) {
+    config.noCommand = true;
+  }
   const isImportMetaObj = isImportMeta(objOrClass);
   if (isImportMetaObj && !config.meta) {
     config.meta = objOrClass as unknown as ImportMeta;
@@ -164,6 +167,21 @@ async function handleMissingEsmSetter(
   }
 }
 
+// deno-lint-ignore no-explicit-any
+function isConstructor(fn: any) {
+  if (typeof fn !== "function") {
+    return false;
+  }
+  try {
+    Reflect.construct(String, [], fn);
+    if (fn.toString().startsWith("class ")) {
+      return true;
+    }
+  } catch (_) {
+    return false;
+  }
+}
+
 async function getObj<O extends Obj & { config?: string }>(
   objOrClass: O | { new (): O },
 ) {
@@ -190,7 +208,11 @@ async function getObj<O extends Obj & { config?: string }>(
       Object.getOwnPropertyDescriptors(objOrClass),
     );
   } else if (typeof objOrClass === "function") {
-    return new objOrClass();
+    if (isConstructor(objOrClass)) {
+      return new objOrClass();
+    } else {
+      return { tool: objOrClass };
+    }
   } else {
     return objOrClass;
   }

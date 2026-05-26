@@ -160,12 +160,9 @@ export function genHelp<O extends Obj>(
     usage = `${usage}${metadata.usage}`;
   } else if (config?.noCommand || metadata.noCommand) {
     const method = Object.keys(metadata.methods)[0];
-    let col1 = "";
     const args = getMethodArgNames(obj, method);
-    if (args.length > 0) {
-      col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
-    }
-    usage = `${usage}${mainFile} [Options] [--] ${col1}`;
+    const argsHelp = args.map((arg) => `<${arg}>`).join(" ");
+    usage = `${usage}${mainFile} [Options] [--] ${argsHelp}`;
   } else {
     usage = `${usage}${mainFile} [Options] [--] [command [command args]]`;
   }
