@@ -159,7 +159,13 @@ export function genHelp<O extends Obj>(
   if (metadata.usage) {
     usage = `${usage}${metadata.usage}`;
   } else if (config?.noCommand || metadata.noCommand) {
-    usage = `${usage}${mainFile} [Options] [--] [args]`;
+    const method = Object.keys(metadata.methods)[0];
+    let col1 = "";
+    const args = getMethodArgNames(obj, method);
+    if (args.length > 0) {
+      col1 += " " + args.map((arg) => `<${arg}>`).join(" ");
+    }
+    usage = `${usage}${mainFile} [Options] [--] ${col1}`;
   } else {
     usage = `${usage}${mainFile} [Options] [--] [command [command args]]`;
   }

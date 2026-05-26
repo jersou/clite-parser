@@ -40,7 +40,7 @@ Deno.test("genHelp  noCommand", () => {
   const tool = new Tool();
   const expected = `test data
 
-Usage: <script path> [Options] [--] [args]
+Usage: <script path> [Options] [--] 
 
 Options:
  -h, --help           Show this help [default: false]
