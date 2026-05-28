@@ -1,12 +1,13 @@
-# CLI lite parser for Node and Deno
+# cli-from for Node and Deno
 
 [![cli-from on NPM](https://img.shields.io/npm/v/cli-from.svg)](https://npmjs.org/package/cli-from)
 [![JSR](https://jsr.io/badges/@jersou/cli-from)](https://jsr.io/@jersou/cli-from)
 [![JSR Score](https://jsr.io/badges/@jersou/cli-from/score)](https://jsr.io/@jersou/cli-from)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**cli-from generates CLI from classes or ES modules** (or objects) : each field
-generates an "option", each method generates a "command" (positional arguments).
+**cli-from generates CLI from classes, ES modules**, objects or function : each
+field generates an "option", each method/function generates a "command"
+(positional arguments).
 
 Just write your tool as a class (or as **ES module**), and call cli-from with
 it... cli-from will deserialize the command line in your class/module and launch
@@ -32,9 +33,9 @@ the CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
-import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
+import { cliFrom } from "cli-from"; // after "npm install cli-from" for Node usage
+// or import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
 // or import { cliFrom } from "@jersou/cli-from"; // after "deno add @jersou/cli-from"
-// or import { cliFrom } from "cli-from"; // after "npm install cli-from" for Node usage
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
@@ -213,7 +214,7 @@ Several examples can be found in the [examples/](./examples) folder.
 Works with vanilla typescript or with experimentalDecorators = true
 
 ```typescript
-import { alias, cliFrom, help } from "jsr:@jersou/cli-from@0.9.0";
+import { alias, cliFrom, help } from "cli-from";
 
 @help("This tool is a little example of cli-from") // optional description
 class Tool {
@@ -265,7 +266,7 @@ Options:
 ### Full example without decorator (Javascript)
 
 ```javascript
-import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
+import { cliFrom } from "cli-from";
 
 class Tool {
   _help = "This tool is a little example of cli-from"; // optional description
@@ -384,7 +385,7 @@ In summary :
 ### Help description with the `@help` decorator or inline help
 
 ```typescript
-import { cliFrom, help } from "jsr:@jersou/cli-from@0.9.0";
+import { cliFrom, help } from "cli-from";
 
 @help("This tool is a little example of cli-from")
 class Tool {
@@ -416,7 +417,7 @@ as description in the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
+import { cliFrom } from "cli-from";
 
 class Tool {
   _help = "This tool is a little example of cli-from"; // optional description
@@ -743,7 +744,7 @@ the command execution. Else, the help is print only for errors that have
 It's useful if a required option is missing, for example.
 
 ```typescript
-import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
+import { cliFrom } from "cli-from";
 export class Tool {
   throw = "true";
   main() {
@@ -760,7 +761,7 @@ To print help on specific error only, without `printHelpOnError=true`, use
 `{ cause: { cliFrom: true } }` :
 
 ```typescript
-import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
+import { cliFrom } from "cli-from";
 export class Tool {
   noThrow = false;
 
@@ -862,7 +863,7 @@ $ ./Tool.ts -- main 123 true foo
 A plain JS Object can be used :
 
 ```typescript
-import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
+import { cliFrom } from "cli-from";
 
 cliFrom({
   retry: 2,

@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno -A
-import { cliFrom } from "../clifrom_parser.ts";
+import { cliFrom } from "../mod.ts";
 
 class Tool {
   _help = "This tool is a little example of Clifrom"; // optional description
