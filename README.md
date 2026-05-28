@@ -721,8 +721,7 @@ of the command.
 
 The default command is used.
 
-`cliteRun(Tool, { noCommand: true });` → `./example-no-command.ts ---help` give
-:
+`cliteRun(Tool, { noCommand: true });` → `./example-no-command.ts --help` give :
 
 ```
 This tool is a "no-command" example of CliteParser usage
@@ -970,16 +969,6 @@ cliteRun(Tool);
 - `@std/text` : to change the option case
 - `@std/assert` : for the tests
 
-## Inspiration
-
-Probably inspired by:
-
-- [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
-  function from CLI with `utils:run "$@"`, created 4 years before Clite,
-- and by [Clap](https://github.com/clap-rs/clap) (with the derive feature) after
-  the development of [mouse-actions](https://github.com/jersou/mouse-actions)
-  (one year before Clite) : deserialize options from CLI to struct.
-
 ## Try in a browser
 
 With [esm.sh](https://code.esm.sh/),
@@ -997,6 +986,22 @@ class Tool {
 const res = cliteParse(Tool, { args: ["--opt", "78"] });
 console.log(res);
 ```
+
+## Inspiration
+
+Probably inspired by:
+
+- [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
+  function from CLI with `utils:run "$@"`, I created 4 years before Clite,
+- and by [Clap](https://github.com/clap-rs/clap) (with the derive feature) after
+  the development of [mouse-actions](https://github.com/jersou/mouse-actions)
+  (one year before Clite) : deserialize options from CLI to struct.
+
+Note: I have only recently discovered (May 2026) other projects sharing the same
+concept.
+
+- https://github.com/google/python-fire
+- https://github.com/fastapi/typer
 
 ## Comparison with other tools : Yargs, @std/cli (minimist)
 
@@ -1043,12 +1048,6 @@ Options:
 The 3 implementations side by side :
 
 [![diff-600.png](examples/cli-tools-diff/diff-600.png)](examples/cli-tools-diff/diff.png)
-
-Note: I have only recently discovered (May 2026) other projects sharing the same
-concept.
-
-- https://github.com/google/python-fire
-- https://github.com/fastapi/typer
 
 ## Real case
 
