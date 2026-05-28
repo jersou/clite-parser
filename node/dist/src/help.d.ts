@@ -1,5 +1,5 @@
 import type { Metadata } from "./metadata.d.ts";
-import type { CliteRunConfig, Obj } from "./types.d.ts";
+import type { ClifromRunConfig, Obj } from "./types.d.ts";
 export declare const boldUnder: (str: string) => any;
 /**
  * Align the 2 columns
@@ -14,12 +14,12 @@ export declare function align(
  * Generate the CLI help of obj
  *
  * @param obj to analyse
- * @param metadata - clite metadata
- * @param config CliteRunConfig
+ * @param metadata - cli-from metadata
+ * @param config ClifromRunConfig
  * @returns the help as string
  */
 export declare function genHelp<O extends Obj>(
   obj: O,
   metadata: Metadata<O>,
-  config?: CliteRunConfig,
+  config?: ClifromRunConfig,
 ): string;

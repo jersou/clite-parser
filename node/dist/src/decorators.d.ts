@@ -3,7 +3,7 @@ import type { Obj } from "./types.d.ts";
  * get the metadata from the js object
  * @param obj - to use
  */
-export declare function getCliteSymbolMetadata(obj: Obj): Obj;
+export declare function getClifromSymbolMetadata(obj: Obj): Obj;
 type DecoratorRetFunc = (target: unknown, prop?: unknown) => any;
 /**
  * decorator on classes/methods/properties : `@help("description...")`

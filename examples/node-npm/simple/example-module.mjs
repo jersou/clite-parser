@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cliteRun } from "clite-parser";
+import { cliFrom } from "cli-from";
 
 export let opt = "foo";
 // To allow the modification of opt from the CLI
@@ -21,7 +21,7 @@ down._help = "down custom help";
 
 export const main = () => console.log("main", opt);
 
-cliteRun(import.meta);
+cliFrom(import.meta);
 
 // $ ./example-module.mjs --opt bar down true 100
 // down command { force: true, timeout: 100, opt: "bar" }

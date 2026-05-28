@@ -24,7 +24,7 @@ export type Metadata<O extends Obj> = {
   noCommand?: boolean;
   jsonConfig?: boolean;
 };
-export declare function getCliteMetadata<O extends Obj>(
+export declare function getClifromMetadata<O extends Obj>(
   obj: O,
   isModule?: boolean,
 ): Metadata<O>;

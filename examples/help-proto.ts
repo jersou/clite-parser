@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../mod.ts";
+import { cliFrom } from "../mod.ts";
 
 class Tool {
   main() {
@@ -12,7 +12,7 @@ class Tool {
 }
 (Tool.prototype.up as any)._help = "up custom help";
 
-cliteRun(Tool);
+cliFrom(Tool);
 
 // $ ./examples/help-proto.ts --help
 // Usage: <Tool file> [Options] [--] [command [command args]]

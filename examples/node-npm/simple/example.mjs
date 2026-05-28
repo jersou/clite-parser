@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cliteRun } from "clite-parser";
+import { cliFrom } from "cli-from";
 
 class Tool {
   retry = 2;
@@ -19,4 +19,4 @@ class Tool {
   }
 }
 
-cliteRun(Tool);
+cliFrom(Tool);

@@ -1,17 +1,16 @@
 # CLI lite parser for Node and Deno
 
-[![Clite-parser on NPM](https://img.shields.io/npm/v/clite-parser.svg)](https://npmjs.org/package/clite-parser)
-[![JSR](https://jsr.io/badges/@jersou/clite)](https://jsr.io/@jersou/clite)
-[![JSR Score](https://jsr.io/badges/@jersou/clite/score)](https://jsr.io/@jersou/clite)
+[![cli-from on NPM](https://img.shields.io/npm/v/cli-from.svg)](https://npmjs.org/package/cli-from)
+[![JSR](https://jsr.io/badges/@jersou/cli-from)](https://jsr.io/@jersou/cli-from)
+[![JSR Score](https://jsr.io/badges/@jersou/cli-from/score)](https://jsr.io/@jersou/cli-from)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**CliteParser generates CLI from classes or ES modules** (or objects) : each
-field generates an "option", each method generates a "command" (positional
-arguments).
+**cli-from generates CLI from classes or ES modules** (or objects) : each field
+generates an "option", each method generates a "command" (positional arguments).
 
-Just write your tool as a class (or as **ES module**), and call Clite with it...
-Clite will deserialize the command line in your class/module and launch the
-right methods/function or display the help... Then you can optionally
+Just write your tool as a class (or as **ES module**), and call cli-from with
+it... cli-from will deserialize the command line in your class/module and launch
+the right methods/function or display the help... Then you can optionally
 personalize the displayed help or add aliases (for example) to complete your
 CLI.
 
@@ -19,23 +18,23 @@ CLI.
 
 ![ESM-demo.mjs.png](ESM-demo.mjs.png)
 
-In this example, the CliteParser specific code is simply `cliteRun(import.meta)`
-to process the CLI, and `export const _set_opt = (v) => (opt = v);` to allow
-modification of the `opt` option (Clite suggests adding it automatically at
+In this example, the cli-from specific code is simply `cliFrom(import.meta)` to
+process the CLI, and `export const _set_opt = (v) => (opt = v);` to allow
+modification of the `opt` option (cli-from suggests adding it automatically at
 first run if missing).
 
 **Example with a class :**
 
 ![class-demo.mjs.png](class-demo.mjs.png)
 
-In this example, the CliteParser specific code is simply `cliteRun(Tool)` to
-process the CLI.
+In this example, the cli-from specific code is simply `cliFrom(Tool)` to process
+the CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
-import { cliteRun } from "jsr:@jersou/clite@0.8.2";
-// or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
-// or import { cliteRun } from "clite-parser"; // after "npm install clite-parser" for Node usage
+import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
+// or import { cliFrom } from "@jersou/cli-from"; // after "deno add @jersou/cli-from"
+// or import { cliFrom } from "cli-from"; // after "npm install cli-from" for Node usage
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
@@ -55,7 +54,7 @@ class Tool {
   }
 }
 
-cliteRun(Tool); // or cliteRun(new Tool());
+cliFrom(Tool); // or cliFrom(new Tool());
 ```
 
 ## The help is generated automatically:
@@ -91,7 +90,7 @@ down command { force: true, timeout: 14 } Tool { retry: 2, webUrl: "none", no_co
 $ ./simple.ts --dry-run --webUrl=tttt # ← same case of the field name works too : --webUrl or --web-url
 main command Tool { retry: 2, dryRun: true, webUrl: "tttt" } # ← main is the default command
 
-$ deno https://raw.githubusercontent.com/jersou/clite-parser/refs/heads/main/examples/simple.ts --dry-run --web-url tttt --retry 4 down true  14
+$ deno https://raw.githubusercontent.com/jersou/cli-from/refs/heads/main/examples/simple.ts --dry-run --web-url tttt --retry 4 down true  14
 down command { force: true, timeout: 14 } Tool { retry: 4, dryRun: true, webUrl: "tttt" }
 ```
 
@@ -101,11 +100,11 @@ Example from [examples/example-module.ts](./examples/example-module.ts) or
 [examples/node-npm/simple/example-module.mjs](./examples/node-npm/simple/example-module.mjs)
 (**NodeJs**).
 
-Generate a CLI with `cliteRun(import.meta)` : exported functions are available
-as commands.
+Generate a CLI with `cliFrom(import.meta)` : exported functions are available as
+commands.
 
 ```typescript
-import { cliteRun } from "clite-parser";
+import { cliFrom } from "cli-from";
 
 export function up() {
   private_function();
@@ -122,7 +121,7 @@ export function down(force = false, timeout = 5) {
 
 export const main = () => console.log("main");
 
-cliteRun(import.meta);
+cliFrom(import.meta);
 
 // $ ./examples/example-module-lite.ts down true 100
 // down command { force: true, timeout: 100 }
@@ -143,11 +142,11 @@ Due to ESM security limitations (exported variables are read only), the var/let
 variables are exposed as CLI options only if they are exported and if there is a
 "_set_<name>" function that allows their modification.
 
-Clite suggests adding it automatically at first run :
+cli-from suggests adding it automatically at first run :
 
 ```
-This module contains exported variables without 'clite' setters : opt.
-It's necessary for Clite to process options (= exported var/let) due to ESM security limitations.
+This module contains exported variables without 'cli-from' setters : opt.
+It's necessary for cli-from to process options (= exported var/let) due to ESM security limitations.
 You must append these lines to "example-module.ts" :
     export const _set_opt = (v: typeof opt) => (opt = v);
 Do you want me to append this lines at the end of "example-module.ts" now ? [Y/n]
@@ -156,7 +155,7 @@ Do you want me to append this lines at the end of "example-module.ts" now ? [Y/n
 Example with an option setter :
 
 ```typescript
-import { cliteRun } from "clite-parser";
+import { cliFrom } from "cli-from";
 
 export let opt = "foo";
 // To allow the modification of opt from the CLI
@@ -178,7 +177,7 @@ export function down(force = false, timeout = 5) {
 
 export const main = () => console.log("main", opt);
 
-cliteRun(import.meta);
+cliFrom(import.meta);
 
 // $ ./examples/example-module.ts --opt bar down true 100
 // down command { force: true, timeout: 100, opt: "bar" }
@@ -196,13 +195,13 @@ cliteRun(import.meta);
 //      --opt                 [default: "foo"]
 ```
 
-Note: Clite can generate CLI from imported module with `import * as ...` :
+Note: cli-from can generate CLI from imported module with `import * as ...` :
 
 ```
-import { cliteRun } from "clite-parser";
+import { cliFrom } from "cli-from";
 import * as tool from "./example-module.ts";
 
-cliteRun(tool);
+cliFrom(tool);
 ```
 
 ## Examples
@@ -214,9 +213,9 @@ Several examples can be found in the [examples/](./examples) folder.
 Works with vanilla typescript or with experimentalDecorators = true
 
 ```typescript
-import { alias, cliteRun, help } from "jsr:@jersou/clite@0.8.2";
+import { alias, cliFrom, help } from "jsr:@jersou/cli-from@0.9.0";
 
-@help("This tool is a little example of CliteParser") // optional description
+@help("This tool is a little example of cli-from") // optional description
 class Tool {
   @alias("r") // optional alias -r for --retry
   retry = 2;
@@ -238,7 +237,7 @@ class Tool {
   }
 }
 
-cliteRun(Tool); // or cliteRun(new Tool());
+cliFrom(Tool); // or cliFrom(new Tool());
 ```
 
 The help is generated automatically:
@@ -247,7 +246,7 @@ The help is generated automatically:
 
 <!-- Plain text (without color and styles in markdown):
 $ ./with-decorators.ts --help
-This tool is a little example of CliteParser
+This tool is a little example of cli-from
 
 Usage: <Tool file> [Options] [--] [command [command args]]
 
@@ -266,10 +265,10 @@ Options:
 ### Full example without decorator (Javascript)
 
 ```javascript
-import { cliteRun } from "jsr:@jersou/clite@0.8.2";
+import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
 
 class Tool {
-  _help = "This tool is a little example of CliteParser"; // optional description
+  _help = "This tool is a little example of cli-from"; // optional description
 
   _retry_alias = "r"; // optional alias -r for --retry
   retry = 2;
@@ -291,7 +290,7 @@ class Tool {
   }
 }
 
-cliteRun(Tool); // or cliteRun(new Tool());
+cliFrom(Tool); // or cliFrom(new Tool());
 ```
 
 The help is generated automatically (same as the previous):
@@ -300,7 +299,7 @@ The help is generated automatically (same as the previous):
 
 <!--  Plain text (without color and styles in markdown):
 ./without-decorator.mjs --help
-This tool is a little example of CliteParser
+This tool is a little example of cli-from
 
 Usage: <Tool file> [Options] [--] [command [command args]]
 
@@ -316,25 +315,25 @@ Options:
      --web-url                [default: "none"]
 -->
 
-## `cliteRun()` usage
+## `cliFrom()` usage
 
-`cliteRun()` function takes an object or a class as input, and an optional
-config, see [CliteRunConfig](#CliteRunConfig) chapter bellow.
+`cliFrom()` function takes an object or a class as input, and an optional
+config, see [ClifromRunConfig](#ClifromRunConfig) chapter bellow.
 
-Exemple : `cliteRun(Tool)` or `cliteRun(new Tool())` or
-`cliteRun(Tool, { noCommand: true })`
+Exemple : `cliFrom(Tool)` or `cliFrom(new Tool())` or
+`cliFrom(Tool, { noCommand: true })`
 
-## `cliteParse()` usage
+## `cliFromParse()` usage
 
-Same as `cliteRun()`, but it doesn't run the command, it returns the parsing
-`CliteResult` that contains:
+Same as `cliFrom()`, but it doesn't run the command, it returns the parsing
+`ClifromResult` that contains:
 
 - obj: The input object overwritten with the data from the parsing result
 - command: The command to run from the parsing result
 - commandArgs: The command arguments from the parsing result
-- config: The input CliteRunConfig
+- config: The input ClifromRunConfig
 - help: The generated help
-- subcommand: The subcommand CliteResult if the command is a subcommand
+- subcommand: The subcommand ClifromResult if the command is a subcommand
 
 ## Ignore `_*` and `#*` methods and fields (in the help)
 
@@ -385,9 +384,9 @@ In summary :
 ### Help description with the `@help` decorator or inline help
 
 ```typescript
-import { cliteRun, help } from "jsr:@jersou/clite@0.8.2";
+import { cliFrom, help } from "jsr:@jersou/cli-from@0.9.0";
 
-@help("This tool is a little example of CliteParser")
+@help("This tool is a little example of cli-from")
 class Tool {
   retry = 2;
   webUrl = "none"; // fields are converted to kebab case as global options
@@ -409,7 +408,7 @@ class Tool {
   }
 }
 
-cliteRun(Tool);
+cliFrom(Tool);
 ```
 
 Without decorator : optional fields `_<filed or method name>_help` are displayed
@@ -417,10 +416,10 @@ as description in the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "jsr:@jersou/clite@0.8.2";
+import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
 
 class Tool {
-  _help = "This tool is a little example of CliteParser"; // optional description
+  _help = "This tool is a little example of cli-from"; // optional description
   retry = 2;
   webUrl = "none"; // fields are converted to kebab case as global options
   no_color?: string | boolean; // → --no-color
@@ -441,7 +440,7 @@ class Tool {
 }
 
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliteRun(Tool);
+  cliFrom(Tool);
 }
 ```
 
@@ -461,7 +460,7 @@ Alias of option can be created, with the `@alias` decorator or with
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../clite_parser.ts";
+import { cliFrom } from "../clifrom_parser.ts";
 import { alias, help, type } from "../src/decorators.ts";
 
 class Tool {
@@ -536,7 +535,7 @@ Full exemple in [examples/git-subcommand.ts](examples/git-subcommand.ts)
 ```typescript
 // → <Tool> [--dry-run] [ [up [--watch] <count>] | [down [--volumes] <force> <timeout>] ]
 class Up {
-  _clite_parent?: Tool;
+  _clifrom_parent?: Tool;
   watch = false;
   main(_count: number) {
     console.log("Up", this);
@@ -558,7 +557,7 @@ class Tool {
   };
 }
 
-cliteRun(new Tool());
+cliFrom(new Tool());
 ```
 
 ```
@@ -596,7 +595,7 @@ description.
 
 ## Argument parsing
 
-Clite use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
+cli-from use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
 [minimist](https://github.com/minimistjs/minimist).
 
 ### Kebab case or the same name
@@ -689,12 +688,12 @@ $ ./example-lite.ts
 main command Tool { retry: 2, webUrl: "none", no_color: undefined }
 ```
 
-## CliteRunConfig
+## ClifromRunConfig
 
-`cliteRun(Tool, < optional CliteRunConfig > )`
+`cliFrom(Tool, < optional ClifromRunConfig > )`
 
 ```typescript
-type CliteRunConfig = {
+type ClifromRunConfig = {
   args?: string[]; // default : Deno.args or process.argv.slice(2)
   dontPrintResult?: boolean; // default false : false, print the command return
   noCommand?: boolean; // no default command : do not run "main" methode if no arg
@@ -708,11 +707,11 @@ type CliteRunConfig = {
 
 ### Return value
 
-If the method run by `cliteRun` return a value != undefined, it will be print in
+If the method run by `cliFrom` return a value != undefined, it will be print in
 stdout. If it's a promise, the result of the promise will be awaited.
 
 This behavior can be disabled with the config :
-`cliteRun(Tool, { dontPrintResult: true })`
+`cliFrom(Tool, { dontPrintResult: true })`
 
 ### noCommand
 
@@ -721,11 +720,10 @@ of the command.
 
 The default command is used.
 
-`cliteRun(Tool, { noCommand: true });` → `./example-no-command.ts ---help` give
-:
+`cliFrom(Tool, { noCommand: true });` → `./example-no-command.ts --help` give :
 
 ```
-This tool is a "no-command" example of CliteParser usage
+This tool is a "no-command" example of cli-from usage
 
 Usage: <Tool file> [Options] [--] [args]
 
@@ -740,12 +738,12 @@ Options:
 
 If printHelpOnError is enabled, the help is print if any error is thrown while
 the command execution. Else, the help is print only for errors that have
-`{ cause: { clite: true } }`.
+`{ cause: { cliFrom: true } }`.
 
 It's useful if a required option is missing, for example.
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.8.2";
+import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
 export class Tool {
   throw = "true";
   main() {
@@ -755,36 +753,36 @@ export class Tool {
     console.log("OK !");
   }
 }
-cliteRun(Tool, { printHelpOnError: true });
+cliFrom(Tool, { printHelpOnError: true });
 ```
 
 To print help on specific error only, without `printHelpOnError=true`, use
-`{ cause: { clite: true } }` :
+`{ cause: { cliFrom: true } }` :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.8.2";
+import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
 export class Tool {
   noThrow = false;
 
   main() {
     if (!this.noThrow) {
-      throw new Error("add --no-throw option !", { cause: { clite: true } });
+      throw new Error("add --no-throw option !", { cause: { cliFrom: true } });
     }
     console.log("OK !");
   }
 }
-cliteRun(Tool);
+cliFrom(Tool);
 ```
 
 ### configCli : load a json config with `--config <path | or json string>`
 
-If `configCli === true` in the CliteRunConfig or `@jsonConfig` is used or
+If `configCli === true` in the ClifromRunConfig or `@jsonConfig` is used or
 `_json_config = true`
 
 ```
 $ cat ./load-config.ts
 ...
-cliteRun(Tool, { configCli: true });
+cliFrom(Tool, { configCli: true });
 
 $ ./load-config.ts --help
 ...
@@ -812,7 +810,7 @@ Allows to change the name of the file in the help, instead of the default for
 example `<Tool file>`.
 
 ```typescript
-cliteRun(Tool, { mainFile: "my-tool" });
+cliFrom(Tool, { mainFile: "my-tool" });
 ```
 
 ...will change the usage line in the help :
@@ -827,14 +825,14 @@ Use meta to avoid the manual `import.meta.main` check :
 
 ```typescript
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliteRun(Tool);
+  cliFrom(Tool);
 }
 ```
 
 is equivalent to :
 
 ```typescript
-cliteRun(Tool, { meta: import.meta });
+cliFrom(Tool, { meta: import.meta });
 ```
 
 The basename of `import.meta.url` will be used in the generated help, as
@@ -864,9 +862,9 @@ $ ./Tool.ts -- main 123 true foo
 A plain JS Object can be used :
 
 ```typescript
-import { cliteRun } from "jsr:@jersou/clite@0.8.2";
+import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
 
-cliteRun({
+cliFrom({
   retry: 2,
   main() {
     console.log("main command", this);
@@ -903,13 +901,13 @@ Options:
 A function can be used :
 
 ```typescript
-import { cliteRun } from "clite-parser";
+import { cliFrom } from "cli-from";
 
 function down(force = false, timeout = 5) {
   console.log("down command", { force, timeout });
 }
 
-cliteRun(down);
+cliFrom(down);
 
 // $ ./examples/example-function.ts true 100
 // down command { force: true, timeout: 100 }
@@ -921,17 +919,17 @@ cliteRun(down);
 //   -h, --help Show this help [default: false]
 ```
 
-## Node support : `npm install clite-parser` or `npx jsr add @jersou/clite`
+## Node support : `npm install cli-from` or `npx jsr add @jersou/cli-from`
 
-### From NPM : `npm install clite-parser`
+### From NPM : `npm install cli-from`
 
-Run `npm install clite-parser` and then, import with
-`import { cliteRun } from "clite-parser";` :
+Run `npm install cli-from` and then, import with
+`import { cliFrom } from "cli-from";` :
 
 ```javascript
-import { cliteRun } from "clite-parser"; // after "npm install clite-parser"
+import { cliFrom } from "cli-from"; // after "npm install cli-from"
 class Tool { ... }
-cliteRun(Tool);
+cliFrom(Tool);
 ```
 
 See node usage examples :
@@ -940,15 +938,15 @@ See node usage examples :
 - [examples/node-npm/simple](examples/node-npm/simple)
 - [examples/node-npm/zx](examples/node-npm/zx)
 
-### From JSR : `npx jsr add @jersou/clite`
+### From JSR : `npx jsr add @jersou/cli-from`
 
-Run `npx jsr add @jersou/clite` and then, import with
-`import { cliteRun } from "@jersou/clite";` :
+Run `npx jsr add @jersou/cli-from` and then, import with
+`import { cliFrom } from "@jersou/cli-from";` :
 
 ```javascript
-import { cliteRun } from "@jersou/clite"; // after "npx jsr add @jersou/clite"
+import { cliFrom } from "@jersou/cli-from"; // after "npx jsr add @jersou/cli-from"
 class Tool { ... }
-cliteRun(Tool);
+cliFrom(Tool);
 ```
 
 ### Node usage examples :
@@ -959,9 +957,9 @@ cliteRun(Tool);
 
 ## Links
 
-- https://jsr.io/@jersou/clite
-- https://github.com/jersou/clite-parser
-- https://www.npmjs.com/package/clite-parser
+- https://jsr.io/@jersou/cli-from
+- https://github.com/jersou/cli-from
+- https://www.npmjs.com/package/cli-from
 
 ## Dependencies (all)
 
@@ -970,16 +968,6 @@ cliteRun(Tool);
 - `@std/text` : to change the option case
 - `@std/assert` : for the tests
 
-## Inspiration
-
-Probably inspired by:
-
-- [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
-  function from CLI with `utils:run "$@"`, created 4 years before Clite,
-- and by [Clap](https://github.com/clap-rs/clap) (with the derive feature) after
-  the development of [mouse-actions](https://github.com/jersou/mouse-actions)
-  (one year before Clite) : deserialize options from CLI to struct.
-
 ## Try in a browser
 
 With [esm.sh](https://code.esm.sh/),
@@ -987,16 +975,32 @@ With [esm.sh](https://code.esm.sh/),
 [jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
-import { cliteParse } from "https://esm.sh/jsr/@jersou/clite@0.8.2";
+import { cliFromParse } from "https://esm.sh/jsr/@jersou/cli-from@0.9.0";
 
 class Tool {
   opt = 123;
   main() {}
 }
 
-const res = cliteParse(Tool, { args: ["--opt", "78"] });
+const res = cliFromParse(Tool, { args: ["--opt", "78"] });
 console.log(res);
 ```
+
+## Inspiration
+
+Probably inspired by:
+
+- [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
+  function from CLI with `utils:run "$@"`, I created 4 years before cli-from,
+- and by [Clap](https://github.com/clap-rs/clap) (with the derive feature) after
+  the development of [mouse-actions](https://github.com/jersou/mouse-actions)
+  (one year before cli-from) : deserialize options from CLI to struct.
+
+Note: I have only recently discovered (May 2026) other projects sharing the same
+concept.
+
+- https://github.com/google/python-fire
+- https://github.com/fastapi/typer
 
 ## Comparison with other tools : Yargs, @std/cli (minimist)
 
@@ -1004,7 +1008,7 @@ The usual tools rather take a particular configuration of the tool and produce
 an output data **without** a defined model. You need to learn their API to
 define the interface you want.
 
-**Clite follows a different approach: it takes the desired model and fills it
+**cli-from follows a different approach: it takes the desired model and fills it
 according to the command line**. If you want to type the parsing output, you
 don't need to do anything else. No duplicate writing for the CLI config and the
 parsing output model/type.
@@ -1016,7 +1020,8 @@ with its parameters.
 A comparison try is made in the
 [examples/cli-tools-diff](examples/cli-tools-diff) folder, it compares :
 
-- Clite : [examples/cli-tools-diff/clite.ts](examples/cli-tools-diff/clite.ts)
+- cli-from :
+  [examples/cli-tools-diff/cli-from.ts](examples/cli-tools-diff/cli-from.ts)
 - vs [Yargs](https://github.com/yargs/yargs) :
   [examples/cli-tools-diff/yargs.ts](examples/cli-tools-diff/yargs.ts)
 - vs [@std/cli](https://jsr.io/@std/cli/doc/parse-args) based on
@@ -1044,17 +1049,11 @@ The 3 implementations side by side :
 
 [![diff-600.png](examples/cli-tools-diff/diff-600.png)](examples/cli-tools-diff/diff.png)
 
-Note: I have only recently discovered (May 2026) other projects sharing the same
-concept.
-
-- https://github.com/google/python-fire
-- https://github.com/fastapi/typer
-
 ## Real case
 
 - The project
   [Studio-Pack-Generator](https://github.com/jersou/studio-pack-generator) use
-  clite and have
+  cli-from and have
   [lots of CLI options](https://github.com/jersou/studio-pack-generator?tab=readme-ov-file#cli-usage)
   generated from
   [a rather understandable file](https://github.com/jersou/studio-pack-generator/blob/main/studio_pack_generator.ts)

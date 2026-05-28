@@ -1,5 +1,5 @@
 import { getFieldNames, getMethodNames } from "./reflect.ts";
-import { getCliteSymbolMetadata } from "./decorators.ts";
+import { getClifromSymbolMetadata } from "./decorators.ts";
 import type { Obj } from "./types.ts";
 
 export type Metadata<O extends Obj> = {
@@ -28,11 +28,11 @@ export type Metadata<O extends Obj> = {
   jsonConfig?: boolean;
 };
 
-export function getCliteMetadata<O extends Obj>(
+export function getClifromMetadata<O extends Obj>(
   obj: O,
   isModule = false,
 ): Metadata<O> {
-  const symb = getCliteSymbolMetadata(obj);
+  const symb = getClifromSymbolMetadata(obj);
   const subcommands = [
     ...Object.keys(symb.subcommand ?? {}),
     ...Object.getOwnPropertyNames(obj).filter(

@@ -1,16 +1,16 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../mod.ts";
+import { cliFrom } from "../mod.ts";
 export class Tool {
   noThrow = false;
 
   main() {
     if (!this.noThrow) {
-      throw new Error("add --no-throw option !", { cause: { clite: true } });
+      throw new Error("add --no-throw option !", { cause: { cliFrom: true } });
     }
     console.log("OK !");
   }
 }
-cliteRun(Tool);
+cliFrom(Tool);
 
 /*
     $ ./example-throw.ts --help
@@ -38,5 +38,5 @@ cliteRun(Tool);
     error: Uncaught (in promise) Error: add --throw=false option !
           throw new Error("add --throw=false option !");
                 ^
-        at Tool.main (file:///tmp/CliteParser/examples/example-throw-all.ts:7:13)
+        at Tool.main (file:///tmp/Clifrom/examples/example-throw-all.ts:7:13)
 */

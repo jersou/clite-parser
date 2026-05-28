@@ -1,3 +1,7 @@
+## [0.9.0](https://github.com/jersou/cli-from/compare/0.8.2...0.9.0) (2026-05-28)
+
+- rename clite-parser to cli-from
+
 ## [0.8.2](https://github.com/jersou/clite-parser/compare/0.8.1...0.8.2) (2026-05-26)
 
 ### Features

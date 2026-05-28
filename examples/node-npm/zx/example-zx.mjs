@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cliteRun } from "clite-parser";
+import { cliFrom } from "cli-from";
 import { $ } from "zx";
 $.verbose = true;
 
@@ -22,4 +22,4 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliFrom(new Tool());

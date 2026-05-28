@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../mod.ts";
+import { cliFrom } from "../mod.ts";
 
-cliteRun({
+cliFrom({
   retry: 2,
   main() {
     console.log("main command", this);

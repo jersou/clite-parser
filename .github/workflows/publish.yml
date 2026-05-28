@@ -1,5 +1,4 @@
 name: Publish
-
 on:
   push:
     branches:
@@ -12,5 +11,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
-      - run: npx jsr publish
+      - uses: actions/checkout@v6
+      - name: Publish package
+        run: npx jsr publish

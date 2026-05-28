@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cliteRun } from "@jersou/clite";
+import { cliFrom } from "@jersou/cli-from";
 import $ from "dax-sh";
 
 class Tool {
@@ -21,4 +21,4 @@ class Tool {
   }
 }
 
-cliteRun(new Tool());
+cliFrom(new Tool());

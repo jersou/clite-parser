@@ -1,7 +1,7 @@
 /**
- * CliteRunConfig
+ * ClifromRunConfig
  */
-export type CliteRunConfig = {
+export type ClifromRunConfig = {
   /**
    * default : Deno.args or process.argv.slice(2)
    */
@@ -40,21 +40,21 @@ export type CliteRunConfig = {
  */
 export type Obj = Record<string, any>;
 /**
- * Result of cliteParse()
+ * Result of cliFromParse()
  */
-export type CliteResult<O extends Obj> = {
+export type ClifromResult<O extends Obj> = {
   obj: O & {
     config?: string;
   };
   command: string;
   commandArgs: (string | number | boolean)[];
-  config?: CliteRunConfig;
+  config?: ClifromRunConfig;
   help: string;
-  subcommand?: CliteResult<Obj>;
+  subcommand?: ClifromResult<Obj>;
 };
-export type CliteError = Error & {
+export type ClifromError = Error & {
   cause?: {
-    clite?: boolean;
+    cliFrom?: boolean;
     relaunchAfterUpdate?: boolean;
     error?: Error;
   };

@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../mod.ts";
+import { cliFrom } from "../mod.ts";
 
 export let opt = "foo";
 // To allow the modification of opt from the CLI (due to ESM security limitations)
@@ -23,7 +23,7 @@ export const main = () => {
   console.log("main", { opt });
 };
 
-cliteRun(import.meta);
+cliFrom(import.meta);
 
 // $ ./examples/example-module.ts --opt bar down true 100
 // down command { force: true, timeout: 100, opt: "bar" }

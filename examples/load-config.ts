@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../mod.ts";
+import { cliFrom } from "../mod.ts";
 
 class Tool {
   retry = 2;
@@ -19,7 +19,7 @@ class Tool {
   }
 }
 
-cliteRun(Tool, { configCli: true });
+cliFrom(Tool, { configCli: true });
 
 /*
     $ ./load-config.ts --help

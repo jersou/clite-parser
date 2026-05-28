@@ -1,10 +1,10 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../mod.ts";
-// or import { cliteRun } from "@jersou/clite"; // after "deno add @jersou/clite"
-// or import { cliteRun } from "clite-parser"; // after "npm install clite-parser" for Node usage
+import { cliFrom } from "../mod.ts";
+// or import { cliFrom } from "@jersou/cli-from"; // after "deno add @jersou/cli-from"
+// or import { cliFrom } from "cli-from"; // after "npm install cli-from" for Node usage
 
 export class Tool {
-  _help = "This tool is a full example of CliteParser usage";
+  _help = "This tool is a full example of Clifrom usage";
   retry = 2;
   webUrl = "none";
   _webUrl_help = "web URL ...";
@@ -51,7 +51,7 @@ export class Tool {
 }
 
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliteRun(Tool); // or cliteRun(new Tool());
+  cliFrom(Tool); // or cliFrom(new Tool());
 }
 
 // $ ./example.ts --retry=4 --web-url=tttt --no-color down true 14

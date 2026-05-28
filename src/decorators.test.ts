@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { cliteParse } from "./clite_parser.ts";
+import { cliFromParse } from "./clifrom_parser.ts";
 import { negatable } from "./decorators.ts";
 
 Deno.test({
@@ -10,7 +10,7 @@ Deno.test({
       dryRun = true;
       main() {}
     }
-    const res = await cliteParse(Tool, { args: ["--no-dry-run"] });
+    const res = await cliFromParse(Tool, { args: ["--no-dry-run"] });
     assertEquals(res.obj.dryRun, false);
   },
 });

@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun, help, noCommand, subcommand, usage } from "../mod.ts";
+import { cliFrom, help, noCommand, subcommand, usage } from "../mod.ts";
 
 @noCommand()
 @usage("git branch [Options] [--] <branchname>")
@@ -7,11 +7,11 @@ import { cliteRun, help, noCommand, subcommand, usage } from "../mod.ts";
 class Branch {
   @help("Delete a branch.")
   delete = false;
-  _clite_parent?: ToolWithSubcommand;
+  _clifrom_parent?: ToolWithSubcommand;
 
   main(branchname: string) {
     console.log("main branch command", {
-      gitDir: this._clite_parent?.gitDir,
+      gitDir: this._clifrom_parent?.gitDir,
       delete: this.delete,
       branchname,
     });
@@ -42,7 +42,7 @@ class ToolWithSubcommand {
   }
 }
 
-cliteRun(ToolWithSubcommand, { dontPrintResult: true });
+cliFrom(ToolWithSubcommand, { dontPrintResult: true });
 
 /*
 $ ./git-subcommand.ts --help

@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../mod.ts";
+import { cliFrom } from "../mod.ts";
 export class Tool {
   throw = "true";
   main() {
@@ -9,7 +9,7 @@ export class Tool {
     console.log("OK !");
   }
 }
-cliteRun(Tool, { printHelpOnError: true });
+cliFrom(Tool, { printHelpOnError: true });
 
 /*
     $ ./example-throw-all.ts --help
@@ -37,5 +37,5 @@ cliteRun(Tool, { printHelpOnError: true });
     error: Uncaught (in promise) Error: add --throw=false option !
           throw new Error("add --throw=false option !");
                 ^
-        at Tool.main (file:///tmp/CliteParser/examples/example-throw-all.ts:7:13)
+        at Tool.main (file:///tmp/Clifrom/examples/example-throw-all.ts:7:13)
 */

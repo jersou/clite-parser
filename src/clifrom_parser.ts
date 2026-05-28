@@ -2,9 +2,14 @@ import { bgGreen, bgRed, bgYellow, bold } from "@std/fmt/colors";
 import { genHelp } from "./help.ts";
 import { convertCommandArg, fillFields, parseArgs } from "./parse_args.ts";
 import { runCommand } from "./command.ts";
-import { getCliteMetadata } from "./metadata.ts";
+import { getClifromMetadata } from "./metadata.ts";
 import { loadConfig } from "./load_config.ts";
-import type { CliteError, CliteResult, CliteRunConfig, Obj } from "./types.ts";
+import type {
+  ClifromError,
+  ClifromResult,
+  ClifromRunConfig,
+  Obj,
+} from "./types.ts";
 import { getFieldNames, getMethodNames } from "./reflect.ts";
 import { appendFileSync } from "node:fs";
 import readline from "node:readline/promises";
@@ -12,20 +17,20 @@ import path from "node:path";
 
 /**
  * Run the command of obj depending on the Deno/Node script arguments
- * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
- * @param config - of clite-parser
+ * @param objOrClass class or object to parse by cli-from (the class will be instanced)
+ * @param config - of cli-from
  */
-export async function cliteRun<O extends Obj>(
+export async function cliFrom<O extends Obj>(
   objOrClass: O | { new (): O },
-  config: CliteRunConfig = {},
+  config: ClifromRunConfig = {},
 ): Promise<unknown> {
   let res;
   try {
-    res = await cliteParse(objOrClass, config);
+    res = await cliFromParse(objOrClass, config);
   } catch (e) {
     if (
-      (e as CliteError).cause?.clite &&
-      (e as CliteError).cause?.relaunchAfterUpdate
+      (e as ClifromError).cause?.cliFrom &&
+      (e as ClifromError).cause?.relaunchAfterUpdate
     ) {
       return;
     } else {
@@ -38,7 +43,7 @@ export async function cliteRun<O extends Obj>(
       return runCommand<O>(res);
       // deno-lint-ignore no-explicit-any
     } catch (e: any) {
-      if (e.cause?.clite || config?.printHelpOnError) {
+      if (e.cause?.cliFrom || config?.printHelpOnError) {
         console.error(bgRed(bold("An error occurred ! The help :")));
         console.error(res.help);
         console.error();
@@ -51,13 +56,13 @@ export async function cliteRun<O extends Obj>(
 
 /**
  * Return the parsing result of obj and the Deno/Node script arguments
- * @param objOrClass class or object to parse by clite-parser (the class will be instanced)
- * @param config - of clite-parser
+ * @param objOrClass class or object to parse by cli-from (the class will be instanced)
+ * @param config - of cli-from
  */
-export async function cliteParse<O extends Obj & { config?: string }>(
+export async function cliFromParse<O extends Obj & { config?: string }>(
   objOrClass: O | { new (): O },
-  config: CliteRunConfig = {},
-): Promise<CliteResult<O>> {
+  config: ClifromRunConfig = {},
+): Promise<ClifromResult<O>> {
   const obj = await getObj(objOrClass);
   if (typeof objOrClass === "function" && !isConstructor(objOrClass)) {
     config.noCommand = true;
@@ -66,7 +71,7 @@ export async function cliteParse<O extends Obj & { config?: string }>(
   if (isImportMetaObj && !config.meta) {
     config.meta = objOrClass as unknown as ImportMeta;
   }
-  const metadata = getCliteMetadata(obj, isImportMetaObj);
+  const metadata = getClifromMetadata(obj, isImportMetaObj);
   const help = genHelp(obj, metadata, config);
   try {
     const parseResult = parseArgs(obj, metadata, config);
@@ -84,7 +89,7 @@ export async function cliteParse<O extends Obj & { config?: string }>(
       const command = parseResult.command ?? metadata.defaultCommand;
       if (!command) {
         throw new Error(`no method defined or no "main" method`, {
-          cause: { clite: true },
+          cause: { cliFrom: true },
         });
       }
       fillFields(parseResult, obj, metadata, config);
@@ -93,16 +98,19 @@ export async function cliteParse<O extends Obj & { config?: string }>(
         const subcommandObj = typeof obj[command] === "function"
           ? new obj[command]()
           : obj[command];
-        subcommandObj._clite_parent = obj;
+        subcommandObj._clifrom_parent = obj;
         const args = parseResult.commandArgs.map((e) => e.toString());
-        const subcommand = await cliteParse(subcommandObj, { ...config, args });
+        const subcommand = await cliFromParse(subcommandObj, {
+          ...config,
+          args,
+        });
         return { obj, command, commandArgs: [], config, help, subcommand };
       } else if (
         !Object.hasOwn(metadata.methods, command) &&
         !getMethodNames(obj).includes(command) // allow exec of private methods
       ) {
         throw new Error(`The command "${command}" doesn't exist`, {
-          cause: { clite: true },
+          cause: { cliFrom: true },
         });
       }
       const commandArgs = config?.dontConvertCmdArgs
@@ -110,8 +118,8 @@ export async function cliteParse<O extends Obj & { config?: string }>(
         : parseResult.commandArgs.map(convertCommandArg);
       return { obj, command, commandArgs, config, help };
     }
-  } catch (e: unknown | CliteError) {
-    if ((e as CliteError).cause?.clite || config?.printHelpOnError) {
+  } catch (e: unknown | ClifromError) {
+    if ((e as ClifromError).cause?.cliFrom || config?.printHelpOnError) {
       console.error(bgRed(bold("An error occurred ! The help :")));
       console.error(`${help}\n${bgRed(bold("The error :"))}`);
     }
@@ -140,12 +148,12 @@ async function handleMissingEsmSetter(
   );
 
   const msg = [
-    `This module contains exported variables without 'clite' setters : ${
+    `This module contains exported variables without 'cli-from' setters : ${
       missingSetters.join(
         ", ",
       )
     }.`,
-    `It's necessary for Clite to process options (= exported var/let) due to ESM security limitations.`,
+    `It's necessary for Clifrom to process options (= exported var/let) due to ESM security limitations.`,
     `You must append these lines to "${path.basename(meta.filename!)}" :`,
     `${setters.map((s) => `    ${s}`).join("\n")}`,
     bold(
@@ -155,12 +163,14 @@ async function handleMissingEsmSetter(
 
   const userResp = await confirmDefaultTrue(bgYellow(msg.join("\n")));
   if (userResp) {
-    const newCode = ["", "// Clite setters for options", ...setters].join("\n");
+    const newCode = ["", "// Clifrom setters for options", ...setters].join(
+      "\n",
+    );
     appendFileSync(meta.filename!, newCode);
     console.log(bgGreen(`File updated !`));
     console.log(bgYellow(`You must relaunch your command !`));
     throw new Error("file updated, relaunch !", {
-      cause: { clite: true, relaunchAfterUpdate: true },
+      cause: { cliFrom: true, relaunchAfterUpdate: true },
     });
   } else {
     console.log(bgYellow(`Ignore these missing setters...`));

@@ -1,8 +1,8 @@
 #!/usr/bin/env -S deno run -A
 
-// deno install -g -f --name dcpm -A https://jsr.io/@jersou/clite/0.8.2/examples/dcpm.ts
+// deno install -g -f --name dcpm -A https://jsr.io/@jersou/cli-from/0.9.0/examples/dcpm.ts
 
-import { cliteRun } from "../mod.ts";
+import { cliFrom } from "../mod.ts";
 import $ from "jsr:@david/dax@0.42.0";
 import { DockerComposePs } from "./dcpps.ts";
 
@@ -31,5 +31,5 @@ class DockerComposeUpMenu {
 
 // if the file is imported, do not execute this block
 if (import.meta.main) {
-  cliteRun(DockerComposeUpMenu);
+  cliFrom(DockerComposeUpMenu);
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { alias, cliteRun, help } from "../../clite_parser.ts";
+import { alias, cliFrom, help } from "../../mod.ts";
 
 let ret;
 
@@ -39,11 +39,11 @@ class Tool {
   }
 }
 
-cliteRun(Tool);
+cliFrom(Tool);
 console.log(ret);
 
 /*
-$ ./clite.ts --help
+$ ./cli-from.ts --help
 This tool is a little example
 
 Usage: <Tool file> [Options] [--] [command [command args]]
@@ -59,26 +59,26 @@ Options:
  -n, --dry-run no changes mode [default: false]
      --web-url web url        [default: "none"]
 
-$ ./clite.ts
+$ ./cli-from.ts
 {
   command: "main",
   options: { retry: 2, dryRun: false, webUrl: "none" }
 }
 
-$ ./clite.ts -r8 --dry-run --web-url=http
+$ ./cli-from.ts -r8 --dry-run --web-url=http
 {
   command: "main",
   options: { retry: 8, dryRun: true, webUrl: "http" }
 }
 
-$ ./clite.ts down true 40
+$ ./cli-from.ts down true 40
 {
   command: "down",
   options: { retry: 2, dryRun: false, webUrl: "none" },
   cmdArgs: { force: true, timeout: 40 }
 }
 
-$ ./clite.ts -r8 --dry-run --web-url=http down true 40
+$ ./cli-from.ts -r8 --dry-run --web-url=http down true 40
 {
   command: "down",
   options: { retry: 8, dryRun: true, webUrl: "http" },
@@ -86,14 +86,14 @@ $ ./clite.ts -r8 --dry-run --web-url=http down true 40
 }
 
 
-$ ./clite.ts --unk
+$ ./cli-from.ts --unk
 An error occurred ! The help :
 ...
 The error :
 error: Uncaught (in promise) Error: The option "unk" doesn't exist
 
 
-$ ./clite.ts unk
+$ ./cli-from.ts unk
 An error occurred ! The help :
 ...
 The error :

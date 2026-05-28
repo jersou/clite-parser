@@ -1,11 +1,11 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun } from "../mod.ts";
+import { cliFrom } from "../mod.ts";
 
 function ext(param1: string) {
   console.log("ext", param1, this);
 }
 
-cliteRun({
+cliFrom({
   _help: "plain object example",
   retry: 2,
   _no_color_help: "skip colorize",

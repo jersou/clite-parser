@@ -1,14 +1,14 @@
 import { assert, assertEquals, assertRejects } from "jsr:@std/assert@1.0.5";
-import { cliteParse, cliteRun } from "./clite_parser.ts";
+import { cliFrom, cliFromParse } from "./clifrom_parser.ts";
 import { help, hidden, noCommand, subcommand } from "./decorators.ts";
 import { genHelp } from "./help.ts";
 import { Tool } from "./test_data.test.ts";
-import { getCliteMetadata } from "./metadata.ts";
+import { getClifromMetadata } from "./metadata.ts";
 import { stripAnsiCode } from "@std/fmt/colors";
 import type { Obj } from "./types.ts";
 
-Deno.test("cliteRun", async () => {
-  const result = await cliteRun(new Tool(), {
+Deno.test("cliFrom", async () => {
+  const result = await cliFrom(new Tool(), {
     args: [
       "--opt2=false",
       "--opt3=qsdf",
@@ -28,18 +28,18 @@ Deno.test("cliteRun", async () => {
   assertEquals(result, expected);
 });
 
-Deno.test("cliteRun help", async () => {
-  const result = await cliteRun(new Tool(), {
+Deno.test("cliFrom help", async () => {
+  const result = await cliFrom(new Tool(), {
     args: ["--help"],
   });
   const tool = new Tool();
-  const metadata = getCliteMetadata(tool);
+  const metadata = getClifromMetadata(tool);
   const expected = genHelp(tool, metadata);
   assertEquals(result, expected);
 });
 
-Deno.test("cliteParse", async () => {
-  const result = await cliteParse(Tool, {
+Deno.test("cliFromParse", async () => {
+  const result = await cliFromParse(Tool, {
     args: ["--opt1=78", "down", "true"],
   });
   assertEquals(result.command, "down");
@@ -79,17 +79,17 @@ Deno.test({
         return this;
       }
     }
-    const result = (await cliteRun(ToolWithSubcommand, {
+    const result = (await cliFrom(ToolWithSubcommand, {
       args: ["--git-dir=/tmp", "branch", "--delete", "foo"],
     })) as Obj;
-    assertEquals(result.branch._clite_parent.gitDir, "/tmp");
+    assertEquals(result.branch._clifrom_parent.gitDir, "/tmp");
     assertEquals(result.branch.delete, true);
     assertEquals(result.branchname, "foo");
 
-    const result2 = (await cliteRun(ToolWithSubcommand, {
+    const result2 = (await cliFrom(ToolWithSubcommand, {
       args: ["--git-dir=/tmp", "commit", "--all", "--message", "bar"],
     })) as Obj;
-    assertEquals(result2._clite_parent.gitDir, "/tmp");
+    assertEquals(result2._clifrom_parent.gitDir, "/tmp");
     assertEquals(result2.all, true);
     assertEquals(result2.message, "bar");
   },
@@ -103,7 +103,7 @@ Deno.test({
       main() {}
     }
 
-    const result = await cliteParse(Tool, {});
+    const result = await cliFromParse(Tool, {});
     assertEquals(result.obj.dryRun, true);
   },
 });
@@ -118,7 +118,7 @@ Deno.test({
       main() {}
     }
 
-    const result = await cliteParse(ToolWithConfig, {
+    const result = await cliFromParse(ToolWithConfig, {
       args: ["--config", "src/test-data/test-config.json"],
       configCli: true,
     });
@@ -136,7 +136,7 @@ Deno.test({
       main() {}
     }
 
-    const result = await cliteParse(ToolWithConfig, {
+    const result = await cliFromParse(ToolWithConfig, {
       args: ["--config", `{"foo": "from-config"}`],
       configCli: true,
     });
@@ -152,7 +152,7 @@ Deno.test({
       main() {}
     }
     assertRejects(() =>
-      cliteParse(ToolWithConfig, {
+      cliFromParse(ToolWithConfig, {
         args: ["--config", "src/test-data/bad-config.json"],
         configCli: true,
       })
@@ -168,7 +168,7 @@ Deno.test({
       main() {}
     }
     assertRejects(() =>
-      cliteParse(ToolWithConfig, {
+      cliFromParse(ToolWithConfig, {
         args: ["--config", "src/test-data/test-config.json"],
         configCli: false,
       })
@@ -185,20 +185,20 @@ Deno.test({
       }
     }
     assertRejects(() =>
-      cliteRun(ToolWithConfig, { args: [], printHelpOnError: true })
+      cliFrom(ToolWithConfig, { args: [], printHelpOnError: true })
     );
   },
 });
 
 Deno.test({
-  name: "throws on clite ",
+  name: "throws on cli-from ",
   fn() {
     class ToolWithConfig {
       main() {
-        throw new Error("", { cause: { clite: true } });
+        throw new Error("", { cause: { cliFrom: true } });
       }
     }
-    assertRejects(() => cliteRun(ToolWithConfig, { args: [] }));
+    assertRejects(() => cliFrom(ToolWithConfig, { args: [] }));
   },
 });
 
@@ -206,7 +206,7 @@ Deno.test({
   name: "no method defined",
   fn() {
     class ToolWithoutCmd {}
-    assertRejects(() => cliteRun(ToolWithoutCmd, { args: [] }));
+    assertRejects(() => cliFrom(ToolWithoutCmd, { args: [] }));
   },
 });
 
@@ -214,12 +214,12 @@ Deno.test({
   name: "The command doesn't exist",
   fn() {
     class ToolWithoutCmd {}
-    assertRejects(() => cliteRun(ToolWithoutCmd, { args: ["foo"] }));
+    assertRejects(() => cliFrom(ToolWithoutCmd, { args: ["foo"] }));
   },
 });
 
-Deno.test("cliteRun meta", async () => {
-  const result = await cliteRun(new Tool(), {
+Deno.test("cliFrom meta", async () => {
+  const result = await cliFrom(new Tool(), {
     args: ["--help"],
     meta: { main: true, url: "./test.ts", resolve: () => "" },
   }) as string;
@@ -227,13 +227,13 @@ Deno.test("cliteRun meta", async () => {
 });
 
 Deno.test("dontConvertCmdArgs", async () => {
-  const result = await cliteParse(Tool, {
+  const result = await cliFromParse(Tool, {
     args: ["--", "main", "123", "true", "foo"],
     dontConvertCmdArgs: true,
   });
   assertEquals(result.command, "main");
   assertEquals(result.commandArgs, ["123", "true", "foo"]);
-  const result2 = await cliteParse(Tool, {
+  const result2 = await cliFromParse(Tool, {
     args: ["--", "main", "123", "true", "foo"],
   });
   assertEquals(result2.command, "main");
@@ -266,7 +266,7 @@ Deno.test("extends", async () => {
     }
   }
   const child = new Child();
-  const result = await cliteParse(child, {});
+  const result = await cliFromParse(child, {});
   assertEquals(
     stripAnsiCode(result.help),
     `Usage: <script path> [Options] [--] [command [command args]]

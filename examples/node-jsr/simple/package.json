@@ -1,5 +1,5 @@
 {
-  "name": "clite-node",
+  "name": "cli-from-node",
   "version": "1.0.0",
   "description": "",
   "main": "example.mjs",
@@ -12,6 +12,6 @@
     "shebang-run": "./example.mjs --retry=4 --web-url=tttt --no-color down true 14"
   },
   "dependencies": {
-    "@jersou/clite": "npm:@jsr/jersou__clite@0.8.2"
+    "@jersou/cli-from": "npm:@jsr/jersou__clifrom@0.9.0"
   }
 }

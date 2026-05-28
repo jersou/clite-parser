@@ -1,5 +1,5 @@
 {
-  "name": "clite-node",
+  "name": "cli-from-node",
   "version": "1.0.0",
   "description": "",
   "main": "example.mjs",
@@ -14,6 +14,6 @@
     "run-module": "node example-module.mjs --opt bar down true 100"
   },
   "dependencies": {
-    "clite-parser": "0.8.2"
+    "cli-from": "0.9.0"
   }
 }

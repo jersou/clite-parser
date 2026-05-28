@@ -18,10 +18,10 @@ function addSymbolMetadata(target: any, prop: any, key: string, val: any) {
     roorMetadata = target.constructor[Symbol.metadata];
     propName = prop;
   }
-  if (!roorMetadata.clite) {
-    roorMetadata.clite = {};
+  if (!roorMetadata.cliFrom) {
+    roorMetadata.cliFrom = {};
   }
-  const metadata = roorMetadata.clite;
+  const metadata = roorMetadata.cliFrom;
   if (!metadata[key]) {
     metadata[key] = {};
   }
@@ -39,7 +39,7 @@ function addSymbolMetadata(target: any, prop: any, key: string, val: any) {
  * get the metadata from the js object
  * @param obj - to use
  */
-export function getCliteSymbolMetadata(obj: Obj): Obj {
+export function getClifromSymbolMetadata(obj: Obj): Obj {
   const prototypes: object[] = [];
   let o: object | null = obj;
   // deno-lint-ignore no-cond-assign
@@ -48,7 +48,7 @@ export function getCliteSymbolMetadata(obj: Obj): Obj {
   }
   let metadata = {};
   for (const prototype of prototypes) {
-    const protMeta = prototype.constructor[Symbol.metadata]?.clite || {};
+    const protMeta = prototype.constructor[Symbol.metadata]?.cliFrom || {};
     metadata = deepMerge(metadata, protMeta);
   }
   return metadata;

@@ -2,7 +2,7 @@ import { toKebabCase } from "@std/text";
 import { getMethodArgNames } from "./reflect.ts";
 import { bold, gray, underline } from "@std/fmt/colors";
 import type { Metadata } from "./metadata.ts";
-import type { CliteRunConfig, Obj } from "./types.ts";
+import type { ClifromRunConfig, Obj } from "./types.ts";
 
 export const boldUnder = (str: string) => bold(underline(str));
 
@@ -69,7 +69,7 @@ function genOptionsHelp<O extends Obj>(
   obj: Obj,
   metadata: Metadata<O>,
   helpLines: string[],
-  config?: CliteRunConfig,
+  config?: ClifromRunConfig,
 ) {
   const allFields = Object.keys(metadata.fields);
   const fields = allFields.filter((f) => !metadata.fields[f]?.hidden);
@@ -138,14 +138,14 @@ function genOptionsHelp<O extends Obj>(
  * Generate the CLI help of obj
  *
  * @param obj to analyse
- * @param metadata - clite metadata
- * @param config CliteRunConfig
+ * @param metadata - cli-from metadata
+ * @param config ClifromRunConfig
  * @returns the help as string
  */
 export function genHelp<O extends Obj>(
   obj: O,
   metadata: Metadata<O>,
-  config?: CliteRunConfig,
+  config?: ClifromRunConfig,
 ): string {
   const helpLines: string[] = [];
   if (metadata.help) {

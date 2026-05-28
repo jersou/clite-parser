@@ -1,7 +1,7 @@
 /**
- * CliteRunConfig
+ * ClifromRunConfig
  */
-export type CliteRunConfig = {
+export type ClifromRunConfig = {
   /**
    * default : Deno.args or process.argv.slice(2)
    */
@@ -44,9 +44,9 @@ export type CliteRunConfig = {
 export type Obj = Record<string, any>;
 
 /**
- * Result of cliteParse()
+ * Result of cliFromParse()
  */
-export type CliteResult<O extends Obj> = {
+export type ClifromResult<O extends Obj> = {
   /*
    * The input object overwritten with the data from the parsing result
    */
@@ -60,19 +60,19 @@ export type CliteResult<O extends Obj> = {
    */
   commandArgs: (string | number | boolean)[];
   /*
-   * The input CliteRunConfig
+   * The input ClifromRunConfig
    */
-  config?: CliteRunConfig;
+  config?: ClifromRunConfig;
   /*
    * The generated help
    */
   help: string;
   /*
-   * The subcommand CliteResult if the command is a subcommand
+   * The subcommand ClifromResult if the command is a subcommand
    */
-  subcommand?: CliteResult<Obj>;
+  subcommand?: ClifromResult<Obj>;
 };
 
-export type CliteError = Error & {
-  cause?: { clite?: boolean; relaunchAfterUpdate?: boolean; error?: Error };
+export type ClifromError = Error & {
+  cause?: { cliFrom?: boolean; relaunchAfterUpdate?: boolean; error?: Error };
 };

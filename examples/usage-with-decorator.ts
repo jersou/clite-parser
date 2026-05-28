@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliteRun, usage } from "../mod.ts";
+import { cliFrom, usage } from "../mod.ts";
 
 @usage("new usage of Tool")
 class Tool {
@@ -8,4 +8,4 @@ class Tool {
   }
 }
 
-cliteRun(Tool);
+cliFrom(Tool);
