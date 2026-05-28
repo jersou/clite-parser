@@ -35,6 +35,12 @@ export type CliteRunConfig = {
    * don't convert "true"/"false" to true/false in command arguments, and not to number after --
    */
   dontConvertCmdArgs?: boolean;
+
+  /**
+   * If true, options appearing after a command method in the arguments will not be parsed as options,
+   * but treated as regular command arguments instead. default: false
+   */
+  dontParseOptionAfterMethodCmd?: boolean;
 };
 
 /**

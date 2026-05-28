@@ -75,7 +75,7 @@ export function parseArgs<O extends Obj>(
     collect: arrayProp,
     default: defaultValues,
     alias,
-    stopEarly: true,
+    stopEarly: config?.dontParseOptionAfterMethodCmd ?? true,
   });
   for (const key of Object.keys(stdRes)) {
     if (defaultValues[key] === stdRes[key]) {
