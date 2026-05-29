@@ -11,6 +11,6 @@ export function main() {
 
 clinfer(import.meta);
 
-// Clinfer setters for options
+// clinfer setters for options
 export const _set__json_config = (v) => (_json_config = v);
 export const _set_retry = (v) => (retry = v);

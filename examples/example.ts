@@ -4,7 +4,7 @@ import { clinfer } from "../mod.ts";
 // or import { clinfer } from "clinfer"; // after "npm install clinfer" for Node usage
 
 export class Tool {
-  _help = "This tool is a full example of Clinfer usage";
+  _help = "This tool is a full example of clinfer usage";
   retry = 2;
   webUrl = "none";
   _webUrl_help = "web URL ...";

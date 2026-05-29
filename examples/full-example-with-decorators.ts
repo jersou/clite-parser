@@ -12,7 +12,7 @@ import {
   usage,
 } from "../mod.ts";
 
-@help("This tool is an example of Clinfer")
+@help("This tool is an example of clinfer")
 @usage("Usage: full-example [Options] [command [command args]]")
 @jsonConfig("Use json file or string to read the options")
 class Tool {
@@ -93,7 +93,7 @@ if (import.meta.main) { // if the file is imported, do not execute this block
 
 /*
 $ ./full-example-with-decorators.ts --help
-This tool is an example of Clinfer
+This tool is an example of clinfer
 
 Usage: Usage: full-example [Options] [command [command args]]
 

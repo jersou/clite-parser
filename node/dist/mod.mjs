@@ -1147,7 +1147,7 @@ async function handleMissingEsmSetter(meta, missingSetters) {
     `This module contains exported variables without 'clinfer' setters : ${
       missingSetters.join(", ")
     }.`,
-    `It's necessary for Clinfer to process options (= exported var/let) due to ESM security limitations.`,
+    `It's necessary for clinfer to process options (= exported var/let) due to ESM security limitations.`,
     `You must append these lines to "${path.basename(meta.filename)}" :`,
     `${setters.map((s) => `    ${s}`).join("\n")}`,
     bold(
@@ -1158,7 +1158,7 @@ async function handleMissingEsmSetter(meta, missingSetters) {
   if (userResp) {
     const newCode = [
       "",
-      "// Clinfer setters for options",
+      "// clinfer setters for options",
       ...setters,
     ].join("\n");
     appendFileSync(meta.filename, newCode);

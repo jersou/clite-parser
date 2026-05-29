@@ -38,5 +38,5 @@ clinfer(Tool);
     error: Uncaught (in promise) Error: add --throw=false option !
           throw new Error("add --throw=false option !");
                 ^
-        at Tool.main (file:///tmp/Clinfer/examples/example-throw-all.ts:7:13)
+        at Tool.main (file:///tmp/clinfer/examples/example-throw-all.ts:7:13)
 */

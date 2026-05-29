@@ -3,7 +3,7 @@ import { clinfer } from "../mod.ts";
 
 export class Tool {
   retry = 2;
-  _help = "This tool is a full example of Clinfer usage";
+  _help = "This tool is a full example of clinfer usage";
   no_color?: string | boolean;
   _no_color_help = "skip colorize";
 

@@ -2,7 +2,7 @@
 import { clinfer, help } from "../mod.ts";
 
 class Tool {
-  _help = "This tool is a full example of Clinfer usage";
+  _help = "This tool is a full example of clinfer usage";
 
   retry = 2;
 
@@ -37,7 +37,7 @@ class Tool {
   }
 }
 
-@help("This tool is a full example of Clinfer usage")
+@help("This tool is a full example of clinfer usage")
 class ToolDecor {
   retry = 2;
 

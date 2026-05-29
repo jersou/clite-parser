@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno -A
 import { alias, clinfer, help } from "../mod.ts";
 
-@help("This tool is a little example of Clinfer") // optional description
+@help("This tool is a little example of clinfer") // optional description
 class Tool {
   @alias("r") // optional alias -r for --retry
   retry = 2;
@@ -29,7 +29,7 @@ if (import.meta.main) { // if the file is imported, do not execute this block
 
 /*
     $ ./example-without-decorator.js --help
-    This tool is a little example of Clinfer
+    This tool is a little example of clinfer
 
     Usage: <Tool file> [Options] [--] [command [command args]]
 

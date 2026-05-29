@@ -2,7 +2,7 @@
 import { clinfer } from "../mod.ts";
 
 class Tool {
-  _help = "This tool is a little example of Clinfer"; // optional description
+  _help = "This tool is a little example of clinfer"; // optional description
 
   _retry_alias = "r"; // optional alias -r for --retry
   retry = 2;
@@ -30,7 +30,7 @@ if (import.meta.main) { // if the file is imported, do not execute this block
 
 /*
     $ ./example-without-decorator.js --help
-    This tool is a little example of Clinfer
+    This tool is a little example of clinfer
 
     Usage: <Tool file> [Options] [--] [command [command args]]
 
@@ -47,7 +47,7 @@ if (import.meta.main) { // if the file is imported, do not execute this block
 
     $ ./without-decorator.mjs --retry 12 --dry-run
     main command Tool {
-      _help: "This tool is a little example of Clinfer",
+      _help: "This tool is a little example of clinfer",
       _retry_alias: "r",
       retry: 12,
       _dryRun_help: "no changes mode",
