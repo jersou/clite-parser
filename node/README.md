@@ -34,7 +34,7 @@ the CLI.
 ```typescript
 #!/usr/bin/env -S deno run
 import { cliFrom } from "cli-from"; // after "npm install cli-from" for Node usage
-// or import { cliFrom } from "jsr:@jersou/cli-from@0.9.0";
+// or import { cliFrom } from "jsr:@jersou/cli-from@0.9.1";
 // or import { cliFrom } from "@jersou/cli-from"; // after "deno add @jersou/cli-from"
 
 class Tool {
@@ -976,7 +976,7 @@ With [esm.sh](https://code.esm.sh/),
 [jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
-import { cliFromParse } from "https://esm.sh/jsr/@jersou/cli-from@0.9.0";
+import { cliFromParse } from "https://esm.sh/jsr/@jersou/cli-from@0.9.1";
 
 class Tool {
   opt = 123;

@@ -13,7 +13,7 @@
 //   -h, --help     Show this help                [default: false]
 //       --interval repeat watch every <INTERVAL> sec [default: 1]
 
-import { cliFrom, help } from "jsr:@jersou/cli-from@0.9.0";
+import { cliFrom, help } from "jsr:@jersou/cli-from@0.9.1";
 import $ from "jsr:@david/dax@0.42.0";
 import { assert } from "jsr:@std/assert@1.0.5";
 import {

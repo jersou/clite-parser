@@ -1,6 +1,6 @@
 {
   "name": "@jersou/cli-from",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "exports": "./mod.ts",
   "license": "MIT",
   "tasks": {

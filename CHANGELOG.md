@@ -1,3 +1,8 @@
+## [0.9.1](https://github.com/jersou/cli-from/compare/0.9.0...0.9.1) (2026-05-29)
+
+- update doc
+- fix npm bundle
+
 ## [0.9.0](https://github.com/jersou/cli-from/compare/0.8.2...0.9.0) (2026-05-28)
 
 - rename clite-parser to cli-from
