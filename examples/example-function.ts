@@ -1,11 +1,11 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 
 function down(force = false, timeout = 5) {
   console.log("down command", { force, timeout });
 }
 
-cliFrom(down);
+clinfer(down);
 
 // $ ./examples/example-function.ts true 100
 // down command { force: true, timeout: 100 }

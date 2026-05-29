@@ -131,11 +131,11 @@ $ ./std-cli.ts -r8 --dry-run --web-url=http down true 40
 }
 
 
-$ ./cli-from.ts --unk
+$ ./clinfer.ts --unk
 error: Uncaught (in promise) Error: No option unk
 ...
 
-$ ./cli-from.ts unk
+$ ./clinfer.ts unk
 error: Uncaught (in promise) Error: Command not found: unk
 ...
 

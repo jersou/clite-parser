@@ -1,9 +1,9 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 
 export class Tool {
   retry = 2;
-  _help = "This tool is a full example of Clifrom usage";
+  _help = "This tool is a full example of Clinfer usage";
   no_color?: string | boolean;
   _no_color_help = "skip colorize";
 
@@ -13,5 +13,5 @@ export class Tool {
 }
 
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliFrom(Tool, { noCommand: true });
+  clinfer(Tool, { noCommand: true });
 }

@@ -1,5 +1,5 @@
 {
-  "name": "cli-from-node",
+  "name": "clinfer-node",
   "version": "1.0.0",
   "description": "",
   "main": "example.mjs",
@@ -10,10 +10,10 @@
     "run-help": "node example.mjs --help",
     "run-full": "node example.mjs --retry=4 --web-url=tttt --no-color down true 14",
     "shebang-run": "./example.mjs --retry=4 --web-url=tttt --no-color down true 14",
-    "run-module-help": "node example-module.mjs --help",
-    "run-module": "node example-module.mjs --opt bar down true 100"
+    "run-module-help": "node ESM-demo.mjs --help",
+    "run-module": "node ESM-demo.mjs --opt bar down true 100"
   },
   "dependencies": {
-    "cli-from": "0.9.1"
+    "clinfer": "0.9.2"
   }
 }

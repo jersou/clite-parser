@@ -1,32 +1,39 @@
 #!/usr/bin/env node
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 
-export let opt = "foo";
-// To allow the modification of opt from the CLI
-export const _set_opt = (v) => (opt = v);
-
-function private_function() {
-  console.log("private_function");
-}
+export let opt = "foo"; // will be "--opt" option
 
 export function up() {
+  // will be "up" command
   private_function();
   console.log("up command", opt);
+}
+
+function private_function() {
+  // ignored (not exported)
+  console.log("private_function");
 }
 
 export function down(force = false, timeout = 5) {
   console.log("down command", { force, timeout, opt });
 }
-down._help = "down custom help";
 
+// will be "main" command (the default)
 export const main = () => console.log("main", opt);
 
-cliFrom(import.meta);
+down._help = "down custom help"; // optional help
+// To allow the modification of opt from the CLI
+export const _set_opt = (v) => (opt = v);
 
-// $ ./example-module.mjs --opt bar down true 100
+clinfer(import.meta);
+
+//  ./ESM-demo.mjs
+// main foo
+//
+// $ ./ESM-demo.mjs --opt bar down true 100
 // down command { force: true, timeout: 100, opt: "bar" }
 //
-// ./example-module.mjs --help
+// ./ESM-demo.mjs --help
 // Usage: <Object file> [Options] [--] [command [command args]]
 //
 // Commands:

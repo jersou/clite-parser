@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run -A
 import {
   alias,
-  cliFrom,
+  clinfer,
   defaultHelp,
   help,
   hidden,
@@ -198,7 +198,7 @@ export class StudioPackGenerator {
     if (!this.storyPath) {
       throw new Error(
         "The story path is not defined ! separate option and story path by --",
-        { cause: { cliFrom: true } },
+        { cause: { clinfer: true } },
       );
     }
 
@@ -216,7 +216,7 @@ export class StudioPackGenerator {
 
 if (import.meta.main) {
   console.log({ version: denoJson.version, ...Deno.version });
-  cliFrom(StudioPackGenerator, { noCommand: true });
+  clinfer(StudioPackGenerator, { noCommand: true });
 }
 
 /*

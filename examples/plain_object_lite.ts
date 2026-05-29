@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 
-cliFrom({
+clinfer({
   retry: 2,
   main() {
     console.log("main command", this);

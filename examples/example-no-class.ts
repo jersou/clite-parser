@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 
 const main = () => console.log("main");
 
@@ -10,7 +10,7 @@ function down(force: boolean, timeout: number) {
 const up = () => console.log("up");
 up._help = "up custom help";
 
-cliFrom({ main, up, down });
+clinfer({ main, up, down });
 
 // $ ./examples/example-no-class.ts down true 15
 // down command { force: true, timeout: 15 }

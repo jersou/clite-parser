@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 
 class Tool {
   _all_alias = "a";
@@ -19,7 +19,7 @@ class Tool {
   }
 }
 
-cliFrom(Tool);
+clinfer(Tool);
 
 /*
 $ ./alias-without-decorator.ts --help

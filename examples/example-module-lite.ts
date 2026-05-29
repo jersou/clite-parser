@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 
 export function up() {
   private_function();
@@ -16,7 +16,7 @@ export function down(force = false, timeout = 5) {
 
 export const main = () => console.log("main");
 
-cliFrom(import.meta);
+clinfer(import.meta);
 
 // $ ./examples/example-module-lite.ts --opt bar down true 100
 // down command { force: true, timeout: 100 }

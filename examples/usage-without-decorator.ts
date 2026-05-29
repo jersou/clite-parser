@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 
 class Tool {
   _usage = "new usage of Tool";
@@ -8,4 +8,4 @@ class Tool {
   }
 }
 
-cliFrom(Tool);
+clinfer(Tool);

@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { cliFromParse } from "./clifrom_parser.ts";
+import { clinferParse } from "./clinfer_parser.ts";
 import { negatable } from "./decorators.ts";
 
 Deno.test({
@@ -10,7 +10,7 @@ Deno.test({
       dryRun = true;
       main() {}
     }
-    const res = await cliFromParse(Tool, { args: ["--no-dry-run"] });
+    const res = await clinferParse(Tool, { args: ["--no-dry-run"] });
     assertEquals(res.obj.dryRun, false);
   },
 });

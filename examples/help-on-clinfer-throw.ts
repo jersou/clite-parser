@@ -1,16 +1,16 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 export class Tool {
   noThrow = false;
 
   main() {
     if (!this.noThrow) {
-      throw new Error("add --no-throw option !", { cause: { cliFrom: true } });
+      throw new Error("add --no-throw option !", { cause: { clinfer: true } });
     }
     console.log("OK !");
   }
 }
-cliFrom(Tool);
+clinfer(Tool);
 
 /*
     $ ./example-throw.ts --help
@@ -38,5 +38,5 @@ cliFrom(Tool);
     error: Uncaught (in promise) Error: add --throw=false option !
           throw new Error("add --throw=false option !");
                 ^
-        at Tool.main (file:///tmp/Clifrom/examples/example-throw-all.ts:7:13)
+        at Tool.main (file:///tmp/Clinfer/examples/example-throw-all.ts:7:13)
 */

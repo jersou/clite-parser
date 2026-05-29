@@ -1,5 +1,5 @@
 #!/usr/bin/env -S node
-import { cliFrom } from "./dist/mod.mjs";
+import { clinfer } from "./dist/mod.mjs";
 
 class Tool {
   _json_config = true;
@@ -9,4 +9,4 @@ class Tool {
   }
 }
 
-cliFrom(Tool);
+clinfer(Tool);

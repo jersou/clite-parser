@@ -2,12 +2,12 @@ import { bgGreen, bgRed, bgYellow, bold } from "@std/fmt/colors";
 import { genHelp } from "./help.ts";
 import { convertCommandArg, fillFields, parseArgs } from "./parse_args.ts";
 import { runCommand } from "./command.ts";
-import { getClifromMetadata } from "./metadata.ts";
+import { getClinferMetadata } from "./metadata.ts";
 import { loadConfig } from "./load_config.ts";
 import type {
-  ClifromError,
-  ClifromResult,
-  ClifromRunConfig,
+  ClinferError,
+  ClinferResult,
+  ClinferRunConfig,
   Obj,
 } from "./types.ts";
 import { getFieldNames, getMethodNames } from "./reflect.ts";
@@ -17,20 +17,20 @@ import path from "node:path";
 
 /**
  * Run the command of obj depending on the Deno/Node script arguments
- * @param objOrClass class or object to parse by cli-from (the class will be instanced)
- * @param config - of cli-from
+ * @param objOrClass class or object to parse by clinfer (the class will be instanced)
+ * @param config - of clinfer
  */
-export async function cliFrom<O extends Obj>(
+export async function clinfer<O extends Obj>(
   objOrClass: O | { new (): O },
-  config: ClifromRunConfig = {},
+  config: ClinferRunConfig = {},
 ): Promise<unknown> {
   let res;
   try {
-    res = await cliFromParse(objOrClass, config);
+    res = await clinferParse(objOrClass, config);
   } catch (e) {
     if (
-      (e as ClifromError).cause?.cliFrom &&
-      (e as ClifromError).cause?.relaunchAfterUpdate
+      (e as ClinferError).cause?.clinfer &&
+      (e as ClinferError).cause?.relaunchAfterUpdate
     ) {
       return;
     } else {
@@ -43,7 +43,7 @@ export async function cliFrom<O extends Obj>(
       return runCommand<O>(res);
       // deno-lint-ignore no-explicit-any
     } catch (e: any) {
-      if (e.cause?.cliFrom || config?.printHelpOnError) {
+      if (e.cause?.clinfer || config?.printHelpOnError) {
         console.error(bgRed(bold("An error occurred ! The help :")));
         console.error(res.help);
         console.error();
@@ -56,13 +56,13 @@ export async function cliFrom<O extends Obj>(
 
 /**
  * Return the parsing result of obj and the Deno/Node script arguments
- * @param objOrClass class or object to parse by cli-from (the class will be instanced)
- * @param config - of cli-from
+ * @param objOrClass class or object to parse by clinfer (the class will be instanced)
+ * @param config - of clinfer
  */
-export async function cliFromParse<O extends Obj & { config?: string }>(
+export async function clinferParse<O extends Obj & { config?: string }>(
   objOrClass: O | { new (): O },
-  config: ClifromRunConfig = {},
-): Promise<ClifromResult<O>> {
+  config: ClinferRunConfig = {},
+): Promise<ClinferResult<O>> {
   const obj = await getObj(objOrClass);
   if (typeof objOrClass === "function" && !isConstructor(objOrClass)) {
     config.noCommand = true;
@@ -71,7 +71,7 @@ export async function cliFromParse<O extends Obj & { config?: string }>(
   if (isImportMetaObj && !config.meta) {
     config.meta = objOrClass as unknown as ImportMeta;
   }
-  const metadata = getClifromMetadata(obj, isImportMetaObj);
+  const metadata = getClinferMetadata(obj, isImportMetaObj);
   const help = genHelp(obj, metadata, config);
   try {
     const parseResult = parseArgs(obj, metadata, config);
@@ -89,7 +89,7 @@ export async function cliFromParse<O extends Obj & { config?: string }>(
       const command = parseResult.command ?? metadata.defaultCommand;
       if (!command) {
         throw new Error(`no method defined or no "main" method`, {
-          cause: { cliFrom: true },
+          cause: { clinfer: true },
         });
       }
       fillFields(parseResult, obj, metadata, config);
@@ -98,9 +98,9 @@ export async function cliFromParse<O extends Obj & { config?: string }>(
         const subcommandObj = typeof obj[command] === "function"
           ? new obj[command]()
           : obj[command];
-        subcommandObj._clifrom_parent = obj;
+        subcommandObj._clinfer_parent = obj;
         const args = parseResult.commandArgs.map((e) => e.toString());
-        const subcommand = await cliFromParse(subcommandObj, {
+        const subcommand = await clinferParse(subcommandObj, {
           ...config,
           args,
         });
@@ -110,7 +110,7 @@ export async function cliFromParse<O extends Obj & { config?: string }>(
         !getMethodNames(obj).includes(command) // allow exec of private methods
       ) {
         throw new Error(`The command "${command}" doesn't exist`, {
-          cause: { cliFrom: true },
+          cause: { clinfer: true },
         });
       }
       const commandArgs = config?.dontConvertCmdArgs
@@ -118,8 +118,8 @@ export async function cliFromParse<O extends Obj & { config?: string }>(
         : parseResult.commandArgs.map(convertCommandArg);
       return { obj, command, commandArgs, config, help };
     }
-  } catch (e: unknown | ClifromError) {
-    if ((e as ClifromError).cause?.cliFrom || config?.printHelpOnError) {
+  } catch (e: unknown | ClinferError) {
+    if ((e as ClinferError).cause?.clinfer || config?.printHelpOnError) {
       console.error(bgRed(bold("An error occurred ! The help :")));
       console.error(`${help}\n${bgRed(bold("The error :"))}`);
     }
@@ -148,12 +148,12 @@ async function handleMissingEsmSetter(
   );
 
   const msg = [
-    `This module contains exported variables without 'cli-from' setters : ${
+    `This module contains exported variables without 'clinfer' setters : ${
       missingSetters.join(
         ", ",
       )
     }.`,
-    `It's necessary for Clifrom to process options (= exported var/let) due to ESM security limitations.`,
+    `It's necessary for Clinfer to process options (= exported var/let) due to ESM security limitations.`,
     `You must append these lines to "${path.basename(meta.filename!)}" :`,
     `${setters.map((s) => `    ${s}`).join("\n")}`,
     bold(
@@ -163,14 +163,14 @@ async function handleMissingEsmSetter(
 
   const userResp = await confirmDefaultTrue(bgYellow(msg.join("\n")));
   if (userResp) {
-    const newCode = ["", "// Clifrom setters for options", ...setters].join(
+    const newCode = ["", "// Clinfer setters for options", ...setters].join(
       "\n",
     );
     appendFileSync(meta.filename!, newCode);
     console.log(bgGreen(`File updated !`));
     console.log(bgYellow(`You must relaunch your command !`));
     throw new Error("file updated, relaunch !", {
-      cause: { cliFrom: true, relaunchAfterUpdate: true },
+      cause: { clinfer: true, relaunchAfterUpdate: true },
     });
   } else {
     console.log(bgYellow(`Ignore these missing setters...`));

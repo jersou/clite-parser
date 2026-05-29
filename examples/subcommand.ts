@@ -1,8 +1,8 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom, subcommand } from "../mod.ts";
+import { clinfer, subcommand } from "../mod.ts";
 
 class Up {
-  _clifrom_parent?: Tool;
+  _clinfer_parent?: Tool;
   watch = false;
   main(_count: number) {
     console.log("Up", this);
@@ -24,4 +24,4 @@ class Tool {
   };
 }
 
-cliFrom(new Tool());
+clinfer(new Tool());

@@ -1,5 +1,5 @@
 import type { Metadata } from "./metadata.d.ts";
-import type { ClifromRunConfig, Obj } from "./types.d.ts";
+import type { ClinferRunConfig, Obj } from "./types.d.ts";
 /**
  * Result of parseArgs()
  */
@@ -19,22 +19,22 @@ export type ParseResult = {
  * parse config?.args, or Deno arguments (Deno.args) or node arguments (process.argv)
  *
  * @param obj to analyse
- * @param metadata - cli-from metadata
+ * @param metadata - clinfer metadata
  * @param config - to use to parse
  * @returns the parse result
  */
 export declare function parseArgs<O extends Obj>(
   obj: O,
   metadata: Metadata<O>,
-  config?: ClifromRunConfig,
+  config?: ClinferRunConfig,
 ): ParseResult;
 export declare function fillFields<O extends Obj>(
   parseResult: ParseResult,
   obj: Obj,
   metadata: Metadata<O>,
-  config?: ClifromRunConfig,
+  config?: ClinferRunConfig,
 ): void;
-export declare function getArgs(config?: ClifromRunConfig): any;
+export declare function getArgs(config?: ClinferRunConfig): any;
 export declare function convertCommandArg(
   v: string | number,
 ): string | number | boolean;

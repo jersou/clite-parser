@@ -2,7 +2,7 @@ import { toCamelCase, toKebabCase, toSnakeCase } from "@std/text";
 import { parseArgs as stdParseArgs } from "@std/cli/parse-args";
 import { getFieldNames } from "./reflect.ts";
 import type { Metadata } from "./metadata.ts";
-import type { ClifromRunConfig, Obj } from "./types.ts";
+import type { ClinferRunConfig, Obj } from "./types.ts";
 
 /**
  * Result of parseArgs()
@@ -24,14 +24,14 @@ export type ParseResult = {
  * parse config?.args, or Deno arguments (Deno.args) or node arguments (process.argv)
  *
  * @param obj to analyse
- * @param metadata - cli-from metadata
+ * @param metadata - clinfer metadata
  * @param config - to use to parse
  * @returns the parse result
  */
 export function parseArgs<O extends Obj>(
   obj: O,
   metadata: Metadata<O>,
-  config?: ClifromRunConfig,
+  config?: ClinferRunConfig,
 ): ParseResult {
   const argsResult: ParseResult = {
     options: {},
@@ -107,7 +107,7 @@ export function parseArgs<O extends Obj>(
         !((config?.configCli || metadata.jsonConfig) && key === "config")
       ) {
         throw new Error(`The option "${key}" doesn't exist`, {
-          cause: { cliFrom: true },
+          cause: { clinfer: true },
         });
       }
       if ((config?.configCli || metadata.jsonConfig) && key === "config") {
@@ -129,7 +129,7 @@ export function fillFields<O extends Obj>(
   parseResult: ParseResult,
   obj: Obj,
   metadata: Metadata<O>,
-  config?: ClifromRunConfig,
+  config?: ClinferRunConfig,
 ) {
   const aliasNames = Object.entries(metadata.fields)
     .flatMap(([, v]) => v?.alias);
@@ -153,14 +153,14 @@ export function fillFields<O extends Obj>(
       (option !== "config" || !(config?.configCli || metadata.jsonConfig))
     ) {
       throw new Error(`The option "${option}" doesn't exist`, {
-        cause: { cliFrom: true },
+        cause: { clinfer: true },
       });
     }
   }
 }
 
 // use globalThis instead of Deno/process to be compatible with Node & Deno
-export function getArgs(config?: ClifromRunConfig) {
+export function getArgs(config?: ClinferRunConfig) {
   // deno-lint-ignore no-explicit-any
   const gt = globalThis as any;
   return config?.args || gt["Deno"]?.args || gt["process"]?.argv.slice(2) || [];

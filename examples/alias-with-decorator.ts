@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 import { alias, help, type } from "../src/decorators.ts";
 
 class Tool {
@@ -21,7 +21,7 @@ class Tool {
   }
 }
 
-cliFrom(Tool);
+clinfer(Tool);
 
 /*
 $ ./alias-with-decorator.ts -h

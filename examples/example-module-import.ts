@@ -1,8 +1,8 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
+import { clinfer } from "../mod.ts";
 import * as tool from "./example-module.ts";
 
-cliFrom(tool);
+clinfer(tool);
 
 // $ ./examples/example-module-import.ts --help
 // Usage: <Object file> [Options] [--] [command [command args]]

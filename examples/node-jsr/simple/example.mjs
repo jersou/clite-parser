@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cliFrom } from "@jersou/cli-from";
+import { clinfer } from "@jersou/clinfer";
 
 class Tool {
   retry = 2;
@@ -19,4 +19,4 @@ class Tool {
   }
 }
 
-cliFrom(new Tool());
+clinfer(new Tool());

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 import $ from "dax-sh";
 
 class Tool {
@@ -21,4 +21,4 @@ class Tool {
   }
 }
 
-cliFrom(new Tool());
+clinfer(new Tool());

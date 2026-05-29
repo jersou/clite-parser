@@ -1,16 +1,16 @@
-# cli-from for Node and Deno
+# clinfer for Node and Deno
 
-[![cli-from on NPM](https://img.shields.io/npm/v/cli-from.svg)](https://npmjs.org/package/cli-from)
-[![JSR](https://jsr.io/badges/@jersou/cli-from)](https://jsr.io/@jersou/cli-from)
-[![JSR Score](https://jsr.io/badges/@jersou/cli-from/score)](https://jsr.io/@jersou/cli-from)
+[![clinfer on NPM](https://img.shields.io/npm/v/clinfer.svg)](https://npmjs.org/package/clinfer)
+[![JSR](https://jsr.io/badges/@jersou/clinfer)](https://jsr.io/@jersou/clinfer)
+[![JSR Score](https://jsr.io/badges/@jersou/clinfer/score)](https://jsr.io/@jersou/clinfer)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**cli-from generates CLI from classes, ES modules**, objects or function : each
+**clinfer generates CLI from classes, ES modules**, objects or function : each
 field generates an "option", each method/function generates a "command"
 (positional arguments).
 
-Just write your tool as a class (or as **ES module**), and call cli-from with
-it... cli-from will deserialize the command line in your class/module and launch
+Just write your tool as a class (or as **ES module**), and call clinfer with
+it... clinfer will deserialize the command line in your class/module and launch
 the right methods/function or display the help... Then you can optionally
 personalize the displayed help or add aliases (for example) to complete your
 CLI.
@@ -19,23 +19,23 @@ CLI.
 
 ![ESM-demo.mjs.png](ESM-demo.mjs.png)
 
-In this example, the cli-from specific code is simply `cliFrom(import.meta)` to
+In this example, the clinfer specific code is simply `clinfer(import.meta)` to
 process the CLI, and `export const _set_opt = (v) => (opt = v);` to allow
-modification of the `opt` option (cli-from suggests adding it automatically at
+modification of the `opt` option (clinfer suggests adding it automatically at
 first run if missing).
 
 **Example with a class :**
 
 ![class-demo.mjs.png](class-demo.mjs.png)
 
-In this example, the cli-from specific code is simply `cliFrom(Tool)` to process
+In this example, the clinfer specific code is simply `clinfer(Tool)` to process
 the CLI.
 
 ```typescript
 #!/usr/bin/env -S deno run
-import { cliFrom } from "cli-from"; // after "npm install cli-from" for Node usage
-// or import { cliFrom } from "jsr:@jersou/cli-from@0.9.1";
-// or import { cliFrom } from "@jersou/cli-from"; // after "deno add @jersou/cli-from"
+import { clinfer } from "clinfer"; // after "npm install clinfer" for Node usage
+// or import { clinfer } from "jsr:@jersou/clinfer@0.9.2";
+// or import { clinfer } from "@jersou/clinfer"; // after "deno add @jersou/clinfer"
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
@@ -55,7 +55,7 @@ class Tool {
   }
 }
 
-cliFrom(Tool); // or cliFrom(new Tool());
+clinfer(Tool); // or clinfer(new Tool());
 ```
 
 ## The help is generated automatically:
@@ -91,7 +91,7 @@ down command { force: true, timeout: 14 } Tool { retry: 2, webUrl: "none", no_co
 $ ./simple.ts --dry-run --webUrl=tttt # ← same case of the field name works too : --webUrl or --web-url
 main command Tool { retry: 2, dryRun: true, webUrl: "tttt" } # ← main is the default command
 
-$ deno https://raw.githubusercontent.com/jersou/cli-from/refs/heads/main/examples/simple.ts --dry-run --web-url tttt --retry 4 down true  14
+$ deno https://raw.githubusercontent.com/jersou/clinfer/refs/heads/main/examples/simple.ts --dry-run --web-url tttt --retry 4 down true  14
 down command { force: true, timeout: 14 } Tool { retry: 4, dryRun: true, webUrl: "tttt" }
 ```
 
@@ -101,11 +101,11 @@ Example from [examples/example-module.ts](./examples/example-module.ts) or
 [examples/node-npm/simple/example-module.mjs](./examples/node-npm/simple/example-module.mjs)
 (**NodeJs**).
 
-Generate a CLI with `cliFrom(import.meta)` : exported functions are available as
+Generate a CLI with `clinfer(import.meta)` : exported functions are available as
 commands.
 
 ```typescript
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 
 export function up() {
   private_function();
@@ -122,7 +122,7 @@ export function down(force = false, timeout = 5) {
 
 export const main = () => console.log("main");
 
-cliFrom(import.meta);
+clinfer(import.meta);
 
 // $ ./examples/example-module-lite.ts down true 100
 // down command { force: true, timeout: 100 }
@@ -143,11 +143,11 @@ Due to ESM security limitations (exported variables are read only), the var/let
 variables are exposed as CLI options only if they are exported and if there is a
 "_set_<name>" function that allows their modification.
 
-cli-from suggests adding it automatically at first run :
+clinfer suggests adding it automatically at first run :
 
 ```
-This module contains exported variables without 'cli-from' setters : opt.
-It's necessary for cli-from to process options (= exported var/let) due to ESM security limitations.
+This module contains exported variables without 'clinfer' setters : opt.
+It's necessary for clinfer to process options (= exported var/let) due to ESM security limitations.
 You must append these lines to "example-module.ts" :
     export const _set_opt = (v: typeof opt) => (opt = v);
 Do you want me to append this lines at the end of "example-module.ts" now ? [Y/n]
@@ -156,7 +156,7 @@ Do you want me to append this lines at the end of "example-module.ts" now ? [Y/n
 Example with an option setter :
 
 ```typescript
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 
 export let opt = "foo";
 // To allow the modification of opt from the CLI
@@ -178,7 +178,7 @@ export function down(force = false, timeout = 5) {
 
 export const main = () => console.log("main", opt);
 
-cliFrom(import.meta);
+clinfer(import.meta);
 
 // $ ./examples/example-module.ts --opt bar down true 100
 // down command { force: true, timeout: 100, opt: "bar" }
@@ -196,13 +196,13 @@ cliFrom(import.meta);
 //      --opt                 [default: "foo"]
 ```
 
-Note: cli-from can generate CLI from imported module with `import * as ...` :
+Note: clinfer can generate CLI from imported module with `import * as ...` :
 
 ```
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 import * as tool from "./example-module.ts";
 
-cliFrom(tool);
+clinfer(tool);
 ```
 
 ## Examples
@@ -214,9 +214,9 @@ Several examples can be found in the [examples/](./examples) folder.
 Works with vanilla typescript or with experimentalDecorators = true
 
 ```typescript
-import { alias, cliFrom, help } from "cli-from";
+import { alias, clinfer, help } from "clinfer";
 
-@help("This tool is a little example of cli-from") // optional description
+@help("This tool is a little example of clinfer") // optional description
 class Tool {
   @alias("r") // optional alias -r for --retry
   retry = 2;
@@ -238,7 +238,7 @@ class Tool {
   }
 }
 
-cliFrom(Tool); // or cliFrom(new Tool());
+clinfer(Tool); // or clinfer(new Tool());
 ```
 
 The help is generated automatically:
@@ -247,7 +247,7 @@ The help is generated automatically:
 
 <!-- Plain text (without color and styles in markdown):
 $ ./with-decorators.ts --help
-This tool is a little example of cli-from
+This tool is a little example of clinfer
 
 Usage: <Tool file> [Options] [--] [command [command args]]
 
@@ -266,10 +266,10 @@ Options:
 ### Full example without decorator (Javascript)
 
 ```javascript
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 
 class Tool {
-  _help = "This tool is a little example of cli-from"; // optional description
+  _help = "This tool is a little example of clinfer"; // optional description
 
   _retry_alias = "r"; // optional alias -r for --retry
   retry = 2;
@@ -291,7 +291,7 @@ class Tool {
   }
 }
 
-cliFrom(Tool); // or cliFrom(new Tool());
+clinfer(Tool); // or clinfer(new Tool());
 ```
 
 The help is generated automatically (same as the previous):
@@ -300,7 +300,7 @@ The help is generated automatically (same as the previous):
 
 <!--  Plain text (without color and styles in markdown):
 ./without-decorator.mjs --help
-This tool is a little example of cli-from
+This tool is a little example of clinfer
 
 Usage: <Tool file> [Options] [--] [command [command args]]
 
@@ -316,25 +316,25 @@ Options:
      --web-url                [default: "none"]
 -->
 
-## `cliFrom()` usage
+## `clinfer()` usage
 
-`cliFrom()` function takes an object or a class as input, and an optional
-config, see [ClifromRunConfig](#ClifromRunConfig) chapter bellow.
+`clinfer()` function takes an object or a class as input, and an optional
+config, see [ClinferRunConfig](#ClinferRunConfig) chapter bellow.
 
-Exemple : `cliFrom(Tool)` or `cliFrom(new Tool())` or
-`cliFrom(Tool, { noCommand: true })`
+Exemple : `clinfer(Tool)` or `clinfer(new Tool())` or
+`clinfer(Tool, { noCommand: true })`
 
-## `cliFromParse()` usage
+## `clinferParse()` usage
 
-Same as `cliFrom()`, but it doesn't run the command, it returns the parsing
-`ClifromResult` that contains:
+Same as `clinfer()`, but it doesn't run the command, it returns the parsing
+`ClinferResult` that contains:
 
 - obj: The input object overwritten with the data from the parsing result
 - command: The command to run from the parsing result
 - commandArgs: The command arguments from the parsing result
-- config: The input ClifromRunConfig
+- config: The input ClinferRunConfig
 - help: The generated help
-- subcommand: The subcommand ClifromResult if the command is a subcommand
+- subcommand: The subcommand ClinferResult if the command is a subcommand
 
 ## Ignore `_*` and `#*` methods and fields (in the help)
 
@@ -385,9 +385,9 @@ In summary :
 ### Help description with the `@help` decorator or inline help
 
 ```typescript
-import { cliFrom, help } from "cli-from";
+import { clinfer, help } from "clinfer";
 
-@help("This tool is a little example of cli-from")
+@help("This tool is a little example of clinfer")
 class Tool {
   retry = 2;
   webUrl = "none"; // fields are converted to kebab case as global options
@@ -409,7 +409,7 @@ class Tool {
   }
 }
 
-cliFrom(Tool);
+clinfer(Tool);
 ```
 
 Without decorator : optional fields `_<filed or method name>_help` are displayed
@@ -417,10 +417,10 @@ as description in the help :
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 
 class Tool {
-  _help = "This tool is a little example of cli-from"; // optional description
+  _help = "This tool is a little example of clinfer"; // optional description
   retry = 2;
   webUrl = "none"; // fields are converted to kebab case as global options
   no_color?: string | boolean; // → --no-color
@@ -441,7 +441,7 @@ class Tool {
 }
 
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliFrom(Tool);
+  clinfer(Tool);
 }
 ```
 
@@ -461,7 +461,7 @@ Alias of option can be created, with the `@alias` decorator or with
 
 ```typescript
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../clifrom_parser.ts";
+import { clinfer } from "../clinfer_parser.ts";
 import { alias, help, type } from "../src/decorators.ts";
 
 class Tool {
@@ -536,7 +536,7 @@ Full exemple in [examples/git-subcommand.ts](examples/git-subcommand.ts)
 ```typescript
 // → <Tool> [--dry-run] [ [up [--watch] <count>] | [down [--volumes] <force> <timeout>] ]
 class Up {
-  _clifrom_parent?: Tool;
+  _clinfer_parent?: Tool;
   watch = false;
   main(_count: number) {
     console.log("Up", this);
@@ -558,7 +558,7 @@ class Tool {
   };
 }
 
-cliFrom(new Tool());
+clinfer(new Tool());
 ```
 
 ```
@@ -596,7 +596,7 @@ description.
 
 ## Argument parsing
 
-cli-from use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
+clinfer use [@std/cli](https://jsr.io/@std/cli/doc/parse-args), based on
 [minimist](https://github.com/minimistjs/minimist).
 
 ### Kebab case or the same name
@@ -689,12 +689,12 @@ $ ./example-lite.ts
 main command Tool { retry: 2, webUrl: "none", no_color: undefined }
 ```
 
-## ClifromRunConfig
+## ClinferRunConfig
 
-`cliFrom(Tool, < optional ClifromRunConfig > )`
+`clinfer(Tool, < optional ClinferRunConfig > )`
 
 ```typescript
-type ClifromRunConfig = {
+type ClinferRunConfig = {
   args?: string[]; // default : Deno.args or process.argv.slice(2)
   dontPrintResult?: boolean; // default false : false, print the command return
   noCommand?: boolean; // no default command : do not run "main" methode if no arg
@@ -708,11 +708,11 @@ type ClifromRunConfig = {
 
 ### Return value
 
-If the method run by `cliFrom` return a value != undefined, it will be print in
+If the method run by `clinfer` return a value != undefined, it will be print in
 stdout. If it's a promise, the result of the promise will be awaited.
 
 This behavior can be disabled with the config :
-`cliFrom(Tool, { dontPrintResult: true })`
+`clinfer(Tool, { dontPrintResult: true })`
 
 ### noCommand
 
@@ -721,10 +721,10 @@ of the command.
 
 The default command is used.
 
-`cliFrom(Tool, { noCommand: true });` → `./example-no-command.ts --help` give :
+`clinfer(Tool, { noCommand: true });` → `./example-no-command.ts --help` give :
 
 ```
-This tool is a "no-command" example of cli-from usage
+This tool is a "no-command" example of clinfer usage
 
 Usage: <Tool file> [Options] [--] [args]
 
@@ -739,12 +739,12 @@ Options:
 
 If printHelpOnError is enabled, the help is print if any error is thrown while
 the command execution. Else, the help is print only for errors that have
-`{ cause: { cliFrom: true } }`.
+`{ cause: { clinfer: true } }`.
 
 It's useful if a required option is missing, for example.
 
 ```typescript
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 export class Tool {
   throw = "true";
   main() {
@@ -754,36 +754,36 @@ export class Tool {
     console.log("OK !");
   }
 }
-cliFrom(Tool, { printHelpOnError: true });
+clinfer(Tool, { printHelpOnError: true });
 ```
 
 To print help on specific error only, without `printHelpOnError=true`, use
-`{ cause: { cliFrom: true } }` :
+`{ cause: { clinfer: true } }` :
 
 ```typescript
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 export class Tool {
   noThrow = false;
 
   main() {
     if (!this.noThrow) {
-      throw new Error("add --no-throw option !", { cause: { cliFrom: true } });
+      throw new Error("add --no-throw option !", { cause: { clinfer: true } });
     }
     console.log("OK !");
   }
 }
-cliFrom(Tool);
+clinfer(Tool);
 ```
 
 ### configCli : load a json config with `--config <path | or json string>`
 
-If `configCli === true` in the ClifromRunConfig or `@jsonConfig` is used or
+If `configCli === true` in the ClinferRunConfig or `@jsonConfig` is used or
 `_json_config = true`
 
 ```
 $ cat ./load-config.ts
 ...
-cliFrom(Tool, { configCli: true });
+clinfer(Tool, { configCli: true });
 
 $ ./load-config.ts --help
 ...
@@ -811,7 +811,7 @@ Allows to change the name of the file in the help, instead of the default for
 example `<Tool file>`.
 
 ```typescript
-cliFrom(Tool, { mainFile: "my-tool" });
+clinfer(Tool, { mainFile: "my-tool" });
 ```
 
 ...will change the usage line in the help :
@@ -826,14 +826,14 @@ Use meta to avoid the manual `import.meta.main` check :
 
 ```typescript
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliFrom(Tool);
+  clinfer(Tool);
 }
 ```
 
 is equivalent to :
 
 ```typescript
-cliFrom(Tool, { meta: import.meta });
+clinfer(Tool, { meta: import.meta });
 ```
 
 The basename of `import.meta.url` will be used in the generated help, as
@@ -863,9 +863,9 @@ $ ./Tool.ts -- main 123 true foo
 A plain JS Object can be used :
 
 ```typescript
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 
-cliFrom({
+clinfer({
   retry: 2,
   main() {
     console.log("main command", this);
@@ -902,13 +902,13 @@ Options:
 A function can be used :
 
 ```typescript
-import { cliFrom } from "cli-from";
+import { clinfer } from "clinfer";
 
 function down(force = false, timeout = 5) {
   console.log("down command", { force, timeout });
 }
 
-cliFrom(down);
+clinfer(down);
 
 // $ ./examples/example-function.ts true 100
 // down command { force: true, timeout: 100 }
@@ -920,17 +920,17 @@ cliFrom(down);
 //   -h, --help Show this help [default: false]
 ```
 
-## Node support : `npm install cli-from` or `npx jsr add @jersou/cli-from`
+## Node support : `npm install clinfer` or `npx jsr add @jersou/clinfer`
 
-### From NPM : `npm install cli-from`
+### From NPM : `npm install clinfer`
 
-Run `npm install cli-from` and then, import with
-`import { cliFrom } from "cli-from";` :
+Run `npm install clinfer` and then, import with
+`import { clinfer } from "clinfer";` :
 
 ```javascript
-import { cliFrom } from "cli-from"; // after "npm install cli-from"
+import { clinfer } from "clinfer"; // after "npm install clinfer"
 class Tool { ... }
-cliFrom(Tool);
+clinfer(Tool);
 ```
 
 See node usage examples :
@@ -939,15 +939,15 @@ See node usage examples :
 - [examples/node-npm/simple](examples/node-npm/simple)
 - [examples/node-npm/zx](examples/node-npm/zx)
 
-### From JSR : `npx jsr add @jersou/cli-from`
+### From JSR : `npx jsr add @jersou/clinfer`
 
-Run `npx jsr add @jersou/cli-from` and then, import with
-`import { cliFrom } from "@jersou/cli-from";` :
+Run `npx jsr add @jersou/clinfer` and then, import with
+`import { clinfer } from "@jersou/clinfer";` :
 
 ```javascript
-import { cliFrom } from "@jersou/cli-from"; // after "npx jsr add @jersou/cli-from"
+import { clinfer } from "@jersou/clinfer"; // after "npx jsr add @jersou/clinfer"
 class Tool { ... }
-cliFrom(Tool);
+clinfer(Tool);
 ```
 
 ### Node usage examples :
@@ -958,9 +958,9 @@ cliFrom(Tool);
 
 ## Links
 
-- https://jsr.io/@jersou/cli-from
-- https://github.com/jersou/cli-from
-- https://www.npmjs.com/package/cli-from
+- https://jsr.io/@jersou/clinfer
+- https://github.com/jersou/clinfer
+- https://www.npmjs.com/package/clinfer
 
 ## Dependencies (all)
 
@@ -976,14 +976,14 @@ With [esm.sh](https://code.esm.sh/),
 [jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
-import { cliFromParse } from "https://esm.sh/jsr/@jersou/cli-from@0.9.1";
+import { clinferParse } from "https://esm.sh/jsr/@jersou/clinfer@0.9.2";
 
 class Tool {
   opt = 123;
   main() {}
 }
 
-const res = cliFromParse(Tool, { args: ["--opt", "78"] });
+const res = clinferParse(Tool, { args: ["--opt", "78"] });
 console.log(res);
 ```
 
@@ -992,10 +992,10 @@ console.log(res);
 Probably inspired by:
 
 - [Bash-utils](https://github.com/jersou/bash-utils#principes) : run bash
-  function from CLI with `utils:run "$@"`, I created 4 years before cli-from,
+  function from CLI with `utils:run "$@"`, I created 4 years before clinfer,
 - and by [Clap](https://github.com/clap-rs/clap) (with the derive feature) after
   the development of [mouse-actions](https://github.com/jersou/mouse-actions)
-  (one year before cli-from) : deserialize options from CLI to struct.
+  (one year before clinfer) : deserialize options from CLI to struct.
 
 Note: I have only recently discovered (May 2026) other projects sharing the same
 concept.
@@ -1009,7 +1009,7 @@ The usual tools rather take a particular configuration of the tool and produce
 an output data **without** a defined model. You need to learn their API to
 define the interface you want.
 
-**cli-from follows a different approach: it takes the desired model and fills it
+**clinfer follows a different approach: it takes the desired model and fills it
 according to the command line**. If you want to type the parsing output, you
 don't need to do anything else. No duplicate writing for the CLI config and the
 parsing output model/type.
@@ -1021,8 +1021,8 @@ with its parameters.
 A comparison try is made in the
 [examples/cli-tools-diff](examples/cli-tools-diff) folder, it compares :
 
-- cli-from :
-  [examples/cli-tools-diff/cli-from.ts](examples/cli-tools-diff/cli-from.ts)
+- clinfer :
+  [examples/cli-tools-diff/clinfer.ts](examples/cli-tools-diff/clinfer.ts)
 - vs [Yargs](https://github.com/yargs/yargs) :
   [examples/cli-tools-diff/yargs.ts](examples/cli-tools-diff/yargs.ts)
 - vs [@std/cli](https://jsr.io/@std/cli/doc/parse-args) based on
@@ -1054,7 +1054,7 @@ The 3 implementations side by side :
 
 - The project
   [Studio-Pack-Generator](https://github.com/jersou/studio-pack-generator) use
-  cli-from and have
+  clinfer and have
   [lots of CLI options](https://github.com/jersou/studio-pack-generator?tab=readme-ov-file#cli-usage)
   generated from
   [a rather understandable file](https://github.com/jersou/studio-pack-generator/blob/main/studio_pack_generator.ts)

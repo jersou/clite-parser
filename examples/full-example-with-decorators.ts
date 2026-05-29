@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno -A
 import {
   alias,
-  cliFrom,
+  clinfer,
   defaultHelp,
   help,
   hidden,
@@ -12,7 +12,7 @@ import {
   usage,
 } from "../mod.ts";
 
-@help("This tool is an example of Clifrom")
+@help("This tool is an example of Clinfer")
 @usage("Usage: full-example [Options] [command [command args]]")
 @jsonConfig("Use json file or string to read the options")
 class Tool {
@@ -68,19 +68,19 @@ class Tool {
 }
 
 class SubCmd {
-  _clifrom_parent?: Tool;
+  _clinfer_parent?: Tool;
   @help("Sub option of subcmd")
   subOpt = 89;
   subCmd1(param1: string) {
     console.log("SubCmd > sub1 :", {
-      retry: this._clifrom_parent?.retry,
+      retry: this._clinfer_parent?.retry,
       subOpt: this.subOpt,
       param1,
     });
   }
   subCmd2(param1: string, param2: string) {
     console.log("SubCmd > sub1 :", {
-      retry: this._clifrom_parent?.retry,
+      retry: this._clinfer_parent?.retry,
       subOpt: this.subOpt,
       param1,
       param2,
@@ -88,12 +88,12 @@ class SubCmd {
   }
 }
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliFrom(Tool); // or cliFrom(new Tool());
+  clinfer(Tool); // or clinfer(new Tool());
 }
 
 /*
 $ ./full-example-with-decorators.ts --help
-This tool is an example of Clifrom
+This tool is an example of Clinfer
 
 Usage: Usage: full-example [Options] [command [command args]]
 
@@ -127,7 +127,7 @@ down command { force: true, timeout: 77 } Tool {
   hiddenField: 88,
   sub: [class SubCmd] {
     [Symbol(Symbol.metadata)]: [Object: null prototype] {
-      cliFrom: { help: { subOpt: "Sub option of subcmd" } }
+      clinfer: { help: { subOpt: "Sub option of subcmd" } }
     }
   },
   config: undefined

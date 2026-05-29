@@ -1,8 +1,8 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
-// or after "deno add @jersou/cli-from" : import { cliFrom } from "@jersou/cli-from";
-// or for Node usage, after "npx jsr add @jersou/cli-from" (same import from "@jersou/cli-from")
-// or for Node usage : import { cliFrom } from "cli-from"; // after "npm install cli-from"
+import { clinfer } from "../mod.ts";
+// or after "deno add @jersou/clinfer" : import { clinfer } from "@jersou/clinfer";
+// or for Node usage, after "npx jsr add @jersou/clinfer" (same import from "@jersou/clinfer")
+// or for Node usage : import { clinfer } from "clinfer"; // after "npm install clinfer"
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
@@ -22,7 +22,7 @@ class Tool {
   }
 }
 
-cliFrom(Tool);
+clinfer(Tool);
 
 /*
     $ ./example-lite-lite.ts --help

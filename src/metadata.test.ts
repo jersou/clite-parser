@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { getClifromMetadata } from "./metadata.ts";
+import { getClinferMetadata } from "./metadata.ts";
 import {
   alias,
   defaultHelp,
@@ -21,7 +21,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.alias, ["n", "d"]);
   },
 });
@@ -35,7 +35,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     // FIXME order ?
     assertEquals(metadata.fields.dryRun?.alias, ["n", "d"]);
   },
@@ -49,7 +49,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.alias, ["n"]);
   },
 });
@@ -62,7 +62,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.alias, ["n"]);
   },
 });
@@ -75,7 +75,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.help, "dryRun help");
   },
 });
@@ -88,7 +88,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.help, "dryRun help");
   },
 });
@@ -101,7 +101,7 @@ Deno.test({
       sub = {};
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.subcommands, ["sub"]);
   },
 });
@@ -114,7 +114,7 @@ Deno.test({
       sub = class Sub {};
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.subcommands, ["sub"]);
   },
 });
@@ -127,7 +127,7 @@ Deno.test({
       sub = class Sub {};
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.subcommands, ["sub"]);
   },
 });
@@ -140,7 +140,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.type, "dryRun type");
   },
 });
@@ -153,7 +153,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.type, "dryRun type");
   },
 });
@@ -166,7 +166,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.defaultHelp, "dryRun default");
   },
 });
@@ -179,7 +179,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.defaultHelp, "dryRun default");
   },
 });
@@ -192,7 +192,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.negatable, "dryRun negatable");
   },
 });
@@ -205,7 +205,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.negatable, "dryRun negatable");
   },
 });
@@ -218,7 +218,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.negatable, true);
   },
 });
@@ -231,7 +231,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.negatable, true);
   },
 });
@@ -244,7 +244,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.hidden, true);
   },
 });
@@ -257,7 +257,7 @@ Deno.test({
       dryRun = false;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.fields.dryRun?.hidden, true);
   },
 });
@@ -269,7 +269,7 @@ Deno.test({
     class Tool {
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.help, "Tool help");
   },
 });
@@ -281,7 +281,7 @@ Deno.test({
       _help = "Tool help";
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.help, "Tool help");
   },
 });
@@ -293,7 +293,7 @@ Deno.test({
     class Tool {
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.usage, "Tool usage");
   },
 });
@@ -305,7 +305,7 @@ Deno.test({
       _usage = "Tool usage";
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.usage, "Tool usage");
   },
 });
@@ -317,7 +317,7 @@ Deno.test({
     class Tool {
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.noCommand, true);
   },
 });
@@ -329,7 +329,7 @@ Deno.test({
       _no_command = true;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.noCommand, true);
   },
 });
@@ -341,7 +341,7 @@ Deno.test({
     class Tool {
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.jsonConfig, true);
   },
 });
@@ -353,7 +353,7 @@ Deno.test({
       _json_config = true;
       main() {}
     }
-    const metadata = getClifromMetadata(new Tool());
+    const metadata = getClinferMetadata(new Tool());
     assertEquals(metadata.jsonConfig, true);
   },
 });

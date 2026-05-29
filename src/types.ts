@@ -1,7 +1,7 @@
 /**
- * ClifromRunConfig
+ * ClinferRunConfig
  */
-export type ClifromRunConfig = {
+export type ClinferRunConfig = {
   /**
    * default : Deno.args or process.argv.slice(2)
    */
@@ -44,9 +44,9 @@ export type ClifromRunConfig = {
 export type Obj = Record<string, any>;
 
 /**
- * Result of cliFromParse()
+ * Result of clinferParse()
  */
-export type ClifromResult<O extends Obj> = {
+export type ClinferResult<O extends Obj> = {
   /*
    * The input object overwritten with the data from the parsing result
    */
@@ -60,19 +60,19 @@ export type ClifromResult<O extends Obj> = {
    */
   commandArgs: (string | number | boolean)[];
   /*
-   * The input ClifromRunConfig
+   * The input ClinferRunConfig
    */
-  config?: ClifromRunConfig;
+  config?: ClinferRunConfig;
   /*
    * The generated help
    */
   help: string;
   /*
-   * The subcommand ClifromResult if the command is a subcommand
+   * The subcommand ClinferResult if the command is a subcommand
    */
-  subcommand?: ClifromResult<Obj>;
+  subcommand?: ClinferResult<Obj>;
 };
 
-export type ClifromError = Error & {
-  cause?: { cliFrom?: boolean; relaunchAfterUpdate?: boolean; error?: Error };
+export type ClinferError = Error & {
+  cause?: { clinfer?: boolean; relaunchAfterUpdate?: boolean; error?: Error };
 };

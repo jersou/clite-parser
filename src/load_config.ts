@@ -15,7 +15,7 @@ export function loadConfig(parseResult: ParseResult, obj: Obj) {
   } catch (error) {
     throw new Error(
       `Error while loading the config "${pathOrJson}"`,
-      { cause: { cliFrom: true, error } },
+      { cause: { clinfer: true, error } },
     );
   }
 }

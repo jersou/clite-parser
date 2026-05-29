@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom, help, negatable } from "../mod.ts";
+import { clinfer, help, negatable } from "../mod.ts";
 
 class Tool {
   @negatable("disable TTY")
@@ -11,7 +11,7 @@ class Tool {
   }
 }
 
-cliFrom(Tool);
+clinfer(Tool);
 
 /*
     $ ./with-negatable-decorator.ts --help

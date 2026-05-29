@@ -1,3 +1,3 @@
 export * from "./src/decorators.ts";
 export * from "./src/types.ts";
-export * from "./src/clifrom_parser.ts";
+export * from "./src/clinfer_parser.ts";

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cliFrom } from "@jersou/cli-from";
+import { clinfer } from "@jersou/clinfer";
 import { $ } from "zx";
 $.verbose = true;
 
@@ -22,4 +22,4 @@ class Tool {
   }
 }
 
-cliFrom(new Tool());
+clinfer(new Tool());

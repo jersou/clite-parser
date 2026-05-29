@@ -1,10 +1,10 @@
 {
-  "name": "cli-from",
-  "description": "CLI-from generates CLI from a class or ES module, each method generates a \"command\", each field generates an \"option\". The help is generated automatically",
-  "version": "0.9.1",
+  "name": "clinfer",
+  "description": "clinfer generates CLI from a class or ES module, each method generates a \"command\", each field generates an \"option\". The help is generated automatically",
+  "version": "0.9.2",
   "type": "module",
-  "homepage": "https://github.com/jersou/cli-from",
-  "repository": "https://github.com/jersou/cli-from",
+  "homepage": "https://github.com/jersou/clinfer",
+  "repository": "https://github.com/jersou/clinfer",
   "author": {
     "name": "jersou"
   },

@@ -1,10 +1,10 @@
 #!/usr/bin/env -S deno run -A
-import { cliFrom } from "../mod.ts";
-// or import { cliFrom } from "@jersou/cli-from"; // after "deno add @jersou/cli-from"
-// or import { cliFrom } from "cli-from"; // after "npm install cli-from" for Node usage
+import { clinfer } from "../mod.ts";
+// or import { clinfer } from "@jersou/clinfer"; // after "deno add @jersou/clinfer"
+// or import { clinfer } from "clinfer"; // after "npm install clinfer" for Node usage
 
 export class Tool {
-  _help = "This tool is a full example of Clifrom usage";
+  _help = "This tool is a full example of Clinfer usage";
   retry = 2;
   webUrl = "none";
   _webUrl_help = "web URL ...";
@@ -51,7 +51,7 @@ export class Tool {
 }
 
 if (import.meta.main) { // if the file is imported, do not execute this block
-  cliFrom(Tool); // or cliFrom(new Tool());
+  clinfer(Tool); // or clinfer(new Tool());
 }
 
 // $ ./example.ts --retry=4 --web-url=tttt --no-color down true 14

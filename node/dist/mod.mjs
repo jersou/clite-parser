@@ -113,10 +113,10 @@ function addSymbolMetadata(target, prop, key, val) {
     roorMetadata = target.constructor[Symbol.metadata];
     propName = prop;
   }
-  if (!roorMetadata.cliFrom) {
-    roorMetadata.cliFrom = {};
+  if (!roorMetadata.clinfer) {
+    roorMetadata.clinfer = {};
   }
-  const metadata = roorMetadata.cliFrom;
+  const metadata = roorMetadata.clinfer;
   if (!metadata[key]) {
     metadata[key] = {};
   }
@@ -131,7 +131,7 @@ function addSymbolMetadata(target, prop, key, val) {
     metadata[key][propName] = val;
   }
 }
-function getClifromSymbolMetadata(obj) {
+function getClinferSymbolMetadata(obj) {
   const prototypes = [];
   let o = obj;
   while (o = Reflect.getPrototypeOf(o)) {
@@ -139,7 +139,7 @@ function getClifromSymbolMetadata(obj) {
   }
   let metadata = {};
   for (const prototype of prototypes) {
-    const protMeta = prototype.constructor[Symbol.metadata]?.cliFrom || {};
+    const protMeta = prototype.constructor[Symbol.metadata]?.clinfer || {};
     metadata = deepMerge(metadata, protMeta);
   }
   return metadata;
@@ -855,7 +855,7 @@ function parseArgs2(obj, metadata, config) {
       ) {
         throw new Error(`The option "${key}" doesn't exist`, {
           cause: {
-            cliFrom: true,
+            clinfer: true,
           },
         });
       }
@@ -897,7 +897,7 @@ function fillFields(parseResult, obj, metadata, config) {
     ) {
       throw new Error(`The option "${option}" doesn't exist`, {
         cause: {
-          cliFrom: true,
+          clinfer: true,
         },
       });
     }
@@ -940,8 +940,8 @@ function runCommand(res) {
 }
 
 // src/metadata.ts
-function getClifromMetadata(obj, isModule = false) {
-  const symb = getClifromSymbolMetadata(obj);
+function getClinferMetadata(obj, isModule = false) {
+  const symb = getClinferSymbolMetadata(obj);
   const subcommands = [
     ...Object.keys(symb.subcommand ?? {}),
     ...Object.getOwnPropertyNames(obj).filter((prop) =>
@@ -1010,23 +1010,23 @@ function loadConfig(parseResult, obj) {
   } catch (error) {
     throw new Error(`Error while loading the config "${pathOrJson}"`, {
       cause: {
-        cliFrom: true,
+        clinfer: true,
         error,
       },
     });
   }
 }
 
-// src/clifrom_parser.ts
+// src/clinfer_parser.ts
 import { appendFileSync } from "node:fs";
 import readline from "node:readline/promises";
 import path from "node:path";
-async function cliFrom(objOrClass, config = {}) {
+async function clinfer(objOrClass, config = {}) {
   let res;
   try {
-    res = await cliFromParse(objOrClass, config);
+    res = await clinferParse(objOrClass, config);
   } catch (e) {
-    if (e.cause?.cliFrom && e.cause?.relaunchAfterUpdate) {
+    if (e.cause?.clinfer && e.cause?.relaunchAfterUpdate) {
       return;
     } else {
       throw e;
@@ -1036,7 +1036,7 @@ async function cliFrom(objOrClass, config = {}) {
     try {
       return runCommand(res);
     } catch (e) {
-      if (e.cause?.cliFrom || config?.printHelpOnError) {
+      if (e.cause?.clinfer || config?.printHelpOnError) {
         console.error(bgRed(bold("An error occurred ! The help :")));
         console.error(res.help);
         console.error();
@@ -1046,7 +1046,7 @@ async function cliFrom(objOrClass, config = {}) {
     }
   }
 }
-async function cliFromParse(objOrClass, config = {}) {
+async function clinferParse(objOrClass, config = {}) {
   const obj = await getObj(objOrClass);
   if (typeof objOrClass === "function" && !isConstructor(objOrClass)) {
     config.noCommand = true;
@@ -1055,7 +1055,7 @@ async function cliFromParse(objOrClass, config = {}) {
   if (isImportMetaObj && !config.meta) {
     config.meta = objOrClass;
   }
-  const metadata = getClifromMetadata(obj, isImportMetaObj);
+  const metadata = getClinferMetadata(obj, isImportMetaObj);
   const help2 = genHelp(obj, metadata, config);
   try {
     const parseResult = parseArgs2(obj, metadata, config);
@@ -1079,7 +1079,7 @@ async function cliFromParse(objOrClass, config = {}) {
       if (!command) {
         throw new Error(`no method defined or no "main" method`, {
           cause: {
-            cliFrom: true,
+            clinfer: true,
           },
         });
       }
@@ -1088,9 +1088,9 @@ async function cliFromParse(objOrClass, config = {}) {
         const subcommandObj = typeof obj[command] === "function"
           ? new obj[command]()
           : obj[command];
-        subcommandObj._clifrom_parent = obj;
+        subcommandObj._clinfer_parent = obj;
         const args = parseResult.commandArgs.map((e) => e.toString());
-        const subcommand2 = await cliFromParse(subcommandObj, {
+        const subcommand2 = await clinferParse(subcommandObj, {
           ...config,
           args,
         });
@@ -1108,7 +1108,7 @@ async function cliFromParse(objOrClass, config = {}) {
       ) {
         throw new Error(`The command "${command}" doesn't exist`, {
           cause: {
-            cliFrom: true,
+            clinfer: true,
           },
         });
       }
@@ -1124,7 +1124,7 @@ async function cliFromParse(objOrClass, config = {}) {
       };
     }
   } catch (e) {
-    if (e.cause?.cliFrom || config?.printHelpOnError) {
+    if (e.cause?.clinfer || config?.printHelpOnError) {
       console.error(bgRed(bold("An error occurred ! The help :")));
       console.error(`${help2}
 ${bgRed(bold("The error :"))}`);
@@ -1144,10 +1144,10 @@ async function handleMissingEsmSetter(meta, missingSetters) {
       : `export const _set_${field} = (v) => (${field} = v);`
   );
   const msg = [
-    `This module contains exported variables without 'cli-from' setters : ${
+    `This module contains exported variables without 'clinfer' setters : ${
       missingSetters.join(", ")
     }.`,
-    `It's necessary for Clifrom to process options (= exported var/let) due to ESM security limitations.`,
+    `It's necessary for Clinfer to process options (= exported var/let) due to ESM security limitations.`,
     `You must append these lines to "${path.basename(meta.filename)}" :`,
     `${setters.map((s) => `    ${s}`).join("\n")}`,
     bold(
@@ -1158,7 +1158,7 @@ async function handleMissingEsmSetter(meta, missingSetters) {
   if (userResp) {
     const newCode = [
       "",
-      "// Clifrom setters for options",
+      "// Clinfer setters for options",
       ...setters,
     ].join("\n");
     appendFileSync(meta.filename, newCode);
@@ -1166,7 +1166,7 @@ async function handleMissingEsmSetter(meta, missingSetters) {
     console.log(bgYellow(`You must relaunch your command !`));
     throw new Error("file updated, relaunch !", {
       cause: {
-        cliFrom: true,
+        clinfer: true,
         relaunchAfterUpdate: true,
       },
     });
@@ -1238,10 +1238,10 @@ async function confirmDefaultTrue(message) {
 }
 export {
   alias,
-  cliFrom,
-  cliFromParse,
+  clinfer,
+  clinferParse,
   defaultHelp,
-  getClifromSymbolMetadata,
+  getClinferSymbolMetadata,
   help,
   hidden,
   jsonConfig,

@@ -1,13 +1,13 @@
-import type { ClifromResult, ClifromRunConfig, Obj } from "./types.ts";
+import type { ClinferResult, ClinferRunConfig, Obj } from "./types.ts";
 
-function processCommandResult(result: unknown, config?: ClifromRunConfig) {
+function processCommandResult(result: unknown, config?: ClinferRunConfig) {
   if (result != undefined && !config?.dontPrintResult) {
     Promise.resolve(result)
       .then((res) => (res != undefined) && console.log(res));
   }
 }
 
-export function runCommand<O extends Obj>(res: ClifromResult<O>) {
+export function runCommand<O extends Obj>(res: ClinferResult<O>) {
   if (res.command === "--help") {
     console.error(res.help);
     return res.help;
