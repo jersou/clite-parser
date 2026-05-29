@@ -12,6 +12,6 @@
     "shebang-run": "./example.mjs --retry=4 --web-url=tttt --no-color down true 14"
   },
   "dependencies": {
-    "@jersou/cli-from": "npm:@jsr/jersou__clifrom@0.9.1"
+    "@jersou/cli-from": "npm:@jsr/jersou__cli-from@^0.9.1"
   }
 }
