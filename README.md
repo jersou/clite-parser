@@ -36,7 +36,7 @@ the CLI.
 ```typescript
 #!/usr/bin/env -S deno run
 import { clinfer } from "clinfer"; // after "npm install clinfer" for Node usage
-// or import { clinfer } from "jsr:@jersou/clinfer@0.9.2"; for Deno
+// or import { clinfer } from "jsr:@jersou/clinfer@0.9.3"; for Deno
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
@@ -977,7 +977,7 @@ With [esm.sh](https://code.esm.sh/),
 [jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
-import { clinferParse } from "https://esm.sh/jsr/@jersou/clinfer@0.9.2";
+import { clinferParse } from "https://esm.sh/jsr/@jersou/clinfer@0.9.3";
 
 class Tool {
   opt = 123;

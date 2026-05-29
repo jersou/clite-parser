@@ -12,6 +12,6 @@
     "shebang-run": "./example.mjs --retry=4 --web-url=tttt --no-color down true 14"
   },
   "dependencies": {
-    "@jersou/clinfer": "npm:@jsr/jersou__clinfer@^0.9.2"
+    "@jersou/clinfer": "npm:@jsr/jersou__clinfer@^0.9.3"
   }
 }

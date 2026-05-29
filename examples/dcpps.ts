@@ -13,7 +13,7 @@
 //   -h, --help     Show this help                [default: false]
 //       --interval repeat watch every <INTERVAL> sec [default: 1]
 
-import { clinfer, help } from "jsr:@jersou/clinfer@0.9.2";
+import { clinfer, help } from "jsr:@jersou/clinfer@0.9.3";
 import $ from "jsr:@david/dax@0.42.0";
 import { assert } from "jsr:@std/assert@1.0.5";
 import {

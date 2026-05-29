@@ -1,7 +1,6 @@
-## [0.9.1](https://github.com/jersou/cli-from/compare/0.9.0...0.9.1) (2026-05-29)
+## [0.9.3](https://github.com/jersou/clinfer/compare/0.9.2...0.9.3) (2026-05-29)
 
-- update doc
-- fix npm bundle
+- rename the project to clinfer (CLI inference)
 
 ## [0.9.0](https://github.com/jersou/cli-from/compare/0.8.2...0.9.0) (2026-05-28)
 

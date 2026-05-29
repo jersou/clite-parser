@@ -5,8 +5,8 @@
 [![JSR Score](https://jsr.io/badges/@jersou/clinfer/score)](https://jsr.io/@jersou/clinfer)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-clinfer brings **CLI** **infer**-ence to Node, Deno, and Bun. Pass it a class, an ES
-module, an object, or a function, and watch it build your interface
+clinfer brings **CLI** **infer**-ence to Node, Deno, and Bun. Pass it a class,
+an ES module, an object, or a function, and watch it build your interface
 automatically:
 
 - Each field/property generates a CLI option (flag).
@@ -36,8 +36,7 @@ the CLI.
 ```typescript
 #!/usr/bin/env -S deno run
 import { clinfer } from "clinfer"; // after "npm install clinfer" for Node usage
-// or import { clinfer } from "jsr:@jersou/clinfer@0.9.2";
-// or import { clinfer } from "@jersou/clinfer"; // after "deno add @jersou/clinfer"
+// or import { clinfer } from "jsr:@jersou/clinfer@0.9.3"; for Deno
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example
@@ -978,7 +977,7 @@ With [esm.sh](https://code.esm.sh/),
 [jsfiddle.net](https://jsfiddle.net/)) :
 
 ```javascript
-import { clinferParse } from "https://esm.sh/jsr/@jersou/clinfer@0.9.2";
+import { clinferParse } from "https://esm.sh/jsr/@jersou/clinfer@0.9.3";
 
 class Tool {
   opt = 123;

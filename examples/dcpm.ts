@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A
 
-// deno install -g -f --name dcpm -A https://jsr.io/@jersou/clinfer/0.9.2/examples/dcpm.ts
+// deno install -g -f --name dcpm -A https://jsr.io/@jersou/clinfer/0.9.3/examples/dcpm.ts
 
 import { clinfer } from "../mod.ts";
 import $ from "jsr:@david/dax@0.42.0";
