@@ -1,19 +1,21 @@
-# clinfer for Node and Deno
+# clinfer JS : automatically generate CLIs from classes, ES Module, ...
 
 [![clinfer on NPM](https://img.shields.io/npm/v/clinfer.svg)](https://npmjs.org/package/clinfer)
 [![JSR](https://jsr.io/badges/@jersou/clinfer)](https://jsr.io/@jersou/clinfer)
 [![JSR Score](https://jsr.io/badges/@jersou/clinfer/score)](https://jsr.io/@jersou/clinfer)
 [![Built with the Deno Standard Library](https://img.shields.io/badge/Built_with_std-blue?logo=deno)](https://jsr.io/@std)
 
-**clinfer generates CLI from classes, ES modules**, objects or function : each
-field generates an "option", each method/function generates a "command"
-(positional arguments).
+clinfer brings **CLI** **infer**-ence to Node, Deno, and Bun. Pass it a class,
+an ES module, an object, or a function, and watch it build your interface
+automatically:
 
-Just write your tool as a class (or as **ES module**), and call clinfer with
-it... clinfer will deserialize the command line in your class/module and launch
-the right methods/function or display the help... Then you can optionally
-personalize the displayed help or add aliases (for example) to complete your
-CLI.
+- Each field/property generates a CLI option (flag).
+- Each method/function generates a CLI command (with positional arguments).
+
+Simply write your tool as a standard class or ES module, and hand it over to
+clinfer. It will automatically parse the command-line arguments, map them to
+your code, execute the right methods, and handle the help menu. You can then
+easily customize the generated help, add aliases, and fine-tune your CLI.
 
 **Example with an ES module :**
 
@@ -34,8 +36,7 @@ the CLI.
 ```typescript
 #!/usr/bin/env -S deno run
 import { clinfer } from "clinfer"; // after "npm install clinfer" for Node usage
-// or import { clinfer } from "jsr:@jersou/clinfer@0.9.2";
-// or import { clinfer } from "@jersou/clinfer"; // after "deno add @jersou/clinfer"
+// or import { clinfer } from "jsr:@jersou/clinfer@0.9.2"; for Deno
 
 class Tool {
   retry = 2; // 2 is the default value, overwrite by "--retry 8" by example

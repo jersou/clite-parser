@@ -16,7 +16,7 @@ export type ParseResult = {
   commandArgs: (string | number)[];
 };
 /**
- * parse config?.args, or Deno arguments (Deno.args) or node arguments (process.argv)
+ * parse config?.args, or Deno arguments (Deno.args) or node arguments (process.argv.slice(2))
  *
  * @param obj to analyse
  * @param metadata - clinfer metadata
