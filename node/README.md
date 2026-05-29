@@ -1,4 +1,4 @@
-# clinfer JS : automatically generate CLIs from classes, ES Module, ...
+# clinfer JS : automatically generate CLIs from classes, ES Modules (CLI infer-ence)
 
 [![clinfer on NPM](https://img.shields.io/npm/v/clinfer.svg)](https://npmjs.org/package/clinfer)
 [![JSR](https://jsr.io/badges/@jersou/clinfer)](https://jsr.io/@jersou/clinfer)

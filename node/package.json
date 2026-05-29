@@ -1,6 +1,6 @@
 {
   "name": "clinfer",
-  "description": "clinfer generates CLI from a class or ES module, each method generates a \"command\", each field generates an \"option\". The help is generated automatically",
+  "description": "clinfer (for **CLI** **infer**-ence) automatically generate CLIs from classes, ES Module. Each method generates a \"command\", each field generates an \"option\". The help is generated automatically",
   "version": "0.9.3",
   "type": "module",
   "homepage": "https://github.com/jersou/clinfer",
@@ -16,5 +16,8 @@
       "default": "./dist/mod.mjs"
     }
   },
-  "files": ["./dist/", "./README.md"]
+  "files": [
+    "./dist/",
+    "./README.md"
+  ]
 }
