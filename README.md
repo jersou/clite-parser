@@ -197,6 +197,10 @@ clinfer(import.meta);
 //      --opt                 [default: "foo"]
 ```
 
+⚠️ warning : do not use await on `clinfer(import.meta)`, doing so will cause a
+deadlock, as clinfer awaits the module, which cannot be resolved if you use
+`await clinfer(import.meta)`.
+
 Note: clinfer can generate CLI from imported module with `import * as ...` :
 
 ```
@@ -1050,6 +1054,11 @@ Options:
 The 3 implementations side by side :
 
 [![diff-600.png](examples/cli-tools-diff/diff-600.png)](examples/cli-tools-diff/diff.png)
+
+A simpler comparaison from
+[examples/cli-tools-diff/esm-diff](examples/cli-tools-diff/esm-diff) :
+
+![clinfer-vs-yargs.png](examples/cli-tools-diff/esm-diff/clinfer-vs-yargs.png)
 
 ## Real case
 
